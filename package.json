@@ -1,0 +1,25 @@
+{
+  "name": "brief-to-site",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AI Sales Microsite Tool — brief + brand colour(s) → SSR microsite → multi-viewport screenshots.",
+  "packageManager": "yarn@4.17.0",
+  "workspaces": [
+    "packages/*",
+    "sites/*"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "typecheck": "tsc -p packages/core"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9",
+    "@vitest/coverage-v8": "4.1.9",
+    "eslint": "^9",
+    "typescript": "^5",
+    "typescript-eslint": "^8",
+    "vitest": "4.1.9"
+  }
+}

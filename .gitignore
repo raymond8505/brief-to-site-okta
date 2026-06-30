@@ -1,0 +1,44 @@
+# dependencies
+node_modules/
+
+# Yarn Berry (node-modules linker) — commit releases/plugins/patches/sdks, ignore the rest
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# builds
+.next/
+out/
+build/
+dist/
+storybook-static/
+*.tsbuildinfo
+next-env.d.ts
+
+# testing / coverage
+coverage/
+test-results/
+playwright-report/
+playwright/.cache/
+
+# codegraph (machine-local generated index)
+.codegraph/
+
+# per-site generated capture output
+sites/*/captures/
+
+# env (keep .env.example committed)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# logs / os
+*.log
+*storybook.log
+.DS_Store
+*.pem
