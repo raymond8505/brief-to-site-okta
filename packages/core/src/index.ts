@@ -3,6 +3,25 @@
 export { cn } from "./lib/utils";
 export { sansFont, monoFont, siteFontClassName } from "./font/siteFont";
 
+// Colour system (PR3). Deterministic HSL derivation + WCAG contrast math — the single source of
+// truth shared by the CSS (styles/colors.css, styles/contrast-math.css) and theme:build (PR7).
+export {
+  HUE_OFFSETS,
+  HUE_OFFSET,
+  DEFAULT_HARMONY,
+  NEUTRAL_TINT,
+  normalizeHue,
+  rotateHue,
+  deriveSecondary,
+  deriveTertiary,
+  withLightness,
+  hslToCss,
+  hslToRgb,
+  relativeLuminance,
+  contrastRatio,
+} from "./styles/palette";
+export type { HSL, RGB, ColorHarmony } from "./styles/palette";
+
 // base-nova primitives (shadcn). Sections compose these; Storybook is their live catalog.
 export { Badge, badgeVariants } from "./components/ui/badge";
 export { Button, buttonVariants } from "./components/ui/button";

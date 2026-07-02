@@ -1,0 +1,62 @@
+/* ============================================================================================
+   Brand colour derivation (FR-2.7 / FR-2.8)
+
+   Deterministic HSL palette built from a single seed (the brand primary). The operator supplies
+   ≥1 colour; missing secondary/tertiary are a fixed HSL transform of the primary — no randomness,
+   no LLM. The hue offsets and neutral-tint lightness values here mirror ./palette.ts exactly
+   (HUE_OFFSET, NEUTRAL_TINT); the Colors/* stories assert the rendered CSS matches that TS math.
+
+   This file only defines brand *tokens* (`--brand-*`). It does NOT assign them to shadcn role
+   vars — that mapping lives in globals.css (so it wins the cascade over the base-nova neutrals)
+   and is intentionally minimal, because the operator/agent controls which element uses which
+   colour by pointing role vars at these tokens (in a site's theme.css). See theme.example.css.
+
+   Note: CSS hsl() treats hue modulo 360, so `calc(var(--brand-h) + 150)` wraps automatically —
+   matching normalizeHue() in palette.ts without needing mod().
+   ============================================================================================ */
+
+:root {
+  /* ── Brand seeds — override these in a site's theme.css (HSL channels, unitless) ──
+     Default is a mid-saturation blue that renders legibly with the base-nova neutral text roles. */
+  --brand-h: 217;
+  --brand-s: 91;
+  --brand-l: 45;
+
+  /* Named colour-harmony hue offsets (degrees) — mirror HUE_OFFSETS in palette.ts. Switch harmony
+     by pointing --secondary-h-offset / --tertiary-h-offset at a different pair in theme.css. */
+  --secondary-h--triadic: 120;
+  --secondary-h--complementary: 150;
+  --secondary-h--analogous: 330;
+  --tertiary-h--triadic: 240;
+  --tertiary-h--complementary: 210;
+  --tertiary-h--analogous: 30;
+
+  /* Active harmony — default complementary (DEFAULT_HARMONY in palette.ts). */
+  --secondary-h-offset: var(--secondary-h--complementary);
+  --tertiary-h-offset: var(--tertiary-h--complementary);
+
+  /* Secondary/tertiary default to the chosen harmony's transform of the primary. To supply an
+     explicit 2nd/3rd brand colour instead, override these channels in theme.css. */
+  --brand-secondary-h: calc(var(--brand-h) + var(--secondary-h-offset));
+  --brand-secondary-s: var(--brand-s);
+  --brand-secondary-l: var(--brand-l);
+
+  --brand-tertiary-h: calc(var(--brand-h) + var(--tertiary-h-offset));
+  --brand-tertiary-s: var(--brand-s);
+  --brand-tertiary-l: var(--brand-l);
+
+  /* ── Composed brand colours ── */
+  --brand-primary: hsl(var(--brand-h) calc(var(--brand-s) * 1%) calc(var(--brand-l) * 1%));
+  --brand-secondary: hsl(
+    var(--brand-secondary-h) calc(var(--brand-secondary-s) * 1%) calc(var(--brand-secondary-l) * 1%)
+  );
+  --brand-tertiary: hsl(
+    var(--brand-tertiary-h) calc(var(--brand-tertiary-s) * 1%) calc(var(--brand-tertiary-l) * 1%)
+  );
+
+  /* ── Brand-tinted neutrals (FR-2.7 "may apply to backgrounds") ──
+     Available for the operator to opt into for surfaces to avoid muddy grey pairings; the default
+     role mapping keeps the base-nova neutrals. Lightness values mirror NEUTRAL_TINT in palette.ts. */
+  --brand-surface: hsl(var(--brand-h) calc(var(--brand-s) * 1%) 96%);
+  --brand-muted: hsl(var(--brand-h) calc(var(--brand-s) * 1%) 90%);
+}
