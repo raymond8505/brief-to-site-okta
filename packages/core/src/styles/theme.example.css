@@ -1,0 +1,33 @@
+/* ============================================================================================
+   Per-site theme override — TEMPLATE (not imported by core)
+
+   Each generated site (sites/<slug>, PR7+) ships a theme.css that it imports AFTER core's
+   globals.css. It overrides only the brand seed(s) and, optionally, remaps shadcn role vars onto
+   the derived brand tokens. Everything else — the secondary/tertiary derivation, the WCAG contrast
+   utility — comes from core. Copy this file to sites/<slug>/theme.css and edit the seeds.
+
+   Import order in a site (conceptually):
+     @import "@brief-to-site/core/styles/globals.css";
+     @import "./theme.css";   // this file — wins the cascade because it comes later
+   ============================================================================================ */
+
+:root {
+  /* ── 1. Brand seed(s) — the operator supplies ≥1 colour as HSL channels (unitless) ── */
+  --brand-h: 274; /* e.g. a violet primary */
+  --brand-s: 72;
+  --brand-l: 45;
+
+  /* Optional: supply an explicit 2nd / 3rd brand colour instead of the derived transform by
+     overriding these channels. Leave them out to keep the deterministic split-complementary
+     derivation from the primary.
+     --brand-secondary-h: 190; --brand-secondary-s: 80; --brand-secondary-l: 45;
+     --brand-tertiary-h:  40;  --brand-tertiary-s:  90; --brand-tertiary-l:  50; */
+
+  /* ── 2. Optional role remaps (FR-2.8) — point any shadcn role at any brand token ──
+     core maps --primary and --ring to --brand-primary by default. Opt other roles/surfaces in
+     here; sections read these role vars, so this is where "what uses which colour" is decided.
+     --secondary: var(--brand-secondary);
+     --accent:    var(--brand-tertiary);
+     --background: var(--brand-surface);
+     --muted:     var(--brand-muted); */
+}

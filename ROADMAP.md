@@ -26,16 +26,21 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
 - ☑ **PR1** Repo + monorepo scaffold: git/remote, Yarn Berry 4.17 (`node-modules` linker +
   7-day min-release-age gate), CodeGraph, root configs (tsconfig base, ESLint 9, Vitest 4),
   `ROADMAP.md`, `core` skeleton (`package.json`, `components.json` base-nova, `cn` + test).
-- ◐ **PR2** Core primitives + Storybook (**preview-only**): shadcn `base-nova` primitives
+- ☑ **PR2** Core primitives + Storybook (**preview-only**): shadcn `base-nova` primitives
   (button, card, input, textarea, label, separator, badge) + stories, `font/siteFont` (Geist +
   Geist Mono via `next/font/google`); Storybook 10 (`nextjs-vite` + a11y/docs/**mcp**), Tailwind v4
   `globals.css` (static base-nova token scaffold). **Testing = Vitest units** (jsdom + Testing
   Library) — Storybook is preview-only, so there is **no story-as-test/browser harness**.
 
 ### Phase 1 — Colour
-- ☐ **PR3** CSS colour system: `styles/{colors,contrast-math}.css` (roles + CSS derivation from
-  `--primary` + WCAG contrast), the per-site `theme.css` override mechanism, Storybook colour
-  stories/tests.
+- ◐ **PR3** CSS colour system: `styles/{colors,contrast-math}.css` (deterministic HSL derivation
+  from a `--brand-*` seed + role mapping; `.wcag-contrast` ported **verbatim** from
+  `raymond8505/pure-css-wcag-compliant-dynamic-colors` with attribution), `styles/palette.ts` as the
+  TS source of truth (unit-tested), the per-site `theme.example.css` override mechanism, Storybook
+  `Colors/*` stories. **Note:** these stories carry `play()` functions that read `getComputedStyle`
+  to confirm the CSS math (`pow()`/`calc()`, which jsdom can't evaluate) matches `palette.ts` — an
+  in-browser value check that runs in Storybook's interactions panel. This does **not** add a
+  headless CI runner; PR2's "no story-as-test harness" posture otherwise stands (FR-5.6 = no CI).
 
 ### Phase 2 — Sections
 - ☐ **PR4** Section contract + `_template` + **Hero** (CSS-only CVA variants, rich story docs,

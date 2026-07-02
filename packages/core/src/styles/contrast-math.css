@@ -1,0 +1,105 @@
+/* ============================================================================================
+   Pure-CSS WCAG 4.5:1 contrast (FR-2.9)
+
+   Ported VERBATIM from Raymond's reference implementation — do not re-derive the formula:
+   https://github.com/raymond8505/pure-css-wcag-compliant-dynamic-colors/blob/main/contrast-math.css
+
+   Guarantees a legible text colour over any background using only calc()/pow()/clamp()/round().
+   Relies on CSS pow() (CSS Values 4); Chromium — the capture engine — supports it, so this is
+   safe for the screenshot deliverable. The TS mirror in ./palette.ts (`contrastText`) is kept in
+   lock-step and asserted against this CSS by the Colors/Contrast story's play() function.
+
+   The `@property --text-val` registration below is from the reference repo's index.html: without
+   it, getComputedStyle() returns the unevaluated calc() expression, so the story could not read
+   the computed value back.
+   ============================================================================================ */
+
+@property --text-val {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 128;
+}
+
+/* ── Drop-in class ──────────────────────────────────────────────────────────
+   Usage: add this class to any element, then set --r, --g, --b (integers
+   0–255) to match its background color. The background and a WCAG 4.5:1
+   contrast-compliant text color are applied automatically — no JS required.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.wcag-contrast {
+  background: rgb(var(--r) var(--g) var(--b));
+
+  /* ── WCAG constants ── */
+  --gamma:            2.4;
+  --gamma-inv:        calc(1 / var(--gamma));
+  --linear-threshold: 0.04045;
+  --linear-scale:     12.92;
+  --gamma-offset:     0.055;
+  --gamma-divisor:    1.055;
+  --linear-cutoff:    0.0031308;
+  --lum-r:            0.2126;
+  --lum-g:            0.7152;
+  --lum-b:            0.0722;
+  --contrast-target:  4.5;
+  --contrast-offset:  0.05;
+  --branch-force:     100000;
+
+  /* ── Normalize (0–255 → 0–1) ── */
+  --r-norm: calc(var(--r) / 255);
+  --g-norm: calc(var(--g) / 255);
+  --b-norm: calc(var(--b) / 255);
+
+  /* ── Linearize: piecewise sRGB → linear light ──
+     Step switch: 0 when channel ≤ threshold, 1 when above.
+     Safe for integer 0–255 inputs — threshold falls between 10 and 11. */
+  --r-above:    clamp(0, calc((var(--r-norm) - var(--linear-threshold)) * var(--branch-force)), 1);
+  --r-lin-low:  calc(var(--r-norm) / var(--linear-scale));
+  --r-lin-high: pow(calc((var(--r-norm) + var(--gamma-offset)) / var(--gamma-divisor)), var(--gamma));
+  --r-lin:      calc(var(--r-above) * var(--r-lin-high) + (1 - var(--r-above)) * var(--r-lin-low));
+
+  --g-above:    clamp(0, calc((var(--g-norm) - var(--linear-threshold)) * var(--branch-force)), 1);
+  --g-lin-low:  calc(var(--g-norm) / var(--linear-scale));
+  --g-lin-high: pow(calc((var(--g-norm) + var(--gamma-offset)) / var(--gamma-divisor)), var(--gamma));
+  --g-lin:      calc(var(--g-above) * var(--g-lin-high) + (1 - var(--g-above)) * var(--g-lin-low));
+
+  --b-above:    clamp(0, calc((var(--b-norm) - var(--linear-threshold)) * var(--branch-force)), 1);
+  --b-lin-low:  calc(var(--b-norm) / var(--linear-scale));
+  --b-lin-high: pow(calc((var(--b-norm) + var(--gamma-offset)) / var(--gamma-divisor)), var(--gamma));
+  --b-lin:      calc(var(--b-above) * var(--b-lin-high) + (1 - var(--b-above)) * var(--b-lin-low));
+
+  /* ── WCAG relative luminance ── */
+  --lum: calc(
+    var(--lum-r) * var(--r-lin) +
+    var(--lum-g) * var(--g-lin) +
+    var(--lum-b) * var(--b-lin)
+  );
+
+  /* ── Target luminance for 4.5:1 ──
+     dark branch:  (lum + 0.05) / 4.5 - 0.05
+     light branch: (lum + 0.05) * 4.5 - 0.05
+     needs-flip: 1 when dark < 0 (background too dark, need light text) */
+  --lum-offset:   calc(var(--lum) + var(--contrast-offset));
+  --target-dark:  calc(var(--lum-offset) / var(--contrast-target) - var(--contrast-offset));
+  --target-light: calc(var(--lum-offset) * var(--contrast-target) - var(--contrast-offset));
+  --needs-flip:   clamp(0, calc(var(--target-dark) * -1 * var(--branch-force)), 1);
+  --target-lum:   clamp(0, calc(
+    var(--needs-flip) * var(--target-light) +
+    (1 - var(--needs-flip)) * var(--target-dark)
+  ), 1);
+
+  /* ── Inverse gamma: linear → sRGB ── */
+  --out-above: clamp(0, calc((var(--target-lum) - var(--linear-cutoff)) * var(--branch-force)), 1);
+  --out-low:   calc(var(--target-lum) * var(--linear-scale));
+  --out-high:  calc(var(--gamma-divisor) * pow(var(--target-lum), var(--gamma-inv)) - var(--gamma-offset));
+  --out-srgb:  calc(var(--out-above) * var(--out-high) + (1 - var(--out-above)) * var(--out-low));
+
+  /* ── Text value (0–255 gray) ──
+     Directional rounding guarantees contrast ≥ 4.5:1 after snapping to integer sRGB.
+     Light text (needs-flip=1): round UP → brighter → more luminance → higher contrast.
+     Dark text  (needs-flip=0): round DOWN → darker  → less  luminance → higher contrast. */
+  --text-light: round(up,   calc(var(--out-srgb) * 255), 1);
+  --text-dark:  round(down, calc(var(--out-srgb) * 255), 1);
+  --text-val:   calc(var(--needs-flip) * var(--text-light) + (1 - var(--needs-flip)) * var(--text-dark));
+
+  color: rgb(var(--text-val) var(--text-val) var(--text-val));
+}

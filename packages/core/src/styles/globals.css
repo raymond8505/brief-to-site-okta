@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+/* PR3 colour system: brand tokens (HSL derivation) + pure-CSS WCAG contrast utility. Roles are
+   mapped onto the brand tokens in :root below. */
+@import "./colors.css";
+@import "./contrast-math.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -59,7 +63,12 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  /* Default brand role mapping (FR-2.8). Minimal by design — only --primary and --ring are wired
+     to brand tokens so the base-nova primitives keep rendering; the operator/agent opts other
+     roles/sections into --brand-secondary / --brand-tertiary / --brand-surface via theme.css.
+     --primary-foreground stays a neutral near-white here; auto-deriving a WCAG-legible foreground
+     for an arbitrary primary is precomputed by theme:build (PR7) via palette.ts contrastText. */
+  --primary: var(--brand-primary);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -70,7 +79,7 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: var(--brand-primary);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
