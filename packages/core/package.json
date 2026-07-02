@@ -6,6 +6,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./sections": "./src/components/sections/index.ts",
     "./lib/utils": "./src/lib/utils.ts",
     "./styles/palette": "./src/styles/palette.ts",
     "./styles/globals.css": "./src/styles/globals.css",

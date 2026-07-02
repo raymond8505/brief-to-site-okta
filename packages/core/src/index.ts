@@ -38,3 +38,12 @@ export { Input } from "./components/ui/input";
 export { Label } from "./components/ui/label";
 export { Separator } from "./components/ui/separator";
 export { Textarea } from "./components/ui/textarea";
+
+// Section suite (PR4). Compound components the agent assembles into SSR pages (spec §3); each carries
+// CSS-only, deterministic CVA variants (FR-3.11). Also available via the "./sections" subpath.
+export { Section, sectionVariants } from "./components/sections/section";
+export type { SectionProps } from "./components/sections/section";
+export { placeholderDataUri } from "./components/sections/placeholder";
+export type { PlaceholderOptions } from "./components/sections/placeholder";
+export { Hero, heroVariants } from "./components/sections/hero/hero";
+export type { HeroProps, HeroCta } from "./components/sections/hero/hero";
