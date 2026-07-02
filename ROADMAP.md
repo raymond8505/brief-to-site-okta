@@ -1,0 +1,76 @@
+# ROADMAP — brief-to-site
+
+The single source of truth for build progress. **Read this first at the start of every session.**
+
+## How this repo is built
+
+- Work ships as **small, ordered PRs — one per branch/session**.
+- Per PR: implement on a branch → push → **the user opens the PR** (the agent never opens PRs;
+  it hands back a compare URL + title/body) → user reviews → agent addresses comments → user
+  merges to `main` → next PR.
+- Update the status box below **within each PR**. Statuses: ☐ todo · ◐ in progress · ☑ merged.
+
+## Architecture (one-paragraph recap)
+
+Yarn-Berry-workspaces monorepo. `packages/core` (`@brief-to-site/core`) owns the section suite
+(**Storybook is the source of truth**), the **CSS** colour system, the microsite shell, Zod
+config schemas, and tooling primitives. Each `sites/<slug>` is a **standalone Next.js app** that
+imports from core; its pages are **generated `.tsx`** arranging sections with copy written inline
+in code (TS-enforced). Flow: scaffold → author `config/*.json` + `brief.md` → **assemble** (agent
+writes pages) → `theme:build` + copy section placeholders → HITL → `capture:run`. Full plan in the
+approved planning doc; key decisions are mirrored in `README.md` and per-area docs as they land.
+
+## Status
+
+### Phase 0 — Foundation
+- ◐ **PR1** Repo + monorepo scaffold: git/remote, Yarn Berry 4.17 (`node-modules` linker +
+  7-day min-release-age gate), CodeGraph, root configs (tsconfig base, ESLint 9, Vitest 4),
+  `ROADMAP.md`, `core` skeleton (`package.json`, `components.json` base-nova, `cn` + test).
+- ☐ **PR2** Core primitives + Storybook: shadcn `base-nova` primitives + stories, `font/siteFont`;
+  Storybook 10 (`nextjs-vite` + vitest/a11y/docs/**mcp**), story-as-test wired; base `globals.css`.
+
+### Phase 1 — Colour
+- ☐ **PR3** CSS colour system: `styles/{colors,contrast-math}.css` (roles + CSS derivation from
+  `--primary` + WCAG contrast), the per-site `theme.css` override mechanism, Storybook colour
+  stories/tests.
+
+### Phase 2 — Sections
+- ☐ **PR4** Section contract + `_template` + **Hero** (CSS-only CVA variants, rich story docs,
+  section-owned placeholder, image-path props) + story-tests.
+- ☐ **PR5** **FeatureGrid** + **ContactBlock** exemplars (prove the contract across a content
+  section and a presentational form).
+
+### Phase 3 — Shell + config
+- ☐ **PR6** Zod schemas (`meta`/`brand`/`pages`/`viewports`/`generation`) + `loadSiteConfig` +
+  `sites:validate`; `MicrositeShell` + `SiteNav` (nav from `pages.json`); full unit tests.
+
+### Phase 4 — Site lifecycle
+- ☐ **PR7** `sites:new` scaffolder + `theme:build`.
+- ☐ **PR8** Example site assembled end-to-end (generated Home/About/Contact `.tsx` + sections +
+  theme + nav + copied placeholders) + `sites:dev`; verify SSR render.
+
+### Phase 5 — Capture
+- ☐ **PR9** `capture:run` (Playwright full-page multi-viewport, motion-free, `${run}-${ts}_<width>`
+  naming) + viewports config. Lives in `scripts/`, **not** under `tests/`.
+
+### Phase 6 — Skill
+- ☐ **PR10** `.claude/skills/microsite/SKILL.md` (intake → author → assemble → HITL → capture) +
+  `config/generation/*` (voice + guardrails) + `brief.md` convention; agent dry-run.
+
+### Phase 7 — Hardening
+- ☐ **PR11** Coverage gaps, docs, ROADMAP finalize.
+
+> The "Core 13" section inventory is deferred (provided later by the operator). Each section is an
+> additive PR (a section folder + stories) with no architecture change.
+
+## Namespaced scripts (target API; each lands in its phase)
+
+| script | phase | purpose |
+|---|---|---|
+| `test` · `test:watch` · `lint` · `typecheck` | PR1 | quality baseline |
+| `storybook` | PR2 | section/primitive catalog (agent's selection vocabulary) |
+| `sites:new` | PR7 | scaffold a standalone site app |
+| `sites:validate` | PR6 | Zod-validate a site's `config/*.json` |
+| `theme:build` | PR7 | `brand.json` → `sites/<slug>/theme.css` |
+| `sites:dev` | PR8 | run a site's dev server |
+| `capture:run` | PR9 | full-page multi-viewport screenshots |
