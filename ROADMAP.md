@@ -33,7 +33,7 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   Library) — Storybook is preview-only, so there is **no story-as-test/browser harness**.
 
 ### Phase 1 — Colour
-- ◐ **PR3** CSS colour system: `styles/{colors,contrast-math}.css` (deterministic HSL derivation
+- ☑ **PR3** CSS colour system: `styles/{colors,contrast-math}.css` (deterministic HSL derivation
   from a `--brand-*` seed + role mapping; `.wcag-contrast` ported **verbatim** from
   `raymond8505/pure-css-wcag-compliant-dynamic-colors` with attribution), `styles/palette.ts` as the
   TS source of truth (unit-tested), the per-site `theme.example.css` override mechanism, Storybook
@@ -43,8 +43,12 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   headless CI runner; PR2's "no story-as-test harness" posture otherwise stands (FR-5.6 = no CI).
 
 ### Phase 2 — Sections
-- ☐ **PR4** Section contract + `_template` + **Hero** (CSS-only CVA variants, rich story docs,
-  section-owned placeholder, image-path props) + story-tests.
+- ◐ **PR4** Section contract + `_template` + **Hero** (CSS-only CVA variants, rich story docs,
+  section-owned placeholder, image-path props) + story-tests. Landed: `components/sections/`
+  (`Section` shell owns the `max-w-7xl` container + `density` axis; `placeholderDataUri` data-URI
+  fallback), the `_template` archetype (not barrel-exported), `Hero` (CSS-only `align` + `media`
+  order variants), a story per variant + `Sections/Overview` MDX, and vitest specs. The `MediaStart`
+  play() confirms the CSS-only reorder in-browser (no CI runner added; FR-5.6).
 - ☐ **PR5** **FeatureGrid** + **ContactBlock** exemplars (prove the contract across a content
   section and a presentational form).
 
