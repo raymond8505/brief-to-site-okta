@@ -49,8 +49,12 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   fallback), the `_template` archetype (not barrel-exported), `Hero` (CSS-only `align` + `media`
   order variants), a story per variant + `Sections/Overview` MDX, and vitest specs. The `MediaStart`
   play() confirms the CSS-only reorder in-browser (no CI runner added; FR-5.6).
-- ☐ **PR5** **FeatureGrid** + **ContactBlock** exemplars (prove the contract across a content
-  section and a presentational form).
+- ◐ **PR5** **FeatureGrid** + **ContactBlock** exemplars (prove the contract across a content
+  section and a presentational form). Landed: `FeatureGrid` (repeating FR-3.7 image contract via
+  per-feature `imageSrc`/placeholder in `Card`s; CSS-only `columns` axis) and `ContactBlock`
+  (Input/Textarea/Label/Button primitives; presentational — no submit handler, stays a server
+  component; CSS-only `form` side axis mirroring Hero's `media`). Each ships a story per variant
+  (incl. a play() CSS-only check) + vitest specs; both barrel-exported; `sections.mdx` updated.
 
 ### Phase 3 — Shell + config
 - ☐ **PR6** Zod schemas (`meta`/`brand`/`pages`/`viewports`/`generation`) + `loadSiteConfig` +
