@@ -23,11 +23,14 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
 ## Status
 
 ### Phase 0 — Foundation
-- ◐ **PR1** Repo + monorepo scaffold: git/remote, Yarn Berry 4.17 (`node-modules` linker +
+- ☑ **PR1** Repo + monorepo scaffold: git/remote, Yarn Berry 4.17 (`node-modules` linker +
   7-day min-release-age gate), CodeGraph, root configs (tsconfig base, ESLint 9, Vitest 4),
   `ROADMAP.md`, `core` skeleton (`package.json`, `components.json` base-nova, `cn` + test).
-- ☐ **PR2** Core primitives + Storybook: shadcn `base-nova` primitives + stories, `font/siteFont`;
-  Storybook 10 (`nextjs-vite` + vitest/a11y/docs/**mcp**), story-as-test wired; base `globals.css`.
+- ◐ **PR2** Core primitives + Storybook (**preview-only**): shadcn `base-nova` primitives
+  (button, card, input, textarea, label, separator, badge) + stories, `font/siteFont` (Geist +
+  Geist Mono via `next/font/google`); Storybook 10 (`nextjs-vite` + a11y/docs/**mcp**), Tailwind v4
+  `globals.css` (static base-nova token scaffold). **Testing = Vitest units** (jsdom + Testing
+  Library) — Storybook is preview-only, so there is **no story-as-test/browser harness**.
 
 ### Phase 1 — Colour
 - ☐ **PR3** CSS colour system: `styles/{colors,contrast-math}.css` (roles + CSS derivation from

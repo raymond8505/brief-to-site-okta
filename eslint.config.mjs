@@ -2,6 +2,7 @@
 // Next-app-specific config (eslint-config-next) and the Storybook plugin are layered
 // in by the packages that need them (site apps in later PRs, core's stories in PR2).
 import js from "@eslint/js";
+import storybook from "eslint-plugin-storybook";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
@@ -19,4 +20,6 @@ export default tseslint.config(
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
+  // Story-file + .storybook lint rules (targets *.stories.* and the config dir).
+  ...storybook.configs["flat/recommended"],
 );
