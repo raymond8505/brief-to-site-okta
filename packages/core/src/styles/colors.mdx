@@ -11,13 +11,22 @@ The microsite theme is driven by **one required brand colour** (the primary). Ev
 
 A single seed (`--brand-h` / `--brand-s` / `--brand-l`, unitless HSL channels) produces the palette
 via fixed HSL transforms. The same constants live in [`palette.ts`](?path=/story/colors-palette--default)
-(`HUE_OFFSET`, `NEUTRAL_TINT`) so tooling (`theme:build`, PR7) and the CSS never drift.
+(`HUE_OFFSETS`, `NEUTRAL_TINT`) so tooling (`theme:build`, PR7) and the CSS never drift.
+
+Secondary/tertiary use a **named colour harmony** (default **complementary**). Switch it by pointing
+`--secondary-h-offset` / `--tertiary-h-offset` at another pair, e.g. `var(--secondary-h--triadic)`:
+
+| Harmony | secondary offset | tertiary offset |
+| --- | --- | --- |
+| complementary *(default)* | +150° | +210° |
+| triadic | +120° | +240° |
+| analogous | +330° (−30°) | +30° |
 
 | Token | Derivation |
 | --- | --- |
 | `--brand-primary` | the seed |
-| `--brand-secondary` | primary hue **+150°** (split-complementary) |
-| `--brand-tertiary` | primary hue **+210°** |
+| `--brand-secondary` | primary hue + active secondary offset |
+| `--brand-tertiary` | primary hue + active tertiary offset |
 | `--brand-surface` | primary hue, lightness **96%** (brand-tinted near-white) |
 | `--brand-muted` | primary hue, lightness **90%** |
 

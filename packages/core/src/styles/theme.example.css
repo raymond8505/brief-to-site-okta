@@ -17,9 +17,12 @@
   --brand-s: 72;
   --brand-l: 45;
 
+  /* Optional: switch the colour harmony used to derive secondary/tertiary (default complementary).
+     --secondary-h-offset: var(--secondary-h--triadic);
+     --tertiary-h-offset:  var(--tertiary-h--triadic); */
+
   /* Optional: supply an explicit 2nd / 3rd brand colour instead of the derived transform by
-     overriding these channels. Leave them out to keep the deterministic split-complementary
-     derivation from the primary.
+     overriding these channels. Leave them out to keep the deterministic harmony-based derivation.
      --brand-secondary-h: 190; --brand-secondary-s: 80; --brand-secondary-l: 45;
      --brand-tertiary-h:  40;  --brand-tertiary-s:  90; --brand-tertiary-l:  50; */
 

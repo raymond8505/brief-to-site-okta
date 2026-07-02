@@ -22,14 +22,26 @@
   --brand-s: 91;
   --brand-l: 45;
 
-  /* Secondary/tertiary hue/sat/lightness default to the derived split-complementary transforms
-     (HUE_OFFSET.secondary = 150°, .tertiary = 210°). To supply an explicit 2nd/3rd brand colour,
-     override just these channels in theme.css. */
-  --brand-secondary-h: calc(var(--brand-h) + 150);
+  /* Named colour-harmony hue offsets (degrees) — mirror HUE_OFFSETS in palette.ts. Switch harmony
+     by pointing --secondary-h-offset / --tertiary-h-offset at a different pair in theme.css. */
+  --secondary-h--triadic: 120;
+  --secondary-h--complementary: 150;
+  --secondary-h--analogous: 330;
+  --tertiary-h--triadic: 240;
+  --tertiary-h--complementary: 210;
+  --tertiary-h--analogous: 30;
+
+  /* Active harmony — default complementary (DEFAULT_HARMONY in palette.ts). */
+  --secondary-h-offset: var(--secondary-h--complementary);
+  --tertiary-h-offset: var(--tertiary-h--complementary);
+
+  /* Secondary/tertiary default to the chosen harmony's transform of the primary. To supply an
+     explicit 2nd/3rd brand colour instead, override these channels in theme.css. */
+  --brand-secondary-h: calc(var(--brand-h) + var(--secondary-h-offset));
   --brand-secondary-s: var(--brand-s);
   --brand-secondary-l: var(--brand-l);
 
-  --brand-tertiary-h: calc(var(--brand-h) + 210);
+  --brand-tertiary-h: calc(var(--brand-h) + var(--tertiary-h-offset));
   --brand-tertiary-s: var(--brand-s);
   --brand-tertiary-l: var(--brand-l);
 

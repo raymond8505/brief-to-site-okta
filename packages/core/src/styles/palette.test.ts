@@ -1,15 +1,16 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  contrastText,
+  contrastRatio,
   deriveSecondary,
   deriveTertiary,
-  HUE_OFFSET,
+  HUE_OFFSETS,
   hslToRgb,
   normalizeHue,
   relativeLuminance,
   rotateHue,
   withLightness,
+  type ColorHarmony,
   type HSL,
 } from "./palette";
 
@@ -41,20 +42,30 @@ describe("HSL derivation (FR-2.7)", () => {
     expect(rotated).toEqual({ h: 190, s: 42, l: 37 });
   });
 
-  it("derives secondary/tertiary by the published hue offsets", () => {
+  it("defaults to the complementary harmony", () => {
+    const p: HSL = { h: 210, s: 90, l: 45 };
+    expect(deriveSecondary(p)).toEqual(deriveSecondary(p, "complementary"));
+    expect(deriveTertiary(p)).toEqual(deriveTertiary(p, "complementary"));
+  });
+
+  it("derives secondary/tertiary by each named harmony's hue offsets", () => {
+    const harmonies = Object.keys(HUE_OFFSETS) as ColorHarmony[];
     for (const p of PRIMARIES) {
-      expect(deriveSecondary(p).h).toBe(normalizeHue(p.h + HUE_OFFSET.secondary));
-      expect(deriveTertiary(p).h).toBe(normalizeHue(p.h + HUE_OFFSET.tertiary));
-      // saturation/lightness carry over from the primary
-      expect(deriveSecondary(p).s).toBe(p.s);
-      expect(deriveTertiary(p).l).toBe(p.l);
+      for (const harmony of harmonies) {
+        const { secondary, tertiary } = HUE_OFFSETS[harmony];
+        expect(deriveSecondary(p, harmony).h).toBe(normalizeHue(p.h + secondary));
+        expect(deriveTertiary(p, harmony).h).toBe(normalizeHue(p.h + tertiary));
+        // saturation/lightness carry over from the primary
+        expect(deriveSecondary(p, harmony).s).toBe(p.s);
+        expect(deriveTertiary(p, harmony).l).toBe(p.l);
+      }
     }
   });
 
   it("is deterministic — same input, same output", () => {
     const p: HSL = { h: 210, s: 90, l: 45 };
-    expect(deriveSecondary(p)).toEqual(deriveSecondary(p));
-    expect(deriveTertiary(p)).toEqual(deriveTertiary(p));
+    expect(deriveSecondary(p, "triadic")).toEqual(deriveSecondary(p, "triadic"));
+    expect(deriveTertiary(p, "analogous")).toEqual(deriveTertiary(p, "analogous"));
   });
 
   it("withLightness clamps to 0–100", () => {
@@ -73,7 +84,10 @@ describe("hslToRgb", () => {
   });
 });
 
-describe("WCAG contrast (FR-2.9)", () => {
+// Measurement primitives only — contrast-math.css owns choosing the text colour at runtime; the
+// ≥4.5:1 guarantee for the CSS is asserted in the Colors/Contrast story (a real browser). These
+// helpers exist so that story can measure the rendered result.
+describe("WCAG measurement primitives (FR-2.9)", () => {
   it("relative luminance is ordered black < mid < white", () => {
     const black = relativeLuminance({ r: 0, g: 0, b: 0 });
     const white = relativeLuminance({ r: 255, g: 255, b: 255 });
@@ -83,26 +97,11 @@ describe("WCAG contrast (FR-2.9)", () => {
     expect(relativeLuminance({ r: 128, g: 128, b: 128 })).toBeLessThan(white);
   });
 
-  it("guarantees ≥ 4.5:1 text over derived brand colours across a spread of primaries", () => {
-    for (const p of PRIMARIES) {
-      for (const colour of [p, deriveSecondary(p), deriveTertiary(p)]) {
-        const { ratio } = contrastText(hslToRgb(colour));
-        expect(ratio).toBeGreaterThanOrEqual(4.5);
-      }
-    }
-  });
-
-  it("chooses light text on dark backgrounds and dark text on light backgrounds", () => {
-    expect(contrastText({ r: 0, g: 0, b: 0 }).isLight).toBe(true);
-    expect(contrastText({ r: 255, g: 255, b: 255 }).isLight).toBe(false);
-  });
-
-  it("produces a valid 0–255 grayscale channel", () => {
-    for (const p of PRIMARIES) {
-      const { value } = contrastText(hslToRgb(p));
-      expect(value).toBeGreaterThanOrEqual(0);
-      expect(value).toBeLessThanOrEqual(255);
-      expect(Number.isInteger(value)).toBe(true);
-    }
+  it("contrastRatio is 21:1 for black-on-white and order-independent", () => {
+    const black = relativeLuminance({ r: 0, g: 0, b: 0 });
+    const white = relativeLuminance({ r: 255, g: 255, b: 255 });
+    expect(contrastRatio(black, white)).toBeCloseTo(21, 1);
+    expect(contrastRatio(white, black)).toBeCloseTo(21, 1);
+    expect(contrastRatio(black, black)).toBeCloseTo(1, 5);
   });
 });

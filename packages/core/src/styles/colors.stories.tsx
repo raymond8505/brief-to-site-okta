@@ -4,7 +4,6 @@ import * as React from "react";
 
 import {
   contrastRatio,
-  contrastText,
   deriveSecondary,
   deriveTertiary,
   hslToRgb,
@@ -193,8 +192,9 @@ const CONTRAST_BACKGROUNDS: RGB[] = [
 
 /**
  * The ported pure-CSS contrast utility. Each cell sets only --r/--g/--b; the CSS computes a
- * WCAG-4.5:1 text colour via pow(). play() reads the rendered text colour, checks it matches
- * palette.ts contrastText, and recomputes the actual ratio from the rendered pixels (≥ 4.5:1).
+ * WCAG-4.5:1 text colour via pow(). play() reads the rendered text colour and independently
+ * recomputes the actual contrast ratio from the rendered pixels — asserting ≥ 4.5:1. The CSS owns
+ * the text-colour computation; the story just verifies the result is legible.
  */
 export const Contrast: StoryObj = {
   render: () => (
@@ -219,14 +219,12 @@ export const Contrast: StoryObj = {
       if (!el) throw new Error(`missing contrast cell for ${bg.r},${bg.g},${bg.b}`);
 
       const textRgb = parseRgb(getComputedStyle(el).color);
-      const expected = contrastText(bg);
 
-      // CSS-rendered text channel matches the TS mirror (grayscale rgb(v v v)).
-      expect(Math.abs(textRgb.r - expected.value)).toBeLessThanOrEqual(2);
+      // The CSS renders a grayscale text colour…
       expect(textRgb.r).toBe(textRgb.g);
       expect(textRgb.g).toBe(textRgb.b);
 
-      // The rendered pixels actually clear WCAG 4.5:1 against the background.
+      // …that actually clears WCAG 4.5:1 against the background.
       const ratio = contrastRatio(relativeLuminance(bg), relativeLuminance(textRgb));
       expect(ratio).toBeGreaterThanOrEqual(4.5);
     }

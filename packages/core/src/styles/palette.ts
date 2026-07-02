@@ -1,18 +1,17 @@
 /**
- * Deterministic colour math — the single source of truth for the CSS colour system.
+ * Deterministic colour math for the CSS colour system.
  *
- * Two independent mechanisms, mirroring the spec (FR-2.7 / FR-2.9):
+ * The heavy lifting is the **HSL palette derivation** (FR-2.7): missing brand colours are a
+ * deterministic HSL transform of the primary (no randomness, no LLM). The constants here
+ * (`HUE_OFFSETS`, `NEUTRAL_TINT`) are the same numbers `styles/colors.css` uses in its `calc()`
+ * derivation, so the colour stories compute *expected* values from here and assert the rendered
+ * CSS matches — any drift surfaces as a failing `play()` assertion. `theme:build` (PR7) reuses
+ * these transforms to precompute concrete palette values.
  *
- *  1. **HSL palette derivation** — missing brand colours are a deterministic HSL transform of the
- *     primary (no randomness, no LLM). The constants below (`HUE_OFFSET`, the tint/shade deltas)
- *     are the same numbers `styles/colors.css` uses in its `calc()` derivation, so the colour
- *     stories can compute *expected* values from here and assert the rendered CSS matches — any
- *     drift between the TS and the CSS surfaces as a failing `play()` assertion.
- *
- *  2. **WCAG 4.5:1 contrast** — `contrastText` mirrors, in TS, the pure-CSS algorithm ported into
- *     `styles/contrast-math.css` (from raymond8505/pure-css-wcag-compliant-dynamic-colors). It
- *     lets us unit-test the contrast guarantee without a DOM, and `theme:build` (PR7) will reuse
- *     it to precompute concrete brand-surface text colours.
+ * Contrast (FR-2.9) is NOT reproduced here — `styles/contrast-math.css` owns choosing the text
+ * colour at runtime. We keep only the WCAG *measurement* primitives (`relativeLuminance`,
+ * `contrastRatio`) so the Colors/Contrast story can independently verify the rendered text clears
+ * 4.5:1.
  */
 
 export interface HSL {
@@ -36,14 +35,27 @@ export interface RGB {
 /* ─────────────────────────── HSL derivation (FR-2.7) ─────────────────────────── */
 
 /**
- * Hue rotations that derive the secondary/tertiary brand colours from the primary when the
- * operator supplies only one colour. A split-complementary pair (±150° from the complement):
- * visually distinct from the primary yet harmonious, and deterministic. Mirrored in colors.css.
+ * Named colour-harmony hue offsets (degrees) used to derive the secondary/tertiary brand colours
+ * from the primary when the operator supplies only one colour — deterministic, no randomness.
+ * The operator/agent picks a harmony per brief; the same names + values are mirrored as CSS vars
+ * in colors.css (`--secondary-h--<harmony>` etc.), so a site can switch harmony from either side.
  */
-export const HUE_OFFSET = {
-  secondary: 150,
-  tertiary: 210,
+export const HUE_OFFSETS = {
+  /** evenly spaced 120°/240° — bold, high-contrast trio */
+  triadic: { secondary: 120, tertiary: 240 },
+  /** ±150° around the complement — distinct yet harmonious */
+  complementary: { secondary: 150, tertiary: 210 },
+  /** adjacent on the wheel (−30°/+30°) — subtle, cohesive */
+  analogous: { secondary: 330, tertiary: 30 },
 } as const;
+
+export type ColorHarmony = keyof typeof HUE_OFFSETS;
+
+/** Harmony used when a brief supplies only a primary colour. */
+export const DEFAULT_HARMONY: ColorHarmony = "complementary";
+
+/** The active default offsets (complementary). Kept for convenience / back-compat. */
+export const HUE_OFFSET = HUE_OFFSETS[DEFAULT_HARMONY];
 
 /**
  * Lightness deltas (percentage points) for the derived brand-tinted neutral tokens. Available for
@@ -67,14 +79,14 @@ export function rotateHue(hsl: HSL, deg: number): HSL {
   return { ...hsl, h: normalizeHue(hsl.h + deg) };
 }
 
-/** Deterministic secondary derived from the primary (FR-2.7). */
-export function deriveSecondary(primary: HSL): HSL {
-  return rotateHue(primary, HUE_OFFSET.secondary);
+/** Deterministic secondary derived from the primary via the chosen harmony (FR-2.7). */
+export function deriveSecondary(primary: HSL, harmony: ColorHarmony = DEFAULT_HARMONY): HSL {
+  return rotateHue(primary, HUE_OFFSETS[harmony].secondary);
 }
 
-/** Deterministic tertiary derived from the primary (FR-2.7). */
-export function deriveTertiary(primary: HSL): HSL {
-  return rotateHue(primary, HUE_OFFSET.tertiary);
+/** Deterministic tertiary derived from the primary via the chosen harmony (FR-2.7). */
+export function deriveTertiary(primary: HSL, harmony: ColorHarmony = DEFAULT_HARMONY): HSL {
+  return rotateHue(primary, HUE_OFFSETS[harmony].tertiary);
 }
 
 const clamp = (v: number, min: number, max: number): number => Math.min(max, Math.max(min, v));
@@ -122,11 +134,11 @@ export function hslToRgb({ h, s, l }: HSL): RGB {
   };
 }
 
-/* ─────────────────────────── WCAG contrast (FR-2.9) ───────────────────────────
+/* ─────────────────── WCAG contrast measurement (FR-2.9) ───────────────────
  *
- * Mirrors styles/contrast-math.css step for step, including the directional rounding that
- * guarantees the ratio stays ≥ 4.5:1 after snapping to an integer sRGB channel. Keep the two in
- * lock-step: the `Colors/Contrast` story asserts the CSS reproduces `contrastText` in a browser.
+ * We deliberately DON'T reproduce contrast-math.css's job (picking the text colour) in JS — the
+ * CSS owns that at runtime. These are only the WCAG *measurement* primitives the Colors/Contrast
+ * story uses to independently verify the browser-rendered text actually clears 4.5:1.
  */
 
 const GAMMA = 2.4;
@@ -134,8 +146,6 @@ const LINEAR_THRESHOLD = 0.04045;
 const LINEAR_SCALE = 12.92;
 const GAMMA_OFFSET = 0.055;
 const GAMMA_DIVISOR = 1.055;
-const LINEAR_CUTOFF = 0.0031308;
-const CONTRAST_TARGET = 4.5;
 const CONTRAST_OFFSET = 0.05;
 
 /** Piecewise sRGB (0–1) → linear-light. */
@@ -159,41 +169,4 @@ export function contrastRatio(l1: number, l2: number): number {
   const lighter = Math.max(l1, l2);
   const darker = Math.min(l1, l2);
   return (lighter + CONTRAST_OFFSET) / (darker + CONTRAST_OFFSET);
-}
-
-export interface ContrastText {
-  /** grayscale text channel value 0–255 (the CSS `--text-val`); text colour is rgb(v v v) */
-  value: number;
-  /** true when light text was chosen (background too dark for dark text) */
-  isLight: boolean;
-  /** achieved contrast ratio of the chosen text over the background */
-  ratio: number;
-}
-
-/**
- * The WCAG-4.5:1-compliant grayscale text colour for a background, matching contrast-math.css.
- * Returns the `--text-val` the CSS computes plus the achieved ratio (always ≥ 4.5 for in-gamut
- * backgrounds — proven by palette.test.ts across a spread of colours).
- */
-export function contrastText(bg: RGB): ContrastText {
-  const lum = relativeLuminance(bg);
-  const lumOffset = lum + CONTRAST_OFFSET;
-  const targetDark = lumOffset / CONTRAST_TARGET - CONTRAST_OFFSET;
-  const targetLight = lumOffset * CONTRAST_TARGET - CONTRAST_OFFSET;
-
-  // Dark text can't reach 4.5:1 once its target luminance would go negative → flip to light text.
-  const isLight = targetDark < 0;
-  const targetLum = clamp(isLight ? targetLight : targetDark, 0, 1);
-
-  // Inverse gamma: linear → sRGB (0–1).
-  const outSrgb =
-    targetLum <= LINEAR_CUTOFF
-      ? targetLum * LINEAR_SCALE
-      : GAMMA_DIVISOR * Math.pow(targetLum, 1 / GAMMA) - GAMMA_OFFSET;
-
-  // Directional rounding preserves the ≥4.5:1 guarantee after integer snapping.
-  const value = isLight ? Math.ceil(outSrgb * 255) : Math.floor(outSrgb * 255);
-  const ratio = contrastRatio(lum, relativeLuminance({ r: value, g: value, b: value }));
-
-  return { value, isLight, ratio };
 }
