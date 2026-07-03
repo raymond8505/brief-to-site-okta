@@ -57,8 +57,16 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   (incl. a play() CSS-only check) + vitest specs; both barrel-exported; `sections.mdx` updated.
 
 ### Phase 3 — Shell + config
-- ☐ **PR6** Zod schemas (`meta`/`brand`/`pages`/`viewports`/`generation`) + `loadSiteConfig` +
-  `sites:validate`; `MicrositeShell` + `SiteNav` (nav from `pages.json`); full unit tests.
+- ◐ **PR6** Zod schemas (`meta`/`brand`/`pages`/`viewports`/`generation`) + `loadSiteConfig` +
+  `sites:validate`; `MicrositeShell` + `SiteNav` (nav from `pages.json`); full unit tests. Landed:
+  `config/` (five per-concern Zod schemas — brand stores **hex** colours, `theme:build` does hex→HSL
+  in PR7; `harmony` enum built from `palette.ts`'s `HARMONIES` so it can't drift; `DEFAULT_VIEWPORTS`
+  ships), `loadSiteConfig`/`loadGenerationConfig` returning a discriminated `{ ok, config | issues }`
+  with structured per-field issues (never throws), and the `tsx`-run `sites:validate` CLI. Shell:
+  `components/shell/{MicrositeShell,SiteNav}` (non-sticky header + main + footer, FR-3.6; live
+  `next/link` nav from the manifest; logo placeholder fallback, FR-3.8) + stories + vitest specs.
+  Schemas re-exported from the main barrel; fs loaders behind the new `./config` subpath. Example
+  configs under `config/examples/` double as loader fixtures. Deps: `zod`, `tsx`, `@types/node`.
 
 ### Phase 4 — Site lifecycle
 - ☐ **PR7** `sites:new` scaffolder + `theme:build`.

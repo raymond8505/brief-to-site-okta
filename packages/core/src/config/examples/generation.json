@@ -1,0 +1,9 @@
+{
+  "voice": "Warm, confident, and concise — a knowledgeable studio owner, never salesy.",
+  "guardrails": [
+    "Do not invent concrete prices, statistics, or dates.",
+    "Do not make legal, medical, or financial claims.",
+    "Keep copy placeholder-grade; the operator finalizes it before capture."
+  ],
+  "readingLevel": "plain / grade 8"
+}

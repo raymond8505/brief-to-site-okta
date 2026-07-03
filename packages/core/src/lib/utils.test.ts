@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cn } from "./utils";
+import { cn, navHref } from "./utils";
 
 describe("cn", () => {
   it("joins truthy class names", () => {
@@ -16,5 +16,21 @@ describe("cn", () => {
 
   it("supports conditional object syntax", () => {
     expect(cn("base", { active: true, disabled: false })).toBe("base active");
+  });
+});
+
+describe("navHref", () => {
+  it("maps the empty and '/' home slugs to '/'", () => {
+    expect(navHref("")).toBe("/");
+    expect(navHref("/")).toBe("/");
+  });
+
+  it("prefixes a bare segment with '/'", () => {
+    expect(navHref("about")).toBe("/about");
+  });
+
+  it("normalizes leading slashes", () => {
+    expect(navHref("/about")).toBe("/about");
+    expect(navHref("//contact")).toBe("/contact");
   });
 });

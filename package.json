@@ -13,6 +13,7 @@
     "test:watch": "vitest",
     "lint": "eslint .",
     "typecheck": "tsc -p packages/core",
+    "sites:validate": "tsx packages/core/src/config/cli/validate.ts",
     "storybook": "yarn workspace @brief-to-site/core storybook",
     "build-storybook": "yarn workspace @brief-to-site/core build-storybook"
   },
@@ -21,6 +22,7 @@
     "@vitest/coverage-v8": "4.1.9",
     "eslint": "^9",
     "eslint-plugin-storybook": "^10.4.1",
+    "tsx": "^4.22.4",
     "typescript": "^5",
     "typescript-eslint": "^8",
     "vitest": "4.1.9"

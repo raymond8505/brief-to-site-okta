@@ -1,6 +1,6 @@
 // Public barrel for @brief-to-site/core. Re-exports grow per PR as modules land
 // (colour system, schemas, microsite shell, sections live behind their own subpath exports).
-export { cn } from "./lib/utils";
+export { cn, navHref } from "./lib/utils";
 export { sansFont, monoFont, siteFontClassName } from "./font/siteFont";
 
 // Colour system (PR3). Deterministic HSL derivation + WCAG contrast math — the single source of
@@ -47,3 +47,24 @@ export { placeholderDataUri } from "./components/sections/placeholder";
 export type { PlaceholderOptions } from "./components/sections/placeholder";
 export { Hero, heroVariants } from "./components/sections/hero/hero";
 export type { HeroProps, HeroCta } from "./components/sections/hero/hero";
+
+// Microsite shell (PR6). The page frame + manifest-driven nav generated pages render through (§3).
+export { MicrositeShell } from "./components/shell/microsite-shell";
+export type { MicrositeShellProps } from "./components/shell/microsite-shell";
+export { SiteNav } from "./components/shell/site-nav";
+export type { SiteNavProps, NavItem } from "./components/shell/site-nav";
+
+// Config schemas (PR6). Browser-safe Zod schemas + inferred types (FR-2.3). The fs-touching loaders
+// (`loadSiteConfig`, `loadGenerationConfig`) live behind the "./config" subpath (node-only); only
+// their result types are re-exported here.
+export { metaSchema } from "./config/meta.schema";
+export type { MetaConfig } from "./config/meta.schema";
+export { brandSchema } from "./config/brand.schema";
+export type { BrandConfig } from "./config/brand.schema";
+export { pageSchema, pagesSchema } from "./config/pages.schema";
+export type { PageConfig, PagesConfig } from "./config/pages.schema";
+export { viewportSchema, viewportsSchema, DEFAULT_VIEWPORTS } from "./config/viewports.schema";
+export type { Viewport, ViewportsConfig } from "./config/viewports.schema";
+export { generationSchema } from "./config/generation.schema";
+export type { GenerationConfig } from "./config/generation.schema";
+export type { SiteConfig, ConfigIssue, LoadResult } from "./config/loadSiteConfig";

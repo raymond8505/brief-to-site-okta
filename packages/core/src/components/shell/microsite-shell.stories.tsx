@@ -1,0 +1,58 @@
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { expect } from "storybook/test";
+
+import { MicrositeShell } from "./microsite-shell";
+import { Hero } from "@/components/sections/hero/hero";
+
+/**
+ * MicrositeShell frames a page with a non-sticky header (logo + `SiteNav`), the page `<main>`, and a
+ * footer (FR-3.6). Stories render a real `Hero` inside so the frame is shown in context; `ActiveNav`
+ * proves the current page is marked, and `FooterOverride` swaps the default © line.
+ */
+const pages = [
+  { slug: "", title: "Home", nav: true },
+  { slug: "about", title: "About", nav: true },
+  { slug: "contact", title: "Contact", nav: true },
+];
+
+const meta = {
+  title: "Shell/MicrositeShell",
+  component: MicrositeShell,
+  parameters: { layout: "fullscreen" },
+  args: {
+    meta: {
+      name: "Northwind Studio",
+      description: "A boutique design studio turning briefs into beautiful sites.",
+    },
+    pages,
+    children: (
+      <Hero
+        eyebrow="Design studio"
+        headline="Turn a brief into a site in minutes"
+        subcopy="Northwind assembles brand-true microsites from a short brief — themed, responsive, ready to review."
+        imageAlt="A sample of studio work"
+      />
+    ),
+  },
+} satisfies Meta<typeof MicrositeShell>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
+
+export const ActiveNav: Story = {
+  args: { currentPath: "/about" },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("link", { name: "About" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  },
+};
+
+export const FooterOverride: Story = {
+  args: {
+    footer: <p>© 2026 Northwind Studio — all rights reserved.</p>,
+  },
+};
