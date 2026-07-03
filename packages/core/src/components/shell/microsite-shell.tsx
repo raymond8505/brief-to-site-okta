@@ -13,6 +13,10 @@ import type { PageConfig } from "@/config/pages.schema";
  * full-page screenshot stitch stays clean. The logo is a replaceable placeholder image (FR-3.8): it
  * uses `meta.logoSrc` when set, otherwise the section-owned `placeholderDataUri`. Server component.
  */
+
+/** Intrinsic dimensions of the fallback logo placeholder box (FR-3.8). */
+const LOGO_PLACEHOLDER = { width: 160, height: 40 } as const;
+
 export interface MicrositeShellProps {
   /** Site identity — drives the logo, name, and footer. */
   meta: MetaConfig;
@@ -34,7 +38,7 @@ export function MicrositeShell({
   className,
   children,
 }: MicrositeShellProps) {
-  const logoSrc = meta.logoSrc ?? placeholderDataUri({ width: 160, height: 40, label: meta.name });
+  const logoSrc = meta.logoSrc ?? placeholderDataUri({ ...LOGO_PLACEHOLDER, label: meta.name });
 
   return (
     <div

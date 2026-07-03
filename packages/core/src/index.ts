@@ -1,6 +1,6 @@
 // Public barrel for @brief-to-site/core. Re-exports grow per PR as modules land
 // (colour system, schemas, microsite shell, sections live behind their own subpath exports).
-export { cn } from "./lib/utils";
+export { cn, navHref } from "./lib/utils";
 export { sansFont, monoFont, siteFontClassName } from "./font/siteFont";
 
 // Colour system (PR3). Deterministic HSL derivation + WCAG contrast math — the single source of
@@ -51,7 +51,7 @@ export type { HeroProps, HeroCta } from "./components/sections/hero/hero";
 // Microsite shell (PR6). The page frame + manifest-driven nav generated pages render through (§3).
 export { MicrositeShell } from "./components/shell/microsite-shell";
 export type { MicrositeShellProps } from "./components/shell/microsite-shell";
-export { SiteNav, navHref } from "./components/shell/site-nav";
+export { SiteNav } from "./components/shell/site-nav";
 export type { SiteNavProps, NavItem } from "./components/shell/site-nav";
 
 // Config schemas (PR6). Browser-safe Zod schemas + inferred types (FR-2.3). The fs-touching loaders

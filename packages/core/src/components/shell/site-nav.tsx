@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { cn } from "@/lib/utils";
+import { cn, navHref } from "@/lib/utils";
 import type { PageConfig } from "@/config/pages.schema";
 
 /**
@@ -12,12 +12,6 @@ import type { PageConfig } from "@/config/pages.schema";
 
 /** The subset of a page the nav needs. */
 export type NavItem = Pick<PageConfig, "slug" | "title"> & { nav?: boolean };
-
-/** Route href for a page slug — `""` / `"/"` is the home route; others become `/segment`. */
-export function navHref(slug: string): string {
-  const trimmed = slug.replace(/^\/+/, "");
-  return trimmed === "" ? "/" : `/${trimmed}`;
-}
 
 export interface SiteNavProps {
   /** Pages to render — typically the validated `pages.json`. */

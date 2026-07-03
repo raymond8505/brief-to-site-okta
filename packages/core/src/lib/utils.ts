@@ -8,3 +8,12 @@ import { twMerge } from "tailwind-merge";
 export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
 }
+
+/**
+ * Route href for a page slug — `""` / `"/"` is the home route; others become `/segment`.
+ * Shared by `SiteNav` and any page that needs to build manifest links.
+ */
+export function navHref(slug: string): string {
+  const trimmed = slug.replace(/^\/+/, "");
+  return trimmed === "" ? "/" : `/${trimmed}`;
+}
