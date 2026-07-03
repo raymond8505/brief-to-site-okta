@@ -51,6 +51,12 @@ export const HUE_OFFSETS = {
 
 export type ColorHarmony = keyof typeof HUE_OFFSETS;
 
+/**
+ * The harmony names as a runtime tuple — the single source the brand config's `harmony` enum is
+ * built from (see `config/brand.schema.ts`), so the schema can never drift from `HUE_OFFSETS`.
+ */
+export const HARMONIES = Object.keys(HUE_OFFSETS) as [ColorHarmony, ...ColorHarmony[]];
+
 /** Harmony used when a brief supplies only a primary colour. */
 export const DEFAULT_HARMONY: ColorHarmony = "complementary";
 
