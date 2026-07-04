@@ -6,6 +6,13 @@
 @import "./colors.css";
 @import "./contrast-math.css";
 
+/* Consumers import THIS file as their Tailwind entry. `@source` is resolved relative to this file,
+   so it makes Tailwind scan core's own components for class names regardless of where the consumer
+   lives — node_modules isn't auto-scanned, so without this a sibling site app renders core's
+   shell/sections unstyled. Core's own Storybook already auto-detects these, but the directive is
+   harmless there (it points at the same files). */
+@source "../components";
+
 @custom-variant dark (&:is(.dark *));
 
 /* Tailwind theme tokens → CSS variables. The colour role variables below are the static

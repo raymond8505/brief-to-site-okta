@@ -96,30 +96,25 @@ export default config;
 `;
 
   const globalsCss = `/* Site stylesheet entry (imported by app/layout.tsx). Pulls in core's colour system + token
-   scaffold, then this site's generated theme.css (which wins the cascade because it comes later). */
+   scaffold — which self-declares an @source so Tailwind scans core's components — then this site's
+   generated theme.css (which wins the cascade because it comes later). */
 @import "@brief-to-site/core/styles/globals.css";
 @import "../theme.css";
-
-/* Tailwind v4 auto-scans this app but NOT node_modules — point it at core's source so the utility
-   classes used by the shell + sections are generated. */
-@source "../../../packages/core/src";
 `;
 
   const layoutTsx = `import type { ReactNode } from "react";
 
-import { MicrositeShell, siteFontClassName } from "@brief-to-site/core";
-import { loadSiteConfig } from "@brief-to-site/core/config";
+import { MicrositeShell, metaSchema, pagesSchema, siteFontClassName } from "@brief-to-site/core";
 
+import metaJson from "../config/meta.json";
+import pagesJson from "../config/pages.json";
 import "./globals.css";
 
-// Read + validate this site's config at the workspace root (cwd when Next runs here). A config
-// error fails the build loudly rather than rendering a broken page.
-const result = loadSiteConfig(process.cwd());
-if (!result.ok) {
-  const detail = result.issues.map((i) => \`  \${i.file} › \${i.path}: \${i.message}\`).join("\\n");
-  throw new Error(\`Invalid site config:\\n\${detail}\`);
-}
-const { meta, pages } = result.config;
+// Config is validated by \`yarn sites:validate\` before a build; parse here (with the same schemas)
+// as a typed backstop that applies defaults like \`nav\` — a static import, no runtime filesystem
+// read, so Next doesn't trace the whole project into the server bundle.
+const meta = metaSchema.parse(metaJson);
+const pages = pagesSchema.parse(pagesJson);
 
 export const metadata = {
   title: meta.name,

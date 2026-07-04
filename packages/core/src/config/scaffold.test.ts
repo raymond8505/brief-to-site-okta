@@ -55,11 +55,17 @@ describe("planSite", () => {
     expect(plan.files["next.config.ts"]).toContain('transpilePackages: ["@brief-to-site/core"]');
   });
 
-  it("wires the CSS entry: core globals + theme + a @source for core", () => {
+  it("wires the CSS entry: core globals (which self-@sources) + the generated theme", () => {
     const css = plan.files["app/globals.css"]!;
     expect(css).toContain('@import "@brief-to-site/core/styles/globals.css";');
     expect(css).toContain('@import "../theme.css";');
-    expect(css).toContain('@source "../../../packages/core/src";');
+  });
+
+  it("imports config statically in the layout (no runtime fs → no NFT trace warning)", () => {
+    const layout = plan.files["app/layout.tsx"]!;
+    expect(layout).toContain('import metaJson from "../config/meta.json";');
+    expect(layout).toContain("metaSchema.parse(metaJson)");
+    expect(layout).not.toContain("loadSiteConfig");
   });
 
   it("titlecases the slug into meta.name and produces valid config", () => {
