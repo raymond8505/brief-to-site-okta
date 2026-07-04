@@ -12,6 +12,7 @@ export {
   type ViewportsConfig,
 } from "./viewports.schema";
 export { generationSchema, type GenerationConfig } from "./generation.schema";
+export { buildThemeCss } from "./theme";
 export {
   loadSiteConfig,
   loadBrandConfig,
