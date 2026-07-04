@@ -69,7 +69,18 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   configs under `config/examples/` double as loader fixtures. Deps: `zod`, `tsx`, `@types/node`.
 
 ### Phase 4 — Site lifecycle
-- ☐ **PR7** `sites:new` scaffolder + `theme:build`.
+- ◐ **PR7** `sites:new` scaffolder + `theme:build`. Landed: `palette.ts` gains `hexToRgb`/`rgbToHsl`/
+  `hexToHsl` (the inverse of `hslToRgb`) + `contrastText` (pure black/white by max WCAG contrast,
+  provably ≥4.58:1) for the auto `--primary-foreground`; `config/theme.ts#buildThemeCss` (pure) +
+  the `theme:build` CLI write `sites/<slug>/theme.css` (brand seed + harmony offset + explicit
+  sec/tert only when given + foreground); `loadBrandConfig` + a shared `resolveSiteDir` (lifted out
+  of `validate.ts`); `config/scaffold.ts#planSite` (pure) + the `sites:new` CLI scaffold a **runnable**
+  standalone Next app (placeholder Hero home, `transpilePackages` core, layout static-imports
+  config, generated `theme.css`). Core made **source-consumable**: 14 component files' `@/*`
+  self-imports → relative, and `styles/globals.css` self-declares `@source "../components"` so a
+  consumer scans core's Tailwind classes. Verified end-to-end: scaffold → `next build` compiles,
+  type-checks, and prerenders **styled** with the site's brand theme, no warnings. Unit tests for
+  every pure piece; scripts wired. The committed **example site is PR8** (PR7 ships tooling only).
 - ☐ **PR8** Example site assembled end-to-end (generated Home/About/Contact `.tsx` + sections +
   theme + nav + copied placeholders) + `sites:dev`; verify SSR render.
 

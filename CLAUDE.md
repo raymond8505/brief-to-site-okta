@@ -19,12 +19,45 @@ Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard
   Do not re-derive or "tidy" the formula — its directional `round(up/down)` is what guarantees
   ≥4.5:1 after integer snapping. There is deliberately **no JS twin**; `relativeLuminance` /
   `contrastRatio` only *measure* (to verify legibility in the story), they don't pick the text
-  colour. The CSS owns that at runtime.
+  colour. The CSS owns that at runtime. **One sanctioned exception (PR7):** `palette.contrastText`
+  picks pure black/white for the single precomputed `--primary-foreground` role — it does NOT
+  reproduce the scaled directional-rounding derivation, so the rule stands for everything else.
 - **Named harmonies** default to complementary (`DEFAULT_HARMONY`). Offsets:
   triadic 120/240, complementary 150/210, analogous 330/30. Switch via `--secondary-h-offset` /
   `--tertiary-h-offset` at `:root`.
-- **Deferred to PR7 (`theme:build`):** auto-legible `--primary-foreground`. Currently a neutral
-  near-white — fine for mid-lightness primaries, **illegible for very light seeds** (yellow, etc.).
+- **Auto-legible `--primary-foreground` (landed PR7):** `theme:build` precomputes it via
+  `palette.contrastText(primary)` (pure black/white by max WCAG contrast — provably ≥4.58:1), so
+  very light seeds (yellow, etc.) now get black text. Emitted into each site's `theme.css`, not core.
+
+## Sites & tooling (`sites:new` + `theme:build`, PR7)
+
+- **`theme:build <slug>`** reads `config/brand.json` (hex) and writes `sites/<slug>/theme.css`:
+  `--brand-h/s/l` (via `palette.hexToHsl`), the harmony offset vars, explicit
+  `--brand-secondary/tertiary-*` only when brand.json supplies a hex (derived colours are left to
+  colors.css's `calc`), and the auto `--primary-foreground`. The pure builder is
+  `config/theme.ts#buildThemeCss` (fs-free, unit-tested, also used by `sites:new`); the CLI is a thin
+  wrapper. `loadBrandConfig` validates just brand.json so a theme can rebuild mid-edit.
+- **`sites:new <slug>`** scaffolds a **runnable** standalone Next.js app (placeholder Hero home; PR8
+  fills real pages). Pure planner `config/scaffold.ts#planSite` → CLI `cli/new-site.ts` writes it.
+  The generated site is NOT committed by PR7 — the example site is PR8.
+- **Core is consumed as raw source** (no build step), so two things are load-bearing and were only
+  exercised once PR7 created the first consumer:
+  - **Internal imports must be relative, not `@/*`.** The `@/*` alias exists only in core's private
+    tsconfig; from a sibling site app `@/*` resolves to the *site* root (Turbopack + tsc both read
+    the site's tsconfig paths). All core **component** files use relative imports now (barrel
+    already did). Stories keep `@/*` (only Storybook consumes them). Don't reintroduce `@/*` in any
+    file a site imports.
+  - **`transpilePackages: ["@brief-to-site/core"]`** in every site's `next.config.ts` (Next must
+    compile core's raw TS).
+- **Tailwind scans core via core's own globals.css.** `styles/globals.css` declares
+  `@source "../components"` (resolved relative to core), so any consumer importing it scans core's
+  classes — node_modules is not auto-scanned. Do NOT rely on a per-site `@source` pointing back at
+  core (brittle path, resolves against the wrong base).
+- **Scaffolded layout imports `config/*.json` statically** (+ `metaSchema/pagesSchema.parse`), NOT
+  `loadSiteConfig(process.cwd())`. Runtime `fs` in a server component makes Turbopack trace the whole
+  project into the bundle (NFT warning). Static import = no fs, clean build, schema defaults applied.
+- **Next 16 `next build` uses Turbopack by default**; a `webpack` config errors unless a `turbopack`
+  key is also present. Force the old bundler with `next build --webpack` when needed.
 
 ## Testing
 
