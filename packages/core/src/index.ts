@@ -17,6 +17,10 @@ export {
   withLightness,
   hslToCss,
   hslToRgb,
+  hexToRgb,
+  rgbToHsl,
+  hexToHsl,
+  contrastText,
   relativeLuminance,
   contrastRatio,
 } from "./styles/palette";

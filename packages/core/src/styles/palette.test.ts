@@ -2,12 +2,16 @@ import { describe, expect, it } from "vitest";
 
 import {
   contrastRatio,
+  contrastText,
   deriveSecondary,
   deriveTertiary,
+  hexToHsl,
+  hexToRgb,
   HUE_OFFSETS,
   hslToRgb,
   normalizeHue,
   relativeLuminance,
+  rgbToHsl,
   rotateHue,
   withLightness,
   type ColorHarmony,
@@ -81,6 +85,50 @@ describe("hslToRgb", () => {
     expect(hslToRgb({ h: 240, s: 100, l: 50 })).toEqual({ r: 0, g: 0, b: 255 });
     expect(hslToRgb({ h: 0, s: 0, l: 100 })).toEqual({ r: 255, g: 255, b: 255 });
     expect(hslToRgb({ h: 0, s: 0, l: 0 })).toEqual({ r: 0, g: 0, b: 0 });
+  });
+});
+
+describe("hex → HSL (theme:build input)", () => {
+  it("hexToRgb parses 6- and 3-digit hex (case-insensitive)", () => {
+    expect(hexToRgb("#7c3aed")).toEqual({ r: 124, g: 58, b: 237 });
+    expect(hexToRgb("#FFFFFF")).toEqual({ r: 255, g: 255, b: 255 });
+    expect(hexToRgb("#000000")).toEqual({ r: 0, g: 0, b: 0 });
+    // #abc expands to #aabbcc
+    expect(hexToRgb("#abc")).toEqual({ r: 170, g: 187, b: 204 });
+  });
+
+  it("hexToHsl matches known colours with integer channels", () => {
+    // #7c3aed is Tailwind violet-600 — hsl(262 83% 58%).
+    expect(hexToHsl("#7c3aed")).toEqual({ h: 262, s: 83, l: 58 });
+    expect(hexToHsl("#ffffff")).toEqual({ h: 0, s: 0, l: 100 });
+    expect(hexToHsl("#000000")).toEqual({ h: 0, s: 0, l: 0 });
+    expect(hexToHsl("#abc")).toEqual({ h: 210, s: 25, l: 73 });
+  });
+
+  it("rgbToHsl round-trips with hslToRgb across the primary spread", () => {
+    for (const p of PRIMARIES) {
+      const back = hslToRgb(rgbToHsl(hslToRgb(p)));
+      const forward = hslToRgb(p);
+      expect(back).toEqual(forward);
+    }
+  });
+});
+
+describe("contrastText (auto-legible --primary-foreground)", () => {
+  it("returns white on dark backgrounds and black on light ones", () => {
+    expect(contrastText({ h: 0, s: 0, l: 0 })).toBe("#ffffff"); // black bg
+    expect(contrastText({ h: 0, s: 0, l: 100 })).toBe("#000000"); // white bg
+    expect(contrastText({ h: 60, s: 100, l: 50 })).toBe("#000000"); // bright yellow
+    expect(contrastText({ h: 240, s: 100, l: 25 })).toBe("#ffffff"); // deep blue
+  });
+
+  it("the chosen foreground clears WCAG AA (≥4.5:1) for every primary", () => {
+    for (const p of PRIMARIES) {
+      const fg = contrastText(p);
+      const fgLuminance = relativeLuminance(hexToRgb(fg));
+      const bgLuminance = relativeLuminance(hslToRgb(p));
+      expect(contrastRatio(fgLuminance, bgLuminance)).toBeGreaterThanOrEqual(4.5);
+    }
   });
 });
 

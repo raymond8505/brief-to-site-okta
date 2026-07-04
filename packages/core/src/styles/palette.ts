@@ -140,6 +140,57 @@ export function hslToRgb({ h, s, l }: HSL): RGB {
   };
 }
 
+/* ─────────────────── hex → HSL (theme:build input, FR-2.6) ───────────────────
+ *
+ * `brand.json` stores colours as hex (what a brief provides); the CSS colour system consumes HSL
+ * channels. `theme:build` turns one into the other via `hexToHsl`. This is the inverse path of the
+ * `hslToRgb` above.
+ */
+
+/** Parse a hex colour (`#rgb` or `#rrggbb`, case-insensitive) to 0–255 RGB. */
+export function hexToRgb(hex: string): RGB {
+  const cleaned = hex.trim().replace(/^#/, "");
+  const full =
+    cleaned.length === 3
+      ? cleaned
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : cleaned;
+  return {
+    r: parseInt(full.slice(0, 2), 16),
+    g: parseInt(full.slice(2, 4), 16),
+    b: parseInt(full.slice(4, 6), 16),
+  };
+}
+
+/** Convert 0–255 RGB to HSL (hue degrees, s/l percent). Inverse of `hslToRgb`. */
+export function rgbToHsl({ r, g, b }: RGB): HSL {
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+  const delta = max - min;
+  const l = (max + min) / 2;
+
+  if (delta === 0) return { h: 0, s: 0, l: l * 100 };
+
+  const s = delta / (1 - Math.abs(2 * l - 1));
+  let h: number;
+  if (max === rn) h = ((gn - bn) / delta) % 6;
+  else if (max === gn) h = (bn - rn) / delta + 2;
+  else h = (rn - gn) / delta + 4;
+
+  return { h: normalizeHue(h * 60), s: s * 100, l: l * 100 };
+}
+
+/** Parse a hex colour to HSL with integer channels — the form `theme:build` writes to CSS vars. */
+export function hexToHsl(hex: string): HSL {
+  const { h, s, l } = rgbToHsl(hexToRgb(hex));
+  return { h: normalizeHue(Math.round(h)), s: Math.round(s), l: Math.round(l) };
+}
+
 /* ─────────────────── WCAG contrast measurement (FR-2.9) ───────────────────
  *
  * We deliberately DON'T reproduce contrast-math.css's job (picking the text colour) in JS — the
@@ -175,4 +226,26 @@ export function contrastRatio(l1: number, l2: number): number {
   const lighter = Math.max(l1, l2);
   const darker = Math.min(l1, l2);
   return (lighter + CONTRAST_OFFSET) / (darker + CONTRAST_OFFSET);
+}
+
+/* ─────────────────── auto-legible primary foreground (theme:build) ───────────────────
+ *
+ * `theme:build` precomputes a site's `--primary-foreground` — the deferral flagged in
+ * styles/globals.css. This is deliberately NOT a JS twin of contrast-math.css: that utility derives
+ * a *scaled* text colour at runtime for arbitrary backgrounds; here we only choose between the two
+ * extremes (black/white) for the single `--primary` role. Picking the better of pure black vs white
+ * is provably ≥ 4.58:1 for any background (the crossover luminance ≈ 0.179 yields 4.58), so the
+ * result always clears WCAG AA for normal text — no directional rounding needed.
+ */
+const FOREGROUND_BLACK = "#000000";
+const FOREGROUND_WHITE = "#ffffff";
+const WHITE_LUMINANCE = relativeLuminance({ r: 255, g: 255, b: 255 });
+const BLACK_LUMINANCE = relativeLuminance({ r: 0, g: 0, b: 0 });
+
+/** Pick pure black or white — whichever contrasts more with `bg` — as a legible foreground. */
+export function contrastText(bg: HSL): string {
+  const bgLuminance = relativeLuminance(hslToRgb(bg));
+  const onWhite = contrastRatio(bgLuminance, WHITE_LUMINANCE);
+  const onBlack = contrastRatio(bgLuminance, BLACK_LUMINANCE);
+  return onWhite >= onBlack ? FOREGROUND_WHITE : FOREGROUND_BLACK;
 }
