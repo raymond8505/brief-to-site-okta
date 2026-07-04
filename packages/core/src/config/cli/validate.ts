@@ -1,7 +1,6 @@
-import { existsSync } from "node:fs";
-import { relative, resolve } from "node:path";
+import { relative } from "node:path";
 
-import { loadSiteConfig, siteConfigPath } from "../loadSiteConfig";
+import { loadSiteConfig, resolveSiteDir, siteConfigPath } from "../loadSiteConfig";
 
 /**
  * `sites:validate <slug-or-path>` — the CLI behind FR-2.3/2.5. Resolves a site directory, validates
@@ -9,13 +8,6 @@ import { loadSiteConfig, siteConfigPath } from "../loadSiteConfig";
  * failure the structured per-field issues + a non-zero exit code the agent can key off.
  */
 const CONCERNS = ["meta", "brand", "pages", "viewports"] as const;
-
-/** Accept either a path (relative to cwd) or a bare slug resolved under `sites/<slug>`. */
-function resolveSiteDir(arg: string): string {
-  const asPath = resolve(process.cwd(), arg);
-  if (existsSync(asPath)) return asPath;
-  return resolve(process.cwd(), "sites", arg);
-}
 
 function main(): void {
   const arg = process.argv[2];

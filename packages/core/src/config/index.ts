@@ -14,8 +14,10 @@ export {
 export { generationSchema, type GenerationConfig } from "./generation.schema";
 export {
   loadSiteConfig,
+  loadBrandConfig,
   loadGenerationConfig,
   siteConfigPath,
+  resolveSiteDir,
   type SiteConfig,
   type ConfigIssue,
   type LoadResult,
