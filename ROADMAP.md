@@ -74,13 +74,16 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   provably ≥4.58:1) for the auto `--primary-foreground`; `config/theme.ts#buildThemeCss` (pure) +
   the `theme:build` CLI write `sites/<slug>/theme.css` (brand seed + harmony offset + explicit
   sec/tert only when given + foreground); `loadBrandConfig` + a shared `resolveSiteDir` (lifted out
-  of `validate.ts`); `config/scaffold.ts#planSite` (pure) + the `sites:new` CLI scaffold a **runnable**
-  standalone Next app (placeholder Hero home, `transpilePackages` core, layout static-imports
-  config, generated `theme.css`). Core made **source-consumable**: 14 component files' `@/*`
+  of `validate.ts`); `sites:new` **copies the committed `sites/_template` workspace** (a real,
+  installed, buildable Next app — placeholder Hero home, `transpilePackages` core, layout
+  static-imports config) via `config/scaffold.ts#scaffoldSite` + structured edits (package/site name).
+  Core made **source-consumable**: 14 component files' `@/*`
   self-imports → relative, and `styles/globals.css` self-declares `@source "../components"` so a
-  consumer scans core's Tailwind classes. Verified end-to-end: scaffold → `next build` compiles,
-  type-checks, and prerenders **styled** with the site's brand theme, no warnings. Unit tests for
-  every pure piece; scripts wired. The committed **example site is PR8** (PR7 ships tooling only).
+  consumer scans core's Tailwind classes. Verified end-to-end: `_template` builds in place, and
+  scaffold → `next build` compiles, type-checks, and prerenders **styled** with the site's brand
+  theme, no warnings. Unit tests for every pure piece (scaffold tested by generating from `_template`
+  into a temp dir); scripts wired. `_template` is committed (the tool); the assembled **example site
+  is PR8**.
 - ☐ **PR8** Example site assembled end-to-end (generated Home/About/Contact `.tsx` + sections +
   theme + nav + copied placeholders) + `sites:dev`; verify SSR render.
 

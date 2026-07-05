@@ -35,11 +35,20 @@ Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard
   `--brand-h/s/l` (via `palette.hexToHsl`), the harmony offset vars, explicit
   `--brand-secondary/tertiary-*` only when brand.json supplies a hex (derived colours are left to
   colors.css's `calc`), and the auto `--primary-foreground`. The pure builder is
-  `config/theme.ts#buildThemeCss` (fs-free, unit-tested, also used by `sites:new`); the CLI is a thin
-  wrapper. `loadBrandConfig` validates just brand.json so a theme can rebuild mid-edit.
-- **`sites:new <slug>`** scaffolds a **runnable** standalone Next.js app (placeholder Hero home; PR8
-  fills real pages). Pure planner `config/scaffold.ts#planSite` → CLI `cli/new-site.ts` writes it.
-  The generated site is NOT committed by PR7 — the example site is PR8.
+  `config/theme.ts#buildThemeCss` (fs-free, unit-tested); the CLI is a thin wrapper. `loadBrandConfig`
+  validates just brand.json so a theme can rebuild mid-edit.
+- **`sites:new <slug>` copies the real `sites/_template` workspace**, it does NOT emit files from
+  template strings. `_template` is a committed, installed, buildable Next.js app (leading `_` = "not a
+  real site") — maintain the scaffold there (bump deps, edit the layout) the same way you'd maintain a
+  site, and `next build` it in place to check the scaffold still works. `config/scaffold.ts#scaffoldSite`
+  copies it (skipping `node_modules`/`.next`) and makes structured edits (package name, meta name/desc);
+  no `{{tokens}}`. `theme.css` is copied as-is (correct for the default brand); the operator re-runs
+  `theme:build` after editing brand.json. A drift test asserts `_template/theme.css === buildThemeCss(brand)`
+  and `viewports.json === DEFAULT_VIEWPORTS`. Scaffold changes are tested by generating a site from
+  `_template` into a temp dir (scaffold.test.ts). `_template` IS committed (it's the tool); the
+  **example site** assembled end-to-end is separate and lands in PR8.
+  - Future `sites/*` iteration (e.g. capture in PR9) must **skip the `_template` dir** (and `isValidSlug`
+    already rejects the `_` prefix, so `sites:new _template` can't collide).
 - **Core is consumed as raw source** (no build step), so two things are load-bearing and were only
   exercised once PR7 created the first consumer:
   - **Internal imports must be relative, not `@/*`.** The `@/*` alias exists only in core's private
