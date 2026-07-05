@@ -17,10 +17,11 @@
 
 :root {
   /* ── Brand seeds — override these in a site's theme.css (HSL channels, unitless) ──
-     Default is a mid-saturation blue that renders legibly with the base-nova neutral text roles. */
-  --brand-h: 217;
-  --brand-s: 91;
-  --brand-l: 45;
+     Default is Tailwind blue-600 (#2563eb = hsl(221 83% 53%)) — the same placeholder brand that
+     sites/_template ships, so there is one canonical default. Renders legibly on the base-nova neutrals. */
+  --brand-h: 221;
+  --brand-s: 83;
+  --brand-l: 53;
 
   /* Named colour-harmony hue offsets (degrees) — mirror HUE_OFFSETS in palette.ts. Switch harmony
      by pointing --secondary-h-offset / --tertiary-h-offset at a different pair in theme.css. */

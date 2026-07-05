@@ -86,7 +86,7 @@ const meta = {
     s: { control: { type: "range", min: 0, max: 100, step: 1 } },
     l: { control: { type: "range", min: 0, max: 100, step: 1 } },
   },
-  args: { h: 217, s: 91, l: 45 },
+  args: { h: 221, s: 83, l: 53 }, // Tailwind blue-600 — the default brand seed
   render: ({ h, s, l }: SeedArgs) => (
     <SeedRoot h={h} s={s} l={l}>
       <div style={row}>
