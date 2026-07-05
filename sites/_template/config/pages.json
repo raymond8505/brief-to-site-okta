@@ -1,0 +1,5 @@
+[
+  { "slug": "", "title": "Home", "instructions": "Lead with the core value proposition." },
+  { "slug": "about", "title": "About", "instructions": "Tell the story behind the brand." },
+  { "slug": "contact", "title": "Contact", "instructions": "Invite the visitor to get in touch." }
+]

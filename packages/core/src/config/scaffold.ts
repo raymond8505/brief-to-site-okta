@@ -1,14 +1,23 @@
-import { DEFAULT_HARMONY } from "../styles/palette";
-import type { BrandConfig } from "./brand.schema";
-import { DEFAULT_VIEWPORTS } from "./viewports.schema";
-import { buildThemeCss } from "./theme";
+import { cpSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join, relative, resolve, sep } from "node:path";
 
 /**
- * `planSite` — the pure core of `sites:new` (PR7). Given a slug it returns the directory list and a
- * relative-path → contents map for a **runnable** standalone Next.js app under `sites/<slug>/` that
- * imports from `@brief-to-site/core`. Kept fs-free so it is unit-testable; `cli/new-site.ts` does the
- * writes. PR8 replaces the placeholder pages with real assembled sections.
+ * `scaffoldSite` — the core of `sites:new` (PR7). A new site is a **copy of the real
+ * `sites/_template` workspace** (an installed, buildable Next.js app) with a few structured edits,
+ * not a bundle of template strings. So the scaffold is maintained the same way sites are — its
+ * dependencies live in a real `package.json`, it can be built in place, and scaffold changes are
+ * tested by generating a site from it (see scaffold.test.ts). PR8 replaces the placeholder pages.
+ *
+ * The only per-site edits are the values derived from the slug (the workspace name + the site name);
+ * everything else — including the generated `theme.css` — is copied verbatim. The operator edits
+ * `config/brand.json` then re-runs `theme:build`.
  */
+
+/**
+ * The template workspace. Resolved from the repo root — both the `sites:new` CLI (a root yarn
+ * script) and vitest run with the repo root as cwd.
+ */
+export const TEMPLATE_DIR = resolve(process.cwd(), "sites", "_template");
 
 /** url-safe directory slug: lowercase letters, digits and hyphens (also a valid npm package part). */
 export const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -26,166 +35,54 @@ function titleCase(slug: string): string {
     .join(" ");
 }
 
-/** Serialize a value as pretty JSON with a trailing newline (matches the repo's config files). */
-function json(value: unknown): string {
-  return `${JSON.stringify(value, null, 2)}\n`;
+const toPosix = (p: string): string => p.split(sep).join("/");
+
+/** Never copy build/install artifacts out of the template (they exist once it's been built). */
+function keepInScaffold(source: string): boolean {
+  const base = source.split(sep).pop() ?? "";
+  if (base === "node_modules" || base === ".next") return false;
+  if (base === "next-env.d.ts" || base.endsWith(".tsbuildinfo")) return false;
+  return true;
 }
 
-export interface SitePlan {
-  /** Directories to create under the site root. */
-  dirs: string[];
-  /** Map of POSIX relative path → file contents. */
-  files: Record<string, string>;
+/** Read a JSON file, mutate the parsed object, write it back pretty-printed with a trailing newline. */
+function editJson(file: string, mutate: (data: Record<string, unknown>) => void): void {
+  const data = JSON.parse(readFileSync(file, "utf8")) as Record<string, unknown>;
+  mutate(data);
+  writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`, "utf8");
 }
 
-export function planSite(slug: string): SitePlan {
+/** Relative POSIX paths of every file under `siteDir` (artifacts excluded), sorted — for reporting. */
+export function listSiteFiles(siteDir: string): string[] {
+  const files: string[] = [];
+  const walk = (dir: string): void => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name);
+      if (!keepInScaffold(full)) continue;
+      if (entry.isDirectory()) walk(full);
+      else files.push(toPosix(relative(siteDir, full)));
+    }
+  };
+  walk(siteDir);
+  return files.sort();
+}
+
+/**
+ * Copy `sites/_template` to `<sitesDir>/<slug>` and apply the slug-derived edits. Assumes the target
+ * does not exist (the CLI refuses otherwise). Returns the created dir + its file list.
+ */
+export function scaffoldSite(slug: string, sitesDir: string): { siteDir: string; files: string[] } {
+  const siteDir = join(sitesDir, slug);
+  cpSync(TEMPLATE_DIR, siteDir, { recursive: true, filter: (src) => keepInScaffold(src) });
+
   const name = titleCase(slug);
-  const brand: BrandConfig = { primary: "#2563eb", harmony: DEFAULT_HARMONY };
+  editJson(join(siteDir, "package.json"), (pkg) => {
+    pkg.name = `@brief-to-site/site-${slug}`;
+  });
+  editJson(join(siteDir, "config", "meta.json"), (meta) => {
+    meta.name = name;
+    meta.description = `${name} — placeholder description; edit config/meta.json.`;
+  });
 
-  const packageJson = {
-    name: `@brief-to-site/site-${slug}`,
-    version: "0.0.0",
-    private: true,
-    type: "module",
-    scripts: { dev: "next dev", build: "next build", start: "next start" },
-    dependencies: {
-      "@brief-to-site/core": "workspace:*",
-      next: "16.2.6",
-      react: "19.2.4",
-      "react-dom": "19.2.4",
-    },
-    devDependencies: {
-      "@types/node": "^26.0.1",
-      "@types/react": "^19",
-      "@types/react-dom": "^19",
-      typescript: "^5",
-    },
-  };
-
-  const tsconfig = {
-    extends: "../../tsconfig.base.json",
-    compilerOptions: {
-      // Next expects untransformed JSX + its own type plugin; the base config uses react-jsx.
-      jsx: "preserve",
-      plugins: [{ name: "next" }],
-      baseUrl: ".",
-      paths: { "@/*": ["./*"] },
-      incremental: true,
-    },
-    include: ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-    exclude: ["node_modules"],
-  };
-
-  const pages = [
-    { slug: "", title: "Home", instructions: "Lead with the core value proposition." },
-    { slug: "about", title: "About", instructions: "Tell the story behind the brand." },
-    { slug: "contact", title: "Contact", instructions: "Invite the visitor to get in touch." },
-  ];
-
-  const nextConfig = `import type { NextConfig } from "next";
-
-/**
- * \`@brief-to-site/core\` ships raw TypeScript via its package exports (no build step), so Next must
- * transpile it. Everything else is Next defaults.
- */
-const config: NextConfig = {
-  transpilePackages: ["@brief-to-site/core"],
-};
-
-export default config;
-`;
-
-  const globalsCss = `/* Site stylesheet entry (imported by app/layout.tsx). Pulls in core's colour system + token
-   scaffold — which self-declares an @source so Tailwind scans core's components — then this site's
-   generated theme.css (which wins the cascade because it comes later). */
-@import "@brief-to-site/core/styles/globals.css";
-@import "../theme.css";
-`;
-
-  const layoutTsx = `import type { ReactNode } from "react";
-
-import { MicrositeShell, metaSchema, pagesSchema, siteFontClassName } from "@brief-to-site/core";
-
-import metaJson from "../config/meta.json";
-import pagesJson from "../config/pages.json";
-import "./globals.css";
-
-// Config is validated by \`yarn sites:validate\` before a build; parse here (with the same schemas)
-// as a typed backstop that applies defaults like \`nav\` — a static import, no runtime filesystem
-// read, so Next doesn't trace the whole project into the server bundle.
-const meta = metaSchema.parse(metaJson);
-const pages = pagesSchema.parse(pagesJson);
-
-export const metadata = {
-  title: meta.name,
-  description: meta.description,
-};
-
-export default function RootLayout({ children }: { children: ReactNode }) {
-  return (
-    <html lang="en" className={siteFontClassName}>
-      <body>
-        <MicrositeShell meta={meta} pages={pages}>
-          {children}
-        </MicrositeShell>
-      </body>
-    </html>
-  );
-}
-`;
-
-  const pageTsx = `import { Hero } from "@brief-to-site/core/sections";
-
-/**
- * Placeholder home page scaffolded by \`sites:new\`. Replaced by the assembled sections in the
- * authoring step (PR8) — it exists so the fresh app renders something.
- */
-export default function HomePage() {
-  return (
-    <Hero
-      eyebrow="Scaffolded"
-      headline="Your new microsite"
-      subcopy="This placeholder was generated by sites:new. Assemble real sections to replace it."
-      imageAlt="Placeholder hero image"
-    />
-  );
-}
-`;
-
-  const briefMd = `# ${name} — brief
-
-> Scaffolded by \`sites:new\`. Fill this in from the client brief, then assemble the site.
-
-## What is this?
-
-## Audience
-
-## Key messages
-
-## Pages
-
-## Notes
-`;
-
-  return {
-    dirs: ["app", "config", "public/images"],
-    files: {
-      "package.json": json(packageJson),
-      "tsconfig.json": json(tsconfig),
-      "next.config.ts": nextConfig,
-      "app/globals.css": globalsCss,
-      "app/layout.tsx": layoutTsx,
-      "app/page.tsx": pageTsx,
-      "config/meta.json": json({
-        name,
-        description: `${name} — placeholder description; edit config/meta.json.`,
-      }),
-      "config/brand.json": json(brand),
-      "config/pages.json": json(pages),
-      "config/viewports.json": json(DEFAULT_VIEWPORTS),
-      "theme.css": buildThemeCss(brand),
-      "brief.md": briefMd,
-      "public/images/.gitkeep": "",
-    },
-  };
+  return { siteDir, files: listSiteFiles(siteDir) };
 }
