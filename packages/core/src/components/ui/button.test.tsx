@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { Button, buttonVariants } from "./button";
+import { Button, buttonVariants } from "@core/components/ui/button";
 
 // Exemplar render/variant test — establishes the jsdom + Testing Library pattern that the
 // section suite (PR4+) reuses. Vendored primitives aren't each unit-tested; this one proves

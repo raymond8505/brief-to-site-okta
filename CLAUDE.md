@@ -19,12 +19,60 @@ Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard
   Do not re-derive or "tidy" the formula — its directional `round(up/down)` is what guarantees
   ≥4.5:1 after integer snapping. There is deliberately **no JS twin**; `relativeLuminance` /
   `contrastRatio` only *measure* (to verify legibility in the story), they don't pick the text
-  colour. The CSS owns that at runtime.
+  colour. The CSS owns that at runtime — **no exceptions** (a PR7 `contrastText` JS picker was
+  added then removed in review; don't reintroduce JS luminance/colour-picking).
 - **Named harmonies** default to complementary (`DEFAULT_HARMONY`). Offsets:
   triadic 120/240, complementary 150/210, analogous 330/30. Switch via `--secondary-h-offset` /
   `--tertiary-h-offset` at `:root`.
-- **Deferred to PR7 (`theme:build`):** auto-legible `--primary-foreground`. Currently a neutral
-  near-white — fine for mid-lightness primaries, **illegible for very light seeds** (yellow, etc.).
+- **Legible foreground is a CSS + component concern, not JS.** `.wcag-contrast` (contrast-math.css)
+  needs only `--r/--g/--b`; a colored-background component sets those from the brand RGB
+  (`--brand-r/g/b`, defaulted in colors.css and emitted per-site by `theme:build` via `hexToRgb` —
+  no luminance math). `--primary-foreground` is left at core's near-white default; wiring a specific
+  component (e.g. the primary Button) to `.wcag-contrast` is a component-level task.
+- **Default brand seed = Tailwind blue-600** (`#2563eb` = hsl(221 83% 53%) = rgb(37 99 235)) in both
+  `colors.css` and `sites/_template` — one canonical default.
+
+## Sites & tooling (`sites:new` + `theme:build`, PR7)
+
+- **`theme:build <slug>`** reads `config/brand.json` (hex) and writes `sites/<slug>/theme.css`:
+  `--brand-h/s/l` (via `palette.hexToHsl`) **and `--brand-r/g/b`** (via `palette.hexToRgb`, the input
+  `.wcag-contrast` reads), the harmony offset vars, and explicit `--brand-secondary/tertiary-*`
+  (HSL + RGB) only when brand.json supplies a hex (derived colours are left to colors.css's `calc`).
+  It does **no** luminance/contrast math. The pure builder is `config/theme.ts#buildThemeCss`
+  (fs-free, unit-tested); the CLI is a thin wrapper. `loadBrandConfig` validates just brand.json so a
+  theme can rebuild mid-edit.
+- **`sites:new <slug>` copies the real `sites/_template` workspace**, it does NOT emit files from
+  template strings. `_template` is a committed, installed, buildable Next.js app (leading `_` = "not a
+  real site") — maintain the scaffold there (bump deps, edit the layout) the same way you'd maintain a
+  site, and `next build` it in place to check the scaffold still works. `config/scaffold.ts#scaffoldSite`
+  copies it (skipping `node_modules`/`.next`) and makes structured edits (package name, meta name/desc);
+  no `{{tokens}}`. `theme.css` is copied as-is (correct for the default brand); the operator re-runs
+  `theme:build` after editing brand.json. A drift test asserts `_template/theme.css === buildThemeCss(brand)`
+  and `viewports.json === DEFAULT_VIEWPORTS`. Scaffold changes are tested by generating a site from
+  `_template` into a temp dir (scaffold.test.ts). `_template` IS committed (it's the tool); the
+  **example site** assembled end-to-end is separate and lands in PR8.
+  - Future `sites/*` iteration (e.g. capture in PR9) must **skip the `_template` dir** (and `isValidSlug`
+    already rejects the `_` prefix, so `sites:new _template` can't collide).
+- **Core is consumed as raw source** (no build step), so two things are load-bearing and were only
+  exercised once PR7 created the first consumer:
+  - **Core internals use the `@core/*` alias, not `@/*`.** A bare `@/*` resolves to the *site* root
+    from a consuming app (Turbopack + tsc both read the site's tsconfig paths), so it breaks there.
+    `@core/*` → core's `src/*` is declared in every resolver: core's tsconfig, `.storybook/main.ts`,
+    `vitest.config.ts`, **and every site's tsconfig** (`sites/_template/tsconfig.json` ships it, so
+    scaffolds inherit it). Turbopack resolves the site-declared `@core` path for core's transpiled
+    files — verified via `next build`; no `turbopack.resolveAlias` fallback needed. Never use `@/*`
+    in a core file a site imports.
+  - **`transpilePackages: ["@brief-to-site/core"]`** in every site's `next.config.ts` (Next must
+    compile core's raw TS).
+- **Tailwind scans core via core's own globals.css.** `styles/globals.css` declares
+  `@source "../components"` (resolved relative to core), so any consumer importing it scans core's
+  classes — node_modules is not auto-scanned. Do NOT rely on a per-site `@source` pointing back at
+  core (brittle path, resolves against the wrong base).
+- **Scaffolded layout imports `config/*.json` statically** (+ `metaSchema/pagesSchema.parse`), NOT
+  `loadSiteConfig(process.cwd())`. Runtime `fs` in a server component makes Turbopack trace the whole
+  project into the bundle (NFT warning). Static import = no fs, clean build, schema defaults applied.
+- **Next 16 `next build` uses Turbopack by default**; a `webpack` config errors unless a `turbopack`
+  key is also present. Force the old bundler with `next build --webpack` when needed.
 
 ## Testing
 

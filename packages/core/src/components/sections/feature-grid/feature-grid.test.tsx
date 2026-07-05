@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { FeatureGrid, type FeatureGridItem } from "./feature-grid";
+import { FeatureGrid, type FeatureGridItem } from "@core/components/sections/feature-grid/feature-grid";
 
 const features: FeatureGridItem[] = [
   { title: "Fast", description: "Ships in minutes.", imageAlt: "Fast" },

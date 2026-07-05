@@ -140,6 +140,57 @@ export function hslToRgb({ h, s, l }: HSL): RGB {
   };
 }
 
+/* ─────────────────── hex → HSL (theme:build input, FR-2.6) ───────────────────
+ *
+ * `brand.json` stores colours as hex (what a brief provides); the CSS colour system consumes HSL
+ * channels. `theme:build` turns one into the other via `hexToHsl`. This is the inverse path of the
+ * `hslToRgb` above.
+ */
+
+/** Parse a hex colour (`#rgb` or `#rrggbb`, case-insensitive) to 0–255 RGB. */
+export function hexToRgb(hex: string): RGB {
+  const cleaned = hex.trim().replace(/^#/, "");
+  const full =
+    cleaned.length === 3
+      ? cleaned
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : cleaned;
+  return {
+    r: parseInt(full.slice(0, 2), 16),
+    g: parseInt(full.slice(2, 4), 16),
+    b: parseInt(full.slice(4, 6), 16),
+  };
+}
+
+/** Convert 0–255 RGB to HSL (hue degrees, s/l percent). Inverse of `hslToRgb`. */
+export function rgbToHsl({ r, g, b }: RGB): HSL {
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+  const delta = max - min;
+  const l = (max + min) / 2;
+
+  if (delta === 0) return { h: 0, s: 0, l: l * 100 };
+
+  const s = delta / (1 - Math.abs(2 * l - 1));
+  let h: number;
+  if (max === rn) h = ((gn - bn) / delta) % 6;
+  else if (max === gn) h = (bn - rn) / delta + 2;
+  else h = (rn - gn) / delta + 4;
+
+  return { h: normalizeHue(h * 60), s: s * 100, l: l * 100 };
+}
+
+/** Parse a hex colour to HSL with integer channels — the form `theme:build` writes to CSS vars. */
+export function hexToHsl(hex: string): HSL {
+  const { h, s, l } = rgbToHsl(hexToRgb(hex));
+  return { h: normalizeHue(Math.round(h)), s: Math.round(s), l: Math.round(l) };
+}
+
 /* ─────────────────── WCAG contrast measurement (FR-2.9) ───────────────────
  *
  * We deliberately DON'T reproduce contrast-math.css's job (picking the text colour) in JS — the

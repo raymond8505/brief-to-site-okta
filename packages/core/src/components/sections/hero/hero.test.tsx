@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { Hero } from "./hero";
+import { Hero } from "@core/components/sections/hero/hero";
 
 describe("Hero", () => {
   it("renders the headline as an <h1> plus eyebrow, subcopy, and actions", () => {

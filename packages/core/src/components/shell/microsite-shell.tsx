@@ -1,11 +1,11 @@
 import * as React from "react";
 import Link from "next/link";
 
-import { cn } from "@/lib/utils";
-import { placeholderDataUri } from "@/components/sections/placeholder";
-import { SiteNav } from "@/components/shell/site-nav";
-import type { MetaConfig } from "@/config/meta.schema";
-import type { PageConfig } from "@/config/pages.schema";
+import { cn } from "@core/lib/utils";
+import { placeholderDataUri } from "@core/components/sections/placeholder";
+import { SiteNav } from "@core/components/shell/site-nav";
+import type { MetaConfig } from "@core/config/meta.schema";
+import type { PageConfig } from "@core/config/pages.schema";
 
 /**
  * MicrositeShell — the page frame every generated page renders through (spec §3). A **non-sticky**

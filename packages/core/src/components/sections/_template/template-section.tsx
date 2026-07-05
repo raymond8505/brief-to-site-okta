@@ -1,9 +1,9 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@/lib/utils";
-import { Section, type SectionProps } from "@/components/sections/section";
-import { placeholderDataUri } from "@/components/sections/placeholder";
+import { cn } from "@core/lib/utils";
+import { Section, type SectionProps } from "@core/components/sections/section";
+import { placeholderDataUri } from "@core/components/sections/placeholder";
 
 /**
  * ┌─ SECTION TEMPLATE ──────────────────────────────────────────────────────────────────────────┐

@@ -1,7 +1,13 @@
+import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-import { loadSiteConfig, loadGenerationConfig } from "./loadSiteConfig";
+import {
+  loadSiteConfig,
+  loadBrandConfig,
+  loadGenerationConfig,
+  resolveSiteDir,
+} from "./loadSiteConfig";
 
 /** Resolve a fixture path relative to this test file. */
 const fixture = (rel: string): string => fileURLToPath(new URL(rel, import.meta.url));
@@ -35,6 +41,36 @@ describe("loadSiteConfig", () => {
     if (result.ok) return;
     expect(result.issues).toHaveLength(4);
     expect(result.issues.every((i) => /missing config file/.test(i.message))).toBe(true);
+  });
+});
+
+describe("loadBrandConfig", () => {
+  it("validates just the brand.json of a site (theme:build input)", () => {
+    const result = loadBrandConfig(fixture("./examples/site"));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.config.primary).toBe("#7c3aed");
+    expect(result.config.harmony).toBe("complementary");
+  });
+
+  it("reports a missing/invalid brand.json as structured issues", () => {
+    const missing = loadBrandConfig(fixture("./examples/does-not-exist"));
+    expect(missing.ok).toBe(false);
+    const invalid = loadBrandConfig(fixture("./examples/site-invalid"));
+    expect(invalid.ok).toBe(false);
+    if (invalid.ok) return;
+    expect(invalid.issues.some((i) => i.file === "brand.json" && i.path === "primary")).toBe(true);
+  });
+});
+
+describe("resolveSiteDir", () => {
+  it("returns an existing path as-is", () => {
+    const rel = "packages/core/src/config/examples/site";
+    expect(resolveSiteDir(rel)).toBe(resolve(process.cwd(), rel));
+  });
+
+  it("falls back to sites/<slug> for a bare slug", () => {
+    expect(resolveSiteDir("no-such-site")).toBe(resolve(process.cwd(), "sites", "no-such-site"));
   });
 });
 

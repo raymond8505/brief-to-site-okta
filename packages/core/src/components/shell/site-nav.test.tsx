@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { SiteNav } from "./site-nav";
+import { SiteNav } from "@core/components/shell/site-nav";
 
 const pages = [
   { slug: "", title: "Home" },

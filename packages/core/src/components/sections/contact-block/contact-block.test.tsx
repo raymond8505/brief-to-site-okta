@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { ContactBlock } from "./contact-block";
+import { ContactBlock } from "@core/components/sections/contact-block/contact-block";
 
 describe("ContactBlock", () => {
   it("renders the heading, optional copy, and the three labelled fields", () => {

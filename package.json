@@ -13,7 +13,9 @@
     "test:watch": "vitest",
     "lint": "eslint .",
     "typecheck": "tsc -p packages/core",
+    "sites:new": "tsx packages/core/src/config/cli/new-site.ts",
     "sites:validate": "tsx packages/core/src/config/cli/validate.ts",
+    "theme:build": "tsx packages/core/src/config/cli/theme-build.ts",
     "storybook": "yarn workspace @brief-to-site/core storybook",
     "build-storybook": "yarn workspace @brief-to-site/core build-storybook"
   },

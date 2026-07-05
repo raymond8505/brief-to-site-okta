@@ -1,12 +1,12 @@
 import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Section, type SectionProps } from "@/components/sections/section";
+import { cn } from "@core/lib/utils";
+import { Badge } from "@core/components/ui/badge";
+import { Button } from "@core/components/ui/button";
+import { Input } from "@core/components/ui/input";
+import { Label } from "@core/components/ui/label";
+import { Textarea } from "@core/components/ui/textarea";
+import { Section, type SectionProps } from "@core/components/sections/section";
 
 /**
  * ContactBlock — the section contract proven across a **presentational form**. A two-column split of

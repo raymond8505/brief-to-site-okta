@@ -1,5 +1,5 @@
-import { readFileSync } from "node:fs";
-import { basename, join } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { basename, join, resolve } from "node:path";
 import type { ZodType } from "zod";
 
 import { metaSchema, type MetaConfig } from "./meta.schema";
@@ -76,6 +76,17 @@ export function siteConfigPath(siteDir: string, concern: string): string {
 }
 
 /**
+ * Resolve a CLI site argument to an absolute site directory: an explicit path if it exists, else a
+ * bare slug under `sites/<slug>`. Shared by the `sites:validate` and `theme:build` CLIs so they
+ * accept the same argument forms.
+ */
+export function resolveSiteDir(arg: string): string {
+  const asPath = resolve(process.cwd(), arg);
+  if (existsSync(asPath)) return asPath;
+  return resolve(process.cwd(), "sites", arg);
+}
+
+/**
  * Validate a site's `config/{meta,brand,pages,viewports}.json`. Returns a discriminated union
  * (deterministic status, FR-2.5): all issues across all four files are collected, so the operator
  * sees everything wrong in one pass rather than one error at a time.
@@ -102,6 +113,17 @@ export function loadSiteConfig(siteDir: string): LoadResult {
     ok: true,
     config: { meta: meta.value, brand: brand.value, pages: pages.value, viewports: viewports.value },
   };
+}
+
+/**
+ * Validate just a site's `brand.json` — `theme:build` depends only on the brand seed, not on the
+ * other three concerns, so it can regenerate a theme even while the rest of the config is mid-edit.
+ */
+export function loadBrandConfig(
+  siteDir: string,
+): { ok: true; config: BrandConfig } | { ok: false; issues: ConfigIssue[] } {
+  const result = parseJsonFile(siteConfigPath(siteDir, "brand"), brandSchema);
+  return result.ok ? { ok: true, config: result.value } : { ok: false, issues: result.issues };
 }
 
 /** Validate the system-level `generation.json` at an explicit path (FR-3.4). */

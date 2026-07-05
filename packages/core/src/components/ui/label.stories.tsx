@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { Input } from "./input";
-import { Label } from "./label";
+import { Input } from "@core/components/ui/input";
+import { Label } from "@core/components/ui/label";
 
 const meta = {
   title: "ui/Label",

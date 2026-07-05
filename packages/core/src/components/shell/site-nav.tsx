@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { cn, navHref } from "@/lib/utils";
-import type { PageConfig } from "@/config/pages.schema";
+import { cn, navHref } from "@core/lib/utils";
+import type { PageConfig } from "@core/config/pages.schema";
 
 /**
  * SiteNav — live multi-page navigation derived from the page manifest (FR-3.1/3.6). A plain,

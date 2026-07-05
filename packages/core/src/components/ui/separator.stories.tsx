@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { Separator } from "./separator";
+import { Separator } from "@core/components/ui/separator";
 
 const meta = {
   title: "ui/Separator",
