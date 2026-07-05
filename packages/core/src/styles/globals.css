@@ -73,8 +73,9 @@
   /* Default brand role mapping (FR-2.8). Minimal by design — only --primary and --ring are wired
      to brand tokens so the base-nova primitives keep rendering; the operator/agent opts other
      roles/sections into --brand-secondary / --brand-tertiary / --brand-surface via theme.css.
-     --primary-foreground stays a neutral near-white here; auto-deriving a WCAG-legible foreground
-     for an arbitrary primary is precomputed by theme:build (PR7) via palette.ts contrastText. */
+     --primary-foreground stays a neutral near-white here; a WCAG-legible foreground for an arbitrary
+     primary is a CSS + component concern — a colored-background component applies `.wcag-contrast`
+     with --r/--g/--b set from the brand RGB (--brand-r/g/b), no JS luminance math. */
   --primary: var(--brand-primary);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);

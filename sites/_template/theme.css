@@ -2,15 +2,15 @@
    Edit config/brand.json and re-run `yarn theme:build <site>`. */
 
 :root {
-  /* Brand seed — brand.json `primary` (hex → HSL). */
+  /* Brand seed — brand.json `primary` (hex → HSL for the palette + RGB for .wcag-contrast). */
   --brand-h: 221;
   --brand-s: 83;
   --brand-l: 53;
+  --brand-r: 37;
+  --brand-g: 99;
+  --brand-b: 235;
 
   /* Colour harmony (complementary) — colors.css derives secondary/tertiary. */
   --secondary-h-offset: var(--secondary-h--complementary);
   --tertiary-h-offset: var(--tertiary-h--complementary);
-
-  /* Auto-legible foreground for --primary (WCAG AA, precomputed). */
-  --primary-foreground: #ffffff;
 }

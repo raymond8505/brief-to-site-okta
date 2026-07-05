@@ -6,8 +6,9 @@
 
    Guarantees a legible text colour over any background using only calc()/pow()/clamp()/round().
    Relies on CSS pow() (CSS Values 4); Chromium — the capture engine — supports it, so this is
-   safe for the screenshot deliverable. The TS mirror in ./palette.ts (`contrastText`) is kept in
-   lock-step and asserted against this CSS by the Colors/Contrast story's play() function.
+   safe for the screenshot deliverable. There is NO JS twin: the CSS owns picking the text colour.
+   ./palette.ts only *measures* (relativeLuminance/contrastRatio) so the Colors/Contrast story's
+   play() can verify the rendered result clears 4.5:1.
 
    The `@property --text-val` registration below is from the reference repo's index.html: without
    it, getComputedStyle() returns the unevaluated calc() expression, so the story could not read

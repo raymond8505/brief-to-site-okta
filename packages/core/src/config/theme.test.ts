@@ -21,16 +21,16 @@ describe("buildThemeCss", () => {
     );
   });
 
-  it("precomputes an auto-legible --primary-foreground", () => {
-    // Violet-600 is dark enough to take white text.
-    expect(buildThemeCss(violet)).toContain("--primary-foreground: #ffffff;");
-    // A bright yellow primary must flip to black text.
-    expect(buildThemeCss({ primary: "#facc15", harmony: "complementary" })).toContain(
-      "--primary-foreground: #000000;",
-    );
+  it("emits the primary as RGB channels for .wcag-contrast, and no JS-picked foreground", () => {
+    const css = buildThemeCss(violet);
+    // #7c3aed = rgb(124 58 237) — the input .wcag-contrast reads; no luminance math in JS.
+    expect(css).toContain("--brand-r: 124;");
+    expect(css).toContain("--brand-g: 58;");
+    expect(css).toContain("--brand-b: 237;");
+    expect(css).not.toContain("--primary-foreground");
   });
 
-  it("omits derived secondary/tertiary channels but writes explicit ones", () => {
+  it("omits derived secondary/tertiary channels but writes explicit ones (HSL + RGB)", () => {
     const derived = buildThemeCss(violet);
     expect(derived).not.toContain("--brand-secondary-h:");
     expect(derived).not.toContain("--brand-tertiary-h:");
@@ -42,7 +42,9 @@ describe("buildThemeCss", () => {
       harmony: "complementary",
     });
     expect(explicit).toContain("--brand-secondary-h:");
+    expect(explicit).toContain("--brand-secondary-r:");
     expect(explicit).toContain("--brand-tertiary-h:");
+    expect(explicit).toContain("--brand-tertiary-r:");
   });
 
   it("prepends a GENERATED header and opens a :root block", () => {

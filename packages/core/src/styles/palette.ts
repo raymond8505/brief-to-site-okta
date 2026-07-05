@@ -227,25 +227,3 @@ export function contrastRatio(l1: number, l2: number): number {
   const darker = Math.min(l1, l2);
   return (lighter + CONTRAST_OFFSET) / (darker + CONTRAST_OFFSET);
 }
-
-/* ─────────────────── auto-legible primary foreground (theme:build) ───────────────────
- *
- * `theme:build` precomputes a site's `--primary-foreground` — the deferral flagged in
- * styles/globals.css. This is deliberately NOT a JS twin of contrast-math.css: that utility derives
- * a *scaled* text colour at runtime for arbitrary backgrounds; here we only choose between the two
- * extremes (black/white) for the single `--primary` role. Picking the better of pure black vs white
- * is provably ≥ 4.58:1 for any background (the crossover luminance ≈ 0.179 yields 4.58), so the
- * result always clears WCAG AA for normal text — no directional rounding needed.
- */
-const FOREGROUND_BLACK = "#000000";
-const FOREGROUND_WHITE = "#ffffff";
-const WHITE_LUMINANCE = relativeLuminance({ r: 255, g: 255, b: 255 });
-const BLACK_LUMINANCE = relativeLuminance({ r: 0, g: 0, b: 0 });
-
-/** Pick pure black or white — whichever contrasts more with `bg` — as a legible foreground. */
-export function contrastText(bg: HSL): string {
-  const bgLuminance = relativeLuminance(hslToRgb(bg));
-  const onWhite = contrastRatio(bgLuminance, WHITE_LUMINANCE);
-  const onBlack = contrastRatio(bgLuminance, BLACK_LUMINANCE);
-  return onWhite >= onBlack ? FOREGROUND_WHITE : FOREGROUND_BLACK;
-}

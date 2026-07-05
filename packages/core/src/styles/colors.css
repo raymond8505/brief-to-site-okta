@@ -23,6 +23,13 @@
   --brand-s: 83;
   --brand-l: 53;
 
+  /* Primary as RGB channels (0–255) — the input the pure-CSS `.wcag-contrast` utility reads to pick a
+     legible text colour (see contrast-math.css). A colored-background component sets its own
+     `--r/--g/--b` from these. `theme:build` overrides them per site (hex → RGB). blue-600 = rgb(37 99 235). */
+  --brand-r: 37;
+  --brand-g: 99;
+  --brand-b: 235;
+
   /* Named colour-harmony hue offsets (degrees) — mirror HUE_OFFSETS in palette.ts. Switch harmony
      by pointing --secondary-h-offset / --tertiary-h-offset at a different pair in theme.css. */
   --secondary-h--triadic: 120;
