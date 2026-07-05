@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "../../lib/utils";
+import { cn } from "@core/lib/utils";
 
 /**
  * The section contract (spec §3). Sections are compound components the agent assembles into SSR

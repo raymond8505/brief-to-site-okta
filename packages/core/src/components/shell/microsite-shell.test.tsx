@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { MicrositeShell } from "./microsite-shell";
+import { MicrositeShell } from "@core/components/shell/microsite-shell";
 
 const meta = { name: "Northwind", description: "A studio." };
 const pages = [

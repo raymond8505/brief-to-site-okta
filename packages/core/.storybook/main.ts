@@ -16,12 +16,12 @@ const config: StorybookConfig = {
     "@storybook/addon-mcp",
   ],
   framework: "@storybook/nextjs-vite",
-  // core is a library (no Next app), so resolve the `@/*` alias from tsconfig.json ourselves.
+  // core is a library (no Next app), so resolve the `@core/*` alias from tsconfig.json ourselves.
   async viteFinal(viteConfig) {
     viteConfig.resolve ??= {};
     viteConfig.resolve.alias = {
       ...(viteConfig.resolve.alias ?? {}),
-      "@": resolve(here, "../src"),
+      "@core": resolve(here, "../src"),
     };
     return viteConfig;
   },

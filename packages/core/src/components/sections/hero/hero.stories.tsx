@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 
-import { Button } from "@/components/ui/button";
-import { Hero } from "./hero";
+import { Button } from "@core/components/ui/button";
+import { Hero } from "@core/components/sections/hero/hero";
 
 /**
  * Hero — the first section and the worked example of the section contract. Its layout variants are

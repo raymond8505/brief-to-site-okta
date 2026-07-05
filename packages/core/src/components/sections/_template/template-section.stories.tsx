@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { TemplateSection } from "./template-section";
+import { TemplateSection } from "@core/components/sections/_template/template-section";
 
 /**
  * Section template — a copy-me reference, not a shipping section. It shows the smallest correct

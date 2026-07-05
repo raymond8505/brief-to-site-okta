@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { TemplateSection } from "./template-section";
+import { TemplateSection } from "@core/components/sections/_template/template-section";
 
 describe("TemplateSection", () => {
   it("renders through the Section shell with a heading, body, and placeholder image", () => {

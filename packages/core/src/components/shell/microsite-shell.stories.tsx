@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 
-import { MicrositeShell } from "./microsite-shell";
-import { Hero } from "@/components/sections/hero/hero";
+import { MicrositeShell } from "@core/components/shell/microsite-shell";
+import { Hero } from "@core/components/sections/hero/hero";
 
 /**
  * MicrositeShell frames a page with a non-sticky header (logo + `SiteNav`), the page `<main>`, and a

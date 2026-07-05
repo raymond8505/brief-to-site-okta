@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 
-import { FeatureGrid, type FeatureGridItem } from "./feature-grid";
+import { FeatureGrid, type FeatureGridItem } from "@core/components/sections/feature-grid/feature-grid";
 
 /**
  * FeatureGrid — the section contract on a **content** section. Its one layout axis (`columns`) is

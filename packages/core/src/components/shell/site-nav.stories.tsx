@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 
-import { SiteNav } from "./site-nav";
+import { SiteNav } from "@core/components/shell/site-nav";
 
 /**
  * SiteNav renders the page manifest (FR-3.1) as live `next/link`s. Stories show the default nav and

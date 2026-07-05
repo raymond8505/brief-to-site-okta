@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { Section } from "./section";
+import { Section } from "@core/components/sections/section";
 
 describe("Section", () => {
   it("renders a <section> wrapping its children", () => {

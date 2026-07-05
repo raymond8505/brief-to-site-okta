@@ -1,10 +1,10 @@
 import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "../../../lib/utils";
-import { Badge } from "../../ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
-import { Section, type SectionProps } from "../section";
-import { placeholderDataUri } from "../placeholder";
+import { cn } from "@core/lib/utils";
+import { Badge } from "@core/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@core/components/ui/card";
+import { Section, type SectionProps } from "@core/components/sections/section";
+import { placeholderDataUri } from "@core/components/sections/placeholder";
 
 /**
  * FeatureGrid — the section contract proven across a **content** section (see `section.tsx` and the

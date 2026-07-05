@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 
-import { ContactBlock } from "./contact-block";
+import { ContactBlock } from "@core/components/sections/contact-block/contact-block";
 
 /**
  * ContactBlock — the section contract on a **presentational form**. The `form` axis is CSS-only and

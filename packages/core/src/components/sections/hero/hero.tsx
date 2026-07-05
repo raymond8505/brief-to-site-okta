@@ -1,10 +1,10 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "../../../lib/utils";
-import { Badge } from "../../ui/badge";
-import { Section, type SectionProps } from "../section";
-import { placeholderDataUri } from "../placeholder";
+import { cn } from "@core/lib/utils";
+import { Badge } from "@core/components/ui/badge";
+import { Section, type SectionProps } from "@core/components/sections/section";
+import { placeholderDataUri } from "@core/components/sections/placeholder";
 
 /**
  * Hero — the first section and the worked example of the section contract (see `section.tsx`). A

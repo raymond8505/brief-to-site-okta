@@ -15,8 +15,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      // Mirror packages/core/tsconfig.json's `@/*` path so component imports resolve.
-      "@": path.resolve(dirname, "packages/core/src"),
+      // Mirror packages/core/tsconfig.json's `@core/*` path so component imports resolve.
+      "@core": path.resolve(dirname, "packages/core/src"),
     },
   },
   test: {
