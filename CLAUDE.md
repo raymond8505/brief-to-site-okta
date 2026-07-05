@@ -19,24 +19,28 @@ Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard
   Do not re-derive or "tidy" the formula — its directional `round(up/down)` is what guarantees
   ≥4.5:1 after integer snapping. There is deliberately **no JS twin**; `relativeLuminance` /
   `contrastRatio` only *measure* (to verify legibility in the story), they don't pick the text
-  colour. The CSS owns that at runtime. **One sanctioned exception (PR7):** `palette.contrastText`
-  picks pure black/white for the single precomputed `--primary-foreground` role — it does NOT
-  reproduce the scaled directional-rounding derivation, so the rule stands for everything else.
+  colour. The CSS owns that at runtime — **no exceptions** (a PR7 `contrastText` JS picker was
+  added then removed in review; don't reintroduce JS luminance/colour-picking).
 - **Named harmonies** default to complementary (`DEFAULT_HARMONY`). Offsets:
   triadic 120/240, complementary 150/210, analogous 330/30. Switch via `--secondary-h-offset` /
   `--tertiary-h-offset` at `:root`.
-- **Auto-legible `--primary-foreground` (landed PR7):** `theme:build` precomputes it via
-  `palette.contrastText(primary)` (pure black/white by max WCAG contrast — provably ≥4.58:1), so
-  very light seeds (yellow, etc.) now get black text. Emitted into each site's `theme.css`, not core.
+- **Legible foreground is a CSS + component concern, not JS.** `.wcag-contrast` (contrast-math.css)
+  needs only `--r/--g/--b`; a colored-background component sets those from the brand RGB
+  (`--brand-r/g/b`, defaulted in colors.css and emitted per-site by `theme:build` via `hexToRgb` —
+  no luminance math). `--primary-foreground` is left at core's near-white default; wiring a specific
+  component (e.g. the primary Button) to `.wcag-contrast` is a component-level task.
+- **Default brand seed = Tailwind blue-600** (`#2563eb` = hsl(221 83% 53%) = rgb(37 99 235)) in both
+  `colors.css` and `sites/_template` — one canonical default.
 
 ## Sites & tooling (`sites:new` + `theme:build`, PR7)
 
 - **`theme:build <slug>`** reads `config/brand.json` (hex) and writes `sites/<slug>/theme.css`:
-  `--brand-h/s/l` (via `palette.hexToHsl`), the harmony offset vars, explicit
-  `--brand-secondary/tertiary-*` only when brand.json supplies a hex (derived colours are left to
-  colors.css's `calc`), and the auto `--primary-foreground`. The pure builder is
-  `config/theme.ts#buildThemeCss` (fs-free, unit-tested); the CLI is a thin wrapper. `loadBrandConfig`
-  validates just brand.json so a theme can rebuild mid-edit.
+  `--brand-h/s/l` (via `palette.hexToHsl`) **and `--brand-r/g/b`** (via `palette.hexToRgb`, the input
+  `.wcag-contrast` reads), the harmony offset vars, and explicit `--brand-secondary/tertiary-*`
+  (HSL + RGB) only when brand.json supplies a hex (derived colours are left to colors.css's `calc`).
+  It does **no** luminance/contrast math. The pure builder is `config/theme.ts#buildThemeCss`
+  (fs-free, unit-tested); the CLI is a thin wrapper. `loadBrandConfig` validates just brand.json so a
+  theme can rebuild mid-edit.
 - **`sites:new <slug>` copies the real `sites/_template` workspace**, it does NOT emit files from
   template strings. `_template` is a committed, installed, buildable Next.js app (leading `_` = "not a
   real site") — maintain the scaffold there (bump deps, edit the layout) the same way you'd maintain a
@@ -51,11 +55,13 @@ Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard
     already rejects the `_` prefix, so `sites:new _template` can't collide).
 - **Core is consumed as raw source** (no build step), so two things are load-bearing and were only
   exercised once PR7 created the first consumer:
-  - **Internal imports must be relative, not `@/*`.** The `@/*` alias exists only in core's private
-    tsconfig; from a sibling site app `@/*` resolves to the *site* root (Turbopack + tsc both read
-    the site's tsconfig paths). All core **component** files use relative imports now (barrel
-    already did). Stories keep `@/*` (only Storybook consumes them). Don't reintroduce `@/*` in any
-    file a site imports.
+  - **Core internals use the `@core/*` alias, not `@/*`.** A bare `@/*` resolves to the *site* root
+    from a consuming app (Turbopack + tsc both read the site's tsconfig paths), so it breaks there.
+    `@core/*` → core's `src/*` is declared in every resolver: core's tsconfig, `.storybook/main.ts`,
+    `vitest.config.ts`, **and every site's tsconfig** (`sites/_template/tsconfig.json` ships it, so
+    scaffolds inherit it). Turbopack resolves the site-declared `@core` path for core's transpiled
+    files — verified via `next build`; no `turbopack.resolveAlias` fallback needed. Never use `@/*`
+    in a core file a site imports.
   - **`transpilePackages: ["@brief-to-site/core"]`** in every site's `next.config.ts` (Next must
     compile core's raw TS).
 - **Tailwind scans core via core's own globals.css.** `styles/globals.css` declares
