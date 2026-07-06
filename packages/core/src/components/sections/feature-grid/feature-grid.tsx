@@ -4,7 +4,7 @@ import { cn } from "@core/lib/utils";
 import { Badge } from "@core/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/components/ui/card";
 import { Section, type SectionProps } from "@core/components/sections/section";
-import { placeholderDataUri } from "@core/components/sections/placeholder";
+import { PLACEHOLDER_SPECS, placeholderDataUri } from "@core/components/sections/placeholder";
 
 /**
  * FeatureGrid — the section contract proven across a **content** section (see `section.tsx` and the
@@ -94,10 +94,7 @@ export function FeatureGrid({
         {features.map((feature, index) => (
           <Card key={index} data-slot="feature-item">
             <img
-              src={
-                feature.imageSrc ??
-                placeholderDataUri({ width: 800, height: 600, label: "Feature image" })
-              }
+              src={feature.imageSrc ?? placeholderDataUri(PLACEHOLDER_SPECS.feature)}
               alt={feature.imageAlt}
               className="aspect-[4/3] w-full bg-muted object-cover object-center"
             />

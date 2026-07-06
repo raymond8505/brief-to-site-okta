@@ -2,7 +2,7 @@ import * as React from "react";
 import Link from "next/link";
 
 import { cn } from "@core/lib/utils";
-import { placeholderDataUri } from "@core/components/sections/placeholder";
+import { PLACEHOLDER_SPECS, placeholderDataUri } from "@core/components/sections/placeholder";
 import { SiteNav } from "@core/components/shell/site-nav";
 import type { MetaConfig } from "@core/config/meta.schema";
 import type { PageConfig } from "@core/config/pages.schema";
@@ -13,9 +13,6 @@ import type { PageConfig } from "@core/config/pages.schema";
  * full-page screenshot stitch stays clean. The logo is a replaceable placeholder image (FR-3.8): it
  * uses `meta.logoSrc` when set, otherwise the section-owned `placeholderDataUri`. Server component.
  */
-
-/** Intrinsic dimensions of the fallback logo placeholder box (FR-3.8). */
-const LOGO_PLACEHOLDER = { width: 160, height: 40 } as const;
 
 export interface MicrositeShellProps {
   /** Site identity — drives the logo, name, and footer. */
@@ -38,7 +35,8 @@ export function MicrositeShell({
   className,
   children,
 }: MicrositeShellProps) {
-  const logoSrc = meta.logoSrc ?? placeholderDataUri({ ...LOGO_PLACEHOLDER, label: meta.name });
+  const logoSrc =
+    meta.logoSrc ?? placeholderDataUri({ ...PLACEHOLDER_SPECS.logo, label: meta.name });
 
   return (
     <div
