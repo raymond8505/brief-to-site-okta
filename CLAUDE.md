@@ -73,6 +73,23 @@ Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard
   project into the bundle (NFT warning). Static import = no fs, clean build, schema defaults applied.
 - **Next 16 `next build` uses Turbopack by default**; a `webpack` config errors unless a `turbopack`
   key is also present. Force the old bundler with `next build --webpack` when needed.
+- **Site image paths must be root-relative** (`/images/...`). Sections and the shell render
+  `imageSrc`/`logoSrc` **verbatim** into `<img src>`, so a relative `images/...` resolves against
+  nested routes (`/about/images/...` → 404). `placeholderPublicPath()` returns the canonical URL;
+  the drift test asserts every referenced path exists under `public/`. (Core's
+  `config/examples/site/config/meta.json` still shows the relative form — it's a schema fixture,
+  don't copy its `logoSrc` into a real site.)
+- **`PLACEHOLDER_SPECS` (sections/placeholder.ts) is the single source of placeholder dims/labels**;
+  keys double as the `placeholders:copy` file basenames. Never hardcode placeholder dimensions in a
+  section or CLI — add/edit the spec. `placeholderSvg` is the one markup generator behind both the
+  inline data-URI fallback and the files on disk (byte-identical, drift-tested).
+- **`spawn("yarn", ...)` on Windows needs `shell: true`** (`yarn` is `yarn.cmd`; Node ≥18.20 throws
+  EINVAL — CVE-2024-27980), and when shelling the whole command line must go in `command` with empty
+  args (DEP0190: an args array is only concatenated, unescaped). `config/dev.ts#devSpawnSpec`
+  encodes both; reuse it for future child-process CLIs (capture:run). Also: killing the yarn/tsx
+  *wrapper* process orphans the `next` grandchild on Windows (port stays bound) — kill by listening
+  port (`Get-NetTCPConnection`) when cleaning up scripted runs; a real terminal Ctrl+C is fine (the
+  console group gets the signal).
 
 ## Testing
 
