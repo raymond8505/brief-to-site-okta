@@ -13,6 +13,7 @@ export {
 } from "./viewports.schema";
 export { generationSchema, type GenerationConfig } from "./generation.schema";
 export { buildThemeCss } from "./theme";
+export { copyPlaceholders, placeholderPublicPath } from "./placeholders";
 export {
   loadSiteConfig,
   loadBrandConfig,
