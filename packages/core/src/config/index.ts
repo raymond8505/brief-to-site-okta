@@ -14,6 +14,7 @@ export {
 export { generationSchema, type GenerationConfig } from "./generation.schema";
 export { buildThemeCss } from "./theme";
 export { copyPlaceholders, placeholderPublicPath } from "./placeholders";
+export { devSpawnSpec, type DevSpawnSpec } from "./dev";
 export {
   loadSiteConfig,
   loadBrandConfig,
