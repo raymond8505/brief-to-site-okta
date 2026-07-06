@@ -24,4 +24,10 @@ describe("devSpawnSpec", () => {
     expect(devSpawnSpec("/repo/sites/acme", [], "linux").options.shell).toBe(false);
     expect(devSpawnSpec("/repo/sites/acme", [], "darwin").options.shell).toBe(false);
   });
+
+  it("puts the whole command line in `command` when shelling (DEP0190: no args array with shell)", () => {
+    const spec = devSpawnSpec("C:/repo/sites/acme", ["-p", "4312"], "win32");
+    expect(spec.command).toBe("yarn dev -p 4312");
+    expect(spec.args).toEqual([]);
+  });
 });
