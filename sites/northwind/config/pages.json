@@ -1,0 +1,5 @@
+[
+  { "slug": "", "title": "Home", "instructions": "Lead with the studio's value proposition." },
+  { "slug": "about", "title": "About", "instructions": "Tell the studio's story and team." },
+  { "slug": "contact", "title": "Contact", "instructions": "Invite the visitor to start a project." }
+]
