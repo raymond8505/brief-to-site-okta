@@ -58,10 +58,18 @@ Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard
   - **Core internals use the `@core/*` alias, not `@/*`.** A bare `@/*` resolves to the *site* root
     from a consuming app (Turbopack + tsc both read the site's tsconfig paths), so it breaks there.
     `@core/*` → core's `src/*` is declared in every resolver: core's tsconfig, `.storybook/main.ts`,
-    `vitest.config.ts`, **and every site's tsconfig** (`sites/_template/tsconfig.json` ships it, so
-    scaffolds inherit it). Turbopack resolves the site-declared `@core` path for core's transpiled
-    files — verified via `next build`; no `turbopack.resolveAlias` fallback needed. Never use `@/*`
-    in a core file a site imports.
+    `vitest.config.ts`, **and the shared `tsconfig.site.json`** (repo root) that every site extends
+    (`sites/_template` + scaffolds inherit it — PR8 review lifted it out of the per-site tsconfigs).
+    Turbopack resolves the inherited `@core` path for core's transpiled files — verified via
+    `next build`; no `turbopack.resolveAlias` fallback needed. Never use `@/*` in a core file a site
+    imports.
+    - **Inherited `paths` resolve relative to the config that DEFINES them**, so `tsconfig.site.json`'s
+      `@core/*: ["packages/core/src/*"]` is written repo-root-relative and needs `baseUrl: "."` (a
+      non-relative `paths` value requires baseUrl). `${configDir}` would let a shared config self-anchor
+      but **breaks Next.js in `compilerOptions.paths`** (vercel/next.js#70912) — don't use it. A site's
+      own `include`/`exclude` stay in its leaf tsconfig: those globs resolve relative to the defining
+      file, so a shared list would scan the whole monorepo. `@/*` was dropped (unused; and TS replaces
+      the whole `paths` object on override, so keeping it would force re-declaring `@core/*` per site).
   - **`transpilePackages: ["@brief-to-site/core"]`** in every site's `next.config.ts` (Next must
     compile core's raw TS).
 - **Tailwind scans core via core's own globals.css.** `styles/globals.css` declares
