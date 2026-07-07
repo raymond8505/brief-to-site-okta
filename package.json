@@ -15,7 +15,9 @@
     "typecheck": "tsc -p packages/core",
     "sites:new": "tsx packages/core/src/config/cli/new-site.ts",
     "sites:validate": "tsx packages/core/src/config/cli/validate.ts",
+    "sites:dev": "tsx packages/core/src/config/cli/dev-site.ts",
     "theme:build": "tsx packages/core/src/config/cli/theme-build.ts",
+    "placeholders:copy": "tsx packages/core/src/config/cli/placeholders-copy.ts",
     "storybook": "yarn workspace @brief-to-site/core storybook",
     "build-storybook": "yarn workspace @brief-to-site/core build-storybook"
   },

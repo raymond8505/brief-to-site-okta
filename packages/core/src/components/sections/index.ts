@@ -3,8 +3,8 @@
 // excluded — it is a copy-me reference, not a shipping section.
 export { Section, sectionVariants } from "./section";
 export type { SectionProps } from "./section";
-export { placeholderDataUri } from "./placeholder";
-export type { PlaceholderOptions } from "./placeholder";
+export { placeholderSvg, placeholderDataUri, PLACEHOLDER_SPECS } from "./placeholder";
+export type { PlaceholderOptions, PlaceholderName } from "./placeholder";
 export { Hero, heroVariants } from "./hero/hero";
 export type { HeroProps, HeroCta } from "./hero/hero";
 export { FeatureGrid, featureGridVariants } from "./feature-grid/feature-grid";

@@ -84,8 +84,21 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   + tsc), and prerenders **styled** with the site's brand RGB vars, no warnings. Unit tests for every
   pure piece (scaffold tested by generating from `_template` into a temp dir); scripts wired.
   `_template` is committed (the tool); the assembled **example site is PR8**.
-- ☐ **PR8** Example site assembled end-to-end (generated Home/About/Contact `.tsx` + sections +
-  theme + nav + copied placeholders) + `sites:dev`; verify SSR render.
+- ◐ **PR8** Example site assembled end-to-end (generated Home/About/Contact `.tsx` + sections +
+  theme + nav + copied placeholders) + `sites:dev`; verify SSR render. Landed: **`sites/northwind`**
+  ("Northwind Studio", violet `#7c3aed` complementary), the first assembled site — authored
+  `config/*.json` + `brief.md`, pages built from Hero/FeatureGrid/ContactBlock (About exercises the
+  CSS-only `media="inline-start"` flip; Home CTAs use Base UI `Button render={<Link/>}`).
+  Placeholders became **real files**: `placeholderSvg` extracted from `placeholderDataUri` (shared
+  markup, byte-identical), `PLACEHOLDER_SPECS` is the single source of placeholder dims, and the new
+  **`placeholders:copy <slug>`** CLI writes one SVG per spec into `public/images/placeholders/`;
+  pages reference them by **root-relative** `/images/...` URLs (relative would break under `/about`).
+  **`sites:dev <slug> [args…]`** spawns the site's `next dev` via a pure, unit-tested `devSpawnSpec`
+  (win32 needs `shell: true` for `yarn.cmd`; whole command string when shelling — DEP0190).
+  `example-site.test.ts` drift-guards the committed artifacts (config↔schemas, theme.css↔
+  `buildThemeCss`, SVGs↔`placeholderSvg`, referenced images exist, slugs↔routes). SSR verified on
+  `next build` + `start`: all routes prerender with section markup, nav, titles, placeholder assets
+  200, and the violet seed winning the `:root` cascade in the built CSS.
 
 ### Phase 5 — Capture
 - ☐ **PR9** `capture:run` (Playwright full-page multi-viewport, motion-free, `${run}-${ts}_<width>`
@@ -110,5 +123,6 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
 | `sites:new` | PR7 | scaffold a standalone site app |
 | `sites:validate` | PR6 | Zod-validate a site's `config/*.json` |
 | `theme:build` | PR7 | `brand.json` → `sites/<slug>/theme.css` |
+| `placeholders:copy` | PR8 | write section placeholder SVGs into `sites/<slug>/public/images/placeholders/` |
 | `sites:dev` | PR8 | run a site's dev server |
 | `capture:run` | PR9 | full-page multi-viewport screenshots |

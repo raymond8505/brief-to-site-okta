@@ -58,10 +58,18 @@ Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard
   - **Core internals use the `@core/*` alias, not `@/*`.** A bare `@/*` resolves to the *site* root
     from a consuming app (Turbopack + tsc both read the site's tsconfig paths), so it breaks there.
     `@core/*` → core's `src/*` is declared in every resolver: core's tsconfig, `.storybook/main.ts`,
-    `vitest.config.ts`, **and every site's tsconfig** (`sites/_template/tsconfig.json` ships it, so
-    scaffolds inherit it). Turbopack resolves the site-declared `@core` path for core's transpiled
-    files — verified via `next build`; no `turbopack.resolveAlias` fallback needed. Never use `@/*`
-    in a core file a site imports.
+    `vitest.config.ts`, **and the shared `tsconfig.site.json`** (repo root) that every site extends
+    (`sites/_template` + scaffolds inherit it — PR8 review lifted it out of the per-site tsconfigs).
+    Turbopack resolves the inherited `@core` path for core's transpiled files — verified via
+    `next build`; no `turbopack.resolveAlias` fallback needed. Never use `@/*` in a core file a site
+    imports.
+    - **Inherited `paths` resolve relative to the config that DEFINES them**, so `tsconfig.site.json`'s
+      `@core/*: ["packages/core/src/*"]` is written repo-root-relative and needs `baseUrl: "."` (a
+      non-relative `paths` value requires baseUrl). `${configDir}` would let a shared config self-anchor
+      but **breaks Next.js in `compilerOptions.paths`** (vercel/next.js#70912) — don't use it. A site's
+      own `include`/`exclude` stay in its leaf tsconfig: those globs resolve relative to the defining
+      file, so a shared list would scan the whole monorepo. `@/*` was dropped (unused; and TS replaces
+      the whole `paths` object on override, so keeping it would force re-declaring `@core/*` per site).
   - **`transpilePackages: ["@brief-to-site/core"]`** in every site's `next.config.ts` (Next must
     compile core's raw TS).
 - **Tailwind scans core via core's own globals.css.** `styles/globals.css` declares
@@ -73,6 +81,23 @@ Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard
   project into the bundle (NFT warning). Static import = no fs, clean build, schema defaults applied.
 - **Next 16 `next build` uses Turbopack by default**; a `webpack` config errors unless a `turbopack`
   key is also present. Force the old bundler with `next build --webpack` when needed.
+- **Site image paths must be root-relative** (`/images/...`). Sections and the shell render
+  `imageSrc`/`logoSrc` **verbatim** into `<img src>`, so a relative `images/...` resolves against
+  nested routes (`/about/images/...` → 404). `placeholderPublicPath()` returns the canonical URL;
+  the drift test asserts every referenced path exists under `public/`. (Core's
+  `config/examples/site/config/meta.json` still shows the relative form — it's a schema fixture,
+  don't copy its `logoSrc` into a real site.)
+- **`PLACEHOLDER_SPECS` (sections/placeholder.ts) is the single source of placeholder dims/labels**;
+  keys double as the `placeholders:copy` file basenames. Never hardcode placeholder dimensions in a
+  section or CLI — add/edit the spec. `placeholderSvg` is the one markup generator behind both the
+  inline data-URI fallback and the files on disk (byte-identical, drift-tested).
+- **`spawn("yarn", ...)` on Windows needs `shell: true`** (`yarn` is `yarn.cmd`; Node ≥18.20 throws
+  EINVAL — CVE-2024-27980), and when shelling the whole command line must go in `command` with empty
+  args (DEP0190: an args array is only concatenated, unescaped). `config/dev.ts#devSpawnSpec`
+  encodes both; reuse it for future child-process CLIs (capture:run). Also: killing the yarn/tsx
+  *wrapper* process orphans the `next` grandchild on Windows (port stays bound) — kill by listening
+  port (`Get-NetTCPConnection`) when cleaning up scripted runs; a real terminal Ctrl+C is fine (the
+  console group gets the signal).
 
 ## Testing
 

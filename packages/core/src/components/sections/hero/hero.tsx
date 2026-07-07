@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@core/lib/utils";
 import { Badge } from "@core/components/ui/badge";
 import { Section, type SectionProps } from "@core/components/sections/section";
-import { placeholderDataUri } from "@core/components/sections/placeholder";
+import { PLACEHOLDER_SPECS, placeholderDataUri } from "@core/components/sections/placeholder";
 
 /**
  * Hero — the first section and the worked example of the section contract (see `section.tsx`). A
@@ -98,7 +98,7 @@ export function Hero({
         {/* Media column — always second in the DOM; the `media` variant flips the visual side. */}
         <div data-slot="hero-media" className="flex-1">
           <img
-            src={imageSrc ?? placeholderDataUri({ width: 1600, height: 900, label: "Hero image" })}
+            src={imageSrc ?? placeholderDataUri(PLACEHOLDER_SPECS.hero)}
             alt={imageAlt}
             className="aspect-[16/9] w-full rounded-xl bg-muted object-cover object-center"
           />

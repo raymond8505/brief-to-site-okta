@@ -46,8 +46,12 @@ export { Textarea } from "./components/ui/textarea";
 // CSS-only, deterministic CVA variants (FR-3.11). Also available via the "./sections" subpath.
 export { Section, sectionVariants } from "./components/sections/section";
 export type { SectionProps } from "./components/sections/section";
-export { placeholderDataUri } from "./components/sections/placeholder";
-export type { PlaceholderOptions } from "./components/sections/placeholder";
+export {
+  placeholderSvg,
+  placeholderDataUri,
+  PLACEHOLDER_SPECS,
+} from "./components/sections/placeholder";
+export type { PlaceholderOptions, PlaceholderName } from "./components/sections/placeholder";
 export { Hero, heroVariants } from "./components/sections/hero/hero";
 export type { HeroProps, HeroCta } from "./components/sections/hero/hero";
 
