@@ -1,0 +1,21 @@
+{
+  "voice": "Professional, plain, and specific — write like a knowledgeable person who respects the reader's time. Confident but never salesy or hyperbolic; short sentences, concrete nouns, active verbs. Adapt the register to the brief's audience, but default to clear over clever.",
+  "guardrails": [
+    "Ground every claim in the brief.md — never invent facts about the client, their product, or their customers.",
+    "Do not state concrete prices, statistics, dates, percentages, or award/customer counts. Speak qualitatively ('fast turnaround', not '48 hours').",
+    "Do not make legal, medical, financial, safety, or regulatory claims, or imply certification/compliance.",
+    "No superlatives or unverifiable bests ('the #1', 'world-leading', 'guaranteed'). Describe, don't boast.",
+    "Copy is placeholder-grade for operator review — write plausible marketing copy, not final legal-approved wording. The operator finalizes it at the HITL checkpoint before capture.",
+    "Every image needs descriptive alt text; every CTA points at a real page in the manifest."
+  ],
+  "forbidden": [
+    "guaranteed",
+    "#1",
+    "world-class",
+    "industry-leading",
+    "best-in-class",
+    "award-winning",
+    "trusted by millions"
+  ],
+  "readingLevel": "plain / grade 8"
+}
