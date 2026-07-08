@@ -1,33 +1,30 @@
+import { existsSync } from "node:fs";
+
 import { describe, expect, it } from "vitest";
 
-import { devSpawnSpec } from "./dev";
+import { devSpawnSpec, resolveNextBin } from "./dev";
+import { resolveSiteDir } from "./loadSiteConfig";
 
 describe("devSpawnSpec", () => {
-  it("runs the site's own dev script from its directory", () => {
-    const spec = devSpawnSpec("C:/repo/sites/acme", [], "linux");
-    expect(spec.command).toBe("yarn");
-    expect(spec.args).toEqual(["dev"]);
-    expect(spec.options.cwd).toBe("C:/repo/sites/acme");
+  it("runs next via the current Node binary — no shell, no platform branch", () => {
+    const spec = devSpawnSpec("/repo/node_modules/next/dist/bin/next", "/repo/sites/acme");
+    expect(spec.command).toBe(process.execPath);
+    expect(spec.args).toEqual(["/repo/node_modules/next/dist/bin/next", "dev"]);
+    expect(spec.options.cwd).toBe("/repo/sites/acme");
     expect(spec.options.stdio).toBe("inherit");
+    expect(spec.options).not.toHaveProperty("shell");
   });
 
   it("forwards extra args to next dev", () => {
-    expect(devSpawnSpec("/repo/sites/acme", ["-p", "4312"], "linux").args).toEqual([
-      "dev",
-      "-p",
-      "4312",
-    ]);
+    const spec = devSpawnSpec("/x/next", "/repo/sites/acme", ["-p", "4312"]);
+    expect(spec.args).toEqual(["/x/next", "dev", "-p", "4312"]);
   });
+});
 
-  it("spawns through a shell only on Windows (yarn is yarn.cmd there)", () => {
-    expect(devSpawnSpec("/repo/sites/acme", [], "win32").options.shell).toBe(true);
-    expect(devSpawnSpec("/repo/sites/acme", [], "linux").options.shell).toBe(false);
-    expect(devSpawnSpec("/repo/sites/acme", [], "darwin").options.shell).toBe(false);
-  });
-
-  it("puts the whole command line in `command` when shelling (DEP0190: no args array with shell)", () => {
-    const spec = devSpawnSpec("C:/repo/sites/acme", ["-p", "4312"], "win32");
-    expect(spec.command).toBe("yarn dev -p 4312");
-    expect(spec.args).toEqual([]);
+describe("resolveNextBin", () => {
+  it("resolves the installed next CLI for a site via Node module resolution", () => {
+    const bin = resolveNextBin(resolveSiteDir("northwind"));
+    expect(bin.replace(/\\/g, "/")).toMatch(/next\/dist\/bin\/next$/);
+    expect(existsSync(bin)).toBe(true);
   });
 });
