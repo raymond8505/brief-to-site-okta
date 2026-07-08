@@ -2,6 +2,26 @@
 
 Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard-won gotchas.
 
+## OS-agnostic — no platform-specific code (project-wide rule)
+
+**Nothing in this project may be OS-dependent.** Node is the abstraction layer between our business
+logic and the host OS; leverage it. Every interaction with the OS goes through Node APIs — never
+shell out to platform commands and never branch on `process.platform`.
+
+- **Never invoke OS-specific commands** (`powershell`/`Get-NetTCPConnection`/`taskkill`,
+  `lsof`/`kill`/`sh -c`, `cmd`, etc.), and never `spawn`/`exec` a shell wrapper whose name differs by
+  OS (`yarn`→`yarn.cmd`, so **don't spawn `yarn`**). Run the actual program with the current Node
+  binary: `spawn(process.execPath, [binPath, …])`, where `binPath` is found via **Node module
+  resolution** (`createRequire(anchor).resolve("pkg/bin/x")`) — see `config/dev.ts`
+  (`resolveNextBin` + `devSpawnSpec`). No `shell: true`, no `.cmd`, no platform branch.
+- **Process teardown is `child.kill()`** (a Node API), not a port scan or a tree-kill utility. Spawn
+  the real program directly (not through a wrapper) so it's the direct child and a single
+  `child.kill()` frees any port it held — verified on Windows.
+- **Paths**: use `node:path` (`join`, `resolve`, `sep`); to emit POSIX paths, normalize with
+  `p.split(sep).join("/")` (see `config/scaffold.ts#toPosix`). Never hardcode `\\` or a drive letter.
+- **Detecting a platform assumption in review is a defect**, not a nuance — refactor it to a Node API
+  and, if the fix reveals a reusable pattern, note it here.
+
 ## Colour system (`packages/core/src/styles`, PR3)
 
 - **CSS custom-property scope is the core gotcha.** Derived tokens (`--brand-secondary`,
@@ -91,13 +111,12 @@ Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard
   keys double as the `placeholders:copy` file basenames. Never hardcode placeholder dimensions in a
   section or CLI — add/edit the spec. `placeholderSvg` is the one markup generator behind both the
   inline data-URI fallback and the files on disk (byte-identical, drift-tested).
-- **`spawn("yarn", ...)` on Windows needs `shell: true`** (`yarn` is `yarn.cmd`; Node ≥18.20 throws
-  EINVAL — CVE-2024-27980), and when shelling the whole command line must go in `command` with empty
-  args (DEP0190: an args array is only concatenated, unescaped). `config/dev.ts#devSpawnSpec`
-  encodes both; reuse it for future child-process CLIs (capture:run). Also: killing the yarn/tsx
-  *wrapper* process orphans the `next` grandchild on Windows (port stays bound) — kill by listening
-  port (`Get-NetTCPConnection`) when cleaning up scripted runs; a real terminal Ctrl+C is fine (the
-  console group gets the signal).
+- **Spawn `next` OS-agnostically via `process.execPath`, never the `yarn` wrapper** (see the
+  OS-agnostic rule above). `config/dev.ts#devSpawnSpec` runs the current Node binary against `next`'s
+  CLI (located with `resolveNextBin` → Node module resolution), so there is no `yarn.cmd`/`shell:
+  true` platform branch and no DEP0190 args-array trap. Because `next` is the *direct* child, a plain
+  Node `child.kill()` frees the port on every OS — no port-scanning, no `Get-NetTCPConnection`/`lsof`.
+  Reuse `devSpawnSpec`/`resolveNextBin` for future child-process CLIs (capture:run).
 
 ## Capture (`capture:run`, PR9)
 
@@ -105,7 +124,7 @@ Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard
   Core is consumed as **raw TS source** by every site (`transpilePackages`), so a `playwright` import
   inside core risks a site build tracing it. Only the deterministic pieces live in core
   (`config/capture.ts`: `captureManifest`, `formatTimestamp`, `pageBasename`, `pageUrl`,
-  `runDirName`, `MOTION_FREE_CSS`, `HIDE_DEV_OVERLAY_CSS`; `config/dev.ts#killByPortSpec`) so vitest
+  `runDirName`, `MOTION_FREE_CSS`, `HIDE_DEV_OVERLAY_CSS`; `config/dev.ts#devSpawnSpec`) so vitest
   collects their tests (the `packages/*/src/**` glob) and `tsc -p packages/core` checks them. The
   root script is **not** covered by `yarn typecheck` (only `eslint .`), so keep it thin — push logic
   into the typechecked core module.
@@ -115,8 +134,8 @@ Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard
 - **Server readiness is polled with `fetch`, not stdout.** `devSpawnSpec` uses `stdio: "inherit"`,
   so the driver can't parse next's "Ready" line — it polls `http://localhost:<port>/` until 200.
   `next dev -p <port>` on a busy port fails rather than serving there, so the default port is an
-  uncommon `3210`; `--port` overrides. Teardown is `killByPortSpec` (kill-by-port — the yarn wrapper
-  orphans `next` on Windows) in a `finally`, so the server dies even on capture error.
+  uncommon `3210`; `--port` overrides. Teardown is a pure Node `child.kill()` in a `finally` (`next`
+  is the direct child — see the OS-agnostic rule), so the server dies even on capture error.
 - **`next dev`'s own dev-tools overlay must be hidden or it taints the capture.** Next renders its
   indicator/error toasts into a `<nextjs-portal>` (shadow DOM); `HIDE_DEV_OVERLAY_CSS` hides the host
   element, injected alongside `MOTION_FREE_CSS` per page. Found empirically — the "N Issues" badge

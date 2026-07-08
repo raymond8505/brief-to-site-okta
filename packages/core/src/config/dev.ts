@@ -1,8 +1,14 @@
 /**
- * The spawn recipe behind `sites:dev` (FR-2.x site lifecycle): run a site's own `dev` script
- * (`next dev`) from inside its directory. Kept pure — the CLI does the actual `spawn` — so the
- * platform-sensitive bits are unit-testable without starting a server.
+ * The spawn recipe behind `sites:dev` / `capture:run` (FR-2.x site lifecycle): run a site's Next.js
+ * dev server. Kept **OS-agnostic by design** — everything goes through Node APIs, never a shell
+ * wrapper or a `process.platform` branch (see the OS-agnostic rule in the project CLAUDE.md). We run
+ * `next` with the current Node binary (`process.execPath`) and the CLI entry located via Node module
+ * resolution, so there is no `yarn.cmd`/`shell: true` special case, and because `next` is the direct
+ * child a plain `child.kill()` frees the port on every OS (no port-scanning, no `taskkill`/`lsof`).
  */
+
+import { createRequire } from "node:module";
+import { join } from "node:path";
 
 export interface DevSpawnSpec {
   command: string;
@@ -10,60 +16,37 @@ export interface DevSpawnSpec {
   options: {
     cwd: string;
     stdio: "inherit";
-    shell: boolean;
   };
 }
 
 /**
- * Build the `spawn` arguments that run `yarn dev [extraArgs…]` in `siteDir`. Yarn Berry resolves
- * the enclosing workspace from `cwd`, so this runs the site's `dev` script with the workspace's
- * linked deps. `shell` must be true on Windows: `yarn` is `yarn.cmd` there, and Node ≥18.20
- * refuses to spawn `.cmd` files directly (EINVAL, CVE-2024-27980) without a shell. When a shell
- * is used, the whole command line goes in `command` (empty `args`) — a shell only concatenates an
- * args array anyway, and Node deprecated that combination (DEP0190).
+ * Resolve the `next` CLI entry (`next/dist/bin/next`) as seen from a site directory, via Node module
+ * resolution. Node walks `node_modules` identically on every OS, so this works whether deps are
+ * hoisted to the repo root or nested in the site. Throws if `next` isn't installed for the site.
+ */
+export function resolveNextBin(siteDir: string): string {
+  const requireFromSite = createRequire(join(siteDir, "package.json"));
+  return requireFromSite.resolve("next/dist/bin/next");
+}
+
+/**
+ * Build the `spawn` arguments that run `next dev [extraArgs…]` in `siteDir`, using the current Node
+ * binary to execute the resolved `next` CLI. No `shell`, no platform branch: `process.execPath` is an
+ * absolute path to `node` on every OS, and running the CLI script directly avoids the `yarn.cmd`
+ * wrapper (which would need a shell on Windows and would orphan `next` when killed). `nextBin` comes
+ * from `resolveNextBin` — kept a parameter so this stays a pure, unit-testable function.
  */
 export function devSpawnSpec(
+  nextBin: string,
   siteDir: string,
   extraArgs: string[] = [],
-  platform: NodeJS.Platform = process.platform,
 ): DevSpawnSpec {
-  const args = ["dev", ...extraArgs];
-  const shell = platform === "win32";
   return {
-    command: shell ? ["yarn", ...args].join(" ") : "yarn",
-    args: shell ? [] : args,
+    command: process.execPath,
+    args: [nextBin, "dev", ...extraArgs],
     options: {
       cwd: siteDir,
       stdio: "inherit",
-      shell,
     },
   };
-}
-
-export interface KillByPortSpec {
-  command: string;
-  args: string[];
-  shell: boolean;
-}
-
-/**
- * Build the command that frees a listening port after a scripted `next dev` run (used by
- * `capture:run` teardown). On Windows, killing the spawned `yarn` wrapper orphans its `next`
- * grandchild — the port stays bound — so we kill **by port**: resolve the owning PID(s) with
- * `Get-NetTCPConnection` and `Stop-Process` them. On POSIX the process tree behaves, but killing by
- * port (`lsof` → `kill`) is still the robust catch-all. Both forms are self-contained (no separate
- * PID lookup) and `-ErrorAction SilentlyContinue`/`xargs -r` no-op when the port is already free.
- */
-export function killByPortSpec(
-  port: number,
-  platform: NodeJS.Platform = process.platform,
-): KillByPortSpec {
-  if (platform === "win32") {
-    const ps =
-      `Get-NetTCPConnection -LocalPort ${port} -State Listen -ErrorAction SilentlyContinue | ` +
-      `Select-Object -ExpandProperty OwningProcess -Unique | ` +
-      `ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }`;
-    return { command: "powershell", args: ["-NoProfile", "-Command", ps], shell: false };
-  }
-  return { command: "sh", args: ["-c", `lsof -ti tcp:${port} | xargs -r kill`], shell: false };
 }

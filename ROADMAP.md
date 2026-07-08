@@ -105,15 +105,17 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   naming) + viewports config. Lives in `scripts/`, **not** under `tests/`. Landed: the deterministic
   pieces live in core (`config/capture.ts` — `captureManifest` page×viewport cross-product,
   `formatTimestamp`/`pageBasename`/`pageUrl`/`runDirName`, `MOTION_FREE_CSS` + `HIDE_DEV_OVERLAY_CSS`)
-  so vitest covers them (FR-5.4); `config/dev.ts` gains a pure `killByPortSpec`. The imperative
+  so vitest covers them (FR-5.4). The imperative
   **`scripts/capture-run.ts`** driver sits at the repo root **on purpose** — core is consumed as raw
   source, so its `playwright` import must not sit where a site build could trace it. `capture:run
-  <slug> [--run <name>] [--port <n>]` self-manages the run: spawns the site's `next dev` via
-  `devSpawnSpec`, polls `fetch` until it serves (stdio is inherited, so readiness ≠ stdout parsing),
+  <slug> [--run <name>] [--port <n>]` self-manages the run: spawns the site's `next dev`
+  **OS-agnostically** (PR9 review — `devSpawnSpec` now runs `next` via `process.execPath` +
+  `resolveNextBin`, superseding PR8's win32 `shell: true`/`yarn.cmd` note; no `process.platform`
+  branch), polls `fetch` until it serves (stdio is inherited, so readiness ≠ stdout parsing),
   drives Chromium (`reducedMotion: 'reduce'` + injected motion CSS + wait for `networkidle` &
   `document.fonts.ready`, FR-4.4) to shoot each page **full-page** as JPEG into
-  `sites/<slug>/captures/<run>-<ts>/<page>_<width>.jpg` (FR-4.5), then tears the server down by port
-  (the yarn wrapper orphans `next` on Windows). Dev-tools overlay hidden so it never taints a
+  `sites/<slug>/captures/<run>-<ts>/<page>_<width>.jpg` (FR-4.5), then tears the server down with a
+  pure Node `child.kill()` (`next` is the direct child). Dev-tools overlay hidden so it never taints a
   deliverable. Dep: root `playwright` (not `@playwright/test`); requires a one-time
   `yarn playwright install chromium`. Verified end-to-end on `northwind`: 3 pages × 2 viewports → 6
   full-page JPEGs (heights exceed the viewport, brand-styled), port freed after.

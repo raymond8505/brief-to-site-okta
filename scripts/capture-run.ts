@@ -12,7 +12,7 @@
  * shell. Exit codes mirror the other CLIs: 0 captured, 1 operational error, 2 usage.
  */
 
-import { spawn, spawnSync, type ChildProcess } from "node:child_process";
+import { spawn, type ChildProcess } from "node:child_process";
 import { existsSync, mkdirSync } from "node:fs";
 import { join, relative } from "node:path";
 
@@ -26,7 +26,7 @@ import {
   runDirName,
   type CaptureShot,
 } from "../packages/core/src/config/capture";
-import { devSpawnSpec, killByPortSpec } from "../packages/core/src/config/dev";
+import { devSpawnSpec, resolveNextBin } from "../packages/core/src/config/dev";
 import { loadSiteConfig, resolveSiteDir } from "../packages/core/src/config/loadSiteConfig";
 
 const DEFAULT_PORT = 3210;
@@ -73,14 +73,8 @@ async function waitForServer(url: string, timeoutMs: number): Promise<boolean> {
   return false;
 }
 
-/** Free the dev-server port (kill-by-port; the yarn wrapper orphans `next` on Windows). */
-function killServer(child: ChildProcess, port: number): void {
-  const spec = killByPortSpec(port);
-  try {
-    spawnSync(spec.command, spec.args, { shell: spec.shell, stdio: "ignore" });
-  } catch {
-    // best-effort teardown
-  }
+/** Stop the dev server via a pure Node signal. `next` is the direct child, so this frees the port. */
+function stopServer(child: ChildProcess): void {
   try {
     child.kill();
   } catch {
@@ -154,7 +148,15 @@ async function main(): Promise<void> {
   const shots = captureManifest({ baseUrl, pages, viewports });
   const runDir = join(siteDir, "captures", runDirName(run, formatTimestamp(new Date())));
 
-  const spec = devSpawnSpec(siteDir, ["-p", String(args.port)]);
+  let nextBin: string;
+  try {
+    nextBin = resolveNextBin(siteDir);
+  } catch {
+    console.error(`✗ ${args.site}: next is not installed for this site`);
+    process.exit(1);
+  }
+
+  const spec = devSpawnSpec(nextBin, siteDir, ["-p", String(args.port)]);
   const child = spawn(spec.command, spec.args, spec.options);
   let serverExited = false;
   child.on("exit", () => {
@@ -182,7 +184,7 @@ async function main(): Promise<void> {
     console.error(`✗ ${args.site}: ${err instanceof Error ? err.message : String(err)}`);
     exitCode = 1;
   } finally {
-    killServer(child, args.port);
+    stopServer(child);
   }
 
   process.exit(exitCode);
