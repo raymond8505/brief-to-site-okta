@@ -136,8 +136,11 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   **analogous** — Northwind is complementary), exercising variants Northwind doesn't (`Hero
   align="center"`, `FeatureGrid columns="four"` at `density="spacious"`, `ContactBlock
   form="inline-start"`). `example-site.test.ts` now drift-guards **both** committed sites via
-  `describe.each`. Verified: `sites:validate` clean, `next build` prerenders all three routes +
-  TypeScript passes, SSR smoke (headings, nav, routes + placeholder assets 200).
+  `describe.each`. Verified **full pipeline incl. capture**: `sites:validate` clean, `next build`
+  prerenders all three routes + TypeScript passes, and `capture:run meridian` shot **12 full-page
+  JPEGs** (3 pages × 4 viewports) styled with the amber/analogous brand — the centered Hero,
+  four-column FeatureGrid, and inline-start ContactBlock all render. Captures land in the gitignored
+  `sites/meridian/captures/` (the per-run deliverable, not committed).
 
 ### Phase 7 — Hardening
 - ☐ **PR11** Coverage gaps, docs, ROADMAP finalize.
