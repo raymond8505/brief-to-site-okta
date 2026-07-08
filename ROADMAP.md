@@ -121,8 +121,23 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   full-page JPEGs (heights exceed the viewport, brand-styled), port freed after.
 
 ### Phase 6 — Skill
-- ☐ **PR10** `.claude/skills/microsite/SKILL.md` (intake → author → assemble → HITL → capture) +
-  `config/generation/*` (voice + guardrails) + `brief.md` convention; agent dry-run.
+- ◐ **PR10** `microsite` skill + system-level generation config + 2nd example site. Landed:
+  **`.claude/skills/microsite/SKILL.md`** (FR-2.4) — the agent-facing work-script tying PR1–PR9's
+  discrete tools into one **intake → author → assemble → HITL → capture** pipeline; it points at the
+  scripts/schemas/Storybook rather than duplicating them, encodes the load-bearing invariants
+  (assembly-only, root-relative image paths, CSS-only variants, no sticky/fixed elements, no runtime
+  `fs` in pages, OS-agnostic entry points), and enforces the **one intentional HITL pause** before
+  capture (FR-2.1). **`config/generation/{generation.json,README.md}`** — the system-level voice +
+  guardrails (FR-3.4/3.5), one house style across every site, agent-read at assemble time (no runtime
+  code path; validates against the existing `generationSchema`), distinct from the studio-specific
+  loader fixture in core. The **`brief.md` convention** (already shipped by `_template`) is formalized
+  as the intake contract + single source of copy grounding. Agent **dry-run**: the skill was run
+  end-to-end to assemble **`sites/meridian`** ("Meridian Coffee Roasters", amber `#b45309`
+  **analogous** — Northwind is complementary), exercising variants Northwind doesn't (`Hero
+  align="center"`, `FeatureGrid columns="four"` at `density="spacious"`, `ContactBlock
+  form="inline-start"`). `example-site.test.ts` now drift-guards **both** committed sites via
+  `describe.each`. Verified: `sites:validate` clean, `next build` prerenders all three routes +
+  TypeScript passes, SSR smoke (headings, nav, routes + placeholder assets 200).
 
 ### Phase 7 — Hardening
 - ☐ **PR11** Coverage gaps, docs, ROADMAP finalize.

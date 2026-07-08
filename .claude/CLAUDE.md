@@ -143,6 +143,26 @@ shell out to platform commands and never branch on `process.platform`.
 - Output is **JPEG** (FR-4.5, `type: "jpeg", quality: 90`), full-page (`fullPage: true`), into the
   **gitignored** `sites/<slug>/captures/<run>-<ts>/<page>_<width>.jpg`. `run` defaults to the slug.
 
+## Skill + generation config (`microsite`, PR10)
+
+- **`.claude/skills/microsite/SKILL.md` is the pipeline entry point** — the agent-facing work-script
+  for intake → author → assemble → HITL → capture. It **points at** the `yarn` scripts, Zod schemas,
+  and Storybook rather than duplicating them; keep it that way (Code Over Instructions). The one hard
+  rule it enforces that isn't code-checkable: **stop at the HITL checkpoint** and hand back to the
+  operator before `capture:run` (FR-2.1) — never auto-capture.
+- **`config/generation/generation.json` is SYSTEM-LEVEL** (repo root, FR-3.4), not per-site: one
+  house voice + guardrails for **every** site. It is **agent-read only** — there is **no runtime code
+  path** that consumes it (copy is written by the agent at assemble time, not templated at build), so
+  don't wire it into a site build or a CLI. It validates against `generationSchema`
+  (`packages/core/src/config/generation.schema.ts`); the studio-specific
+  `packages/core/src/config/examples/generation.json` is a separate **loader fixture**, not this
+  config — don't conflate them.
+- **Two committed example sites, both drift-guarded.** `sites/northwind` (complementary) and
+  `sites/meridian` (analogous) prove the pipeline across harmonies/variants. `example-site.test.ts`
+  runs its structural checks over an `EXAMPLE_SITES` table via `describe.each` — **adding a 3rd
+  example site means adding a row there**, or it silently goes unguarded (the test won't fail, it just
+  won't cover it).
+
 ## Testing
 
 - No headless CI runner (FR-5.6 = no CI). CSS `pow()`/`calc()` can't be evaluated in jsdom, so the
