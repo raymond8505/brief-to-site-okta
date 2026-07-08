@@ -99,13 +99,39 @@ Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard
   port (`Get-NetTCPConnection`) when cleaning up scripted runs; a real terminal Ctrl+C is fine (the
   console group gets the signal).
 
+## Capture (`capture:run`, PR9)
+
+- **The Playwright driver lives at repo-root `scripts/capture-run.ts`, NOT in core — deliberately.**
+  Core is consumed as **raw TS source** by every site (`transpilePackages`), so a `playwright` import
+  inside core risks a site build tracing it. Only the deterministic pieces live in core
+  (`config/capture.ts`: `captureManifest`, `formatTimestamp`, `pageBasename`, `pageUrl`,
+  `runDirName`, `MOTION_FREE_CSS`, `HIDE_DEV_OVERLAY_CSS`; `config/dev.ts#killByPortSpec`) so vitest
+  collects their tests (the `packages/*/src/**` glob) and `tsc -p packages/core` checks them. The
+  root script is **not** covered by `yarn typecheck` (only `eslint .`), so keep it thin — push logic
+  into the typechecked core module.
+- **`playwright` is a root devDependency (core lib, `chromium.launch()`), not `@playwright/test`** —
+  capture is a script, not a test suite. The Chromium **binary is a separate one-time install**:
+  `yarn playwright install chromium` (not committed; document it for any fresh clone).
+- **Server readiness is polled with `fetch`, not stdout.** `devSpawnSpec` uses `stdio: "inherit"`,
+  so the driver can't parse next's "Ready" line — it polls `http://localhost:<port>/` until 200.
+  `next dev -p <port>` on a busy port fails rather than serving there, so the default port is an
+  uncommon `3210`; `--port` overrides. Teardown is `killByPortSpec` (kill-by-port — the yarn wrapper
+  orphans `next` on Windows) in a `finally`, so the server dies even on capture error.
+- **`next dev`'s own dev-tools overlay must be hidden or it taints the capture.** Next renders its
+  indicator/error toasts into a `<nextjs-portal>` (shadow DOM); `HIDE_DEV_OVERLAY_CSS` hides the host
+  element, injected alongside `MOTION_FREE_CSS` per page. Found empirically — the "N Issues" badge
+  showed up mid-page in the first real run.
+- Output is **JPEG** (FR-4.5, `type: "jpeg", quality: 90`), full-page (`fullPage: true`), into the
+  **gitignored** `sites/<slug>/captures/<run>-<ts>/<page>_<width>.jpg`. `run` defaults to the slug.
+
 ## Testing
 
 - No headless CI runner (FR-5.6 = no CI). CSS `pow()`/`calc()` can't be evaluated in jsdom, so the
   **`Colors/*` `play()` stories** confirm rendered values in a real browser (Storybook interactions
   panel); vitest covers only non-DOM math. Adding `@storybook/addon-vitest` to run play tests in CI
   is a deliberate scope decision NOT yet taken.
-- **Verify CSS computed values without Playwright** (not installed) via headless Chrome:
+- **Verify CSS computed values without a browser harness** (Playwright is now a dep for `capture:run`
+  but there's no story/e2e runner) via headless Chrome:
   `chrome --headless --disable-gpu --dump-dom "file:///C:/.../x.html"`, with the test JS writing
   results into a DOM attribute. Gotchas: use the `file:///C:/...` **drive-letter** URL (MSYS `/c/`
   paths → Chrome error page); **inline** the CSS into the HTML (external `<link>` triggers the
