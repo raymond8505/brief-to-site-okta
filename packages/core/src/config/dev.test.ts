@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { devSpawnSpec } from "./dev";
+import { devSpawnSpec, killByPortSpec } from "./dev";
 
 describe("devSpawnSpec", () => {
   it("runs the site's own dev script from its directory", () => {
@@ -29,5 +29,22 @@ describe("devSpawnSpec", () => {
     const spec = devSpawnSpec("C:/repo/sites/acme", ["-p", "4312"], "win32");
     expect(spec.command).toBe("yarn dev -p 4312");
     expect(spec.args).toEqual([]);
+  });
+});
+
+describe("killByPortSpec", () => {
+  it("kills by owning PID via PowerShell on Windows (yarn wrapper orphans next)", () => {
+    const spec = killByPortSpec(4312, "win32");
+    expect(spec.command).toBe("powershell");
+    expect(spec.shell).toBe(false);
+    expect(spec.args.join(" ")).toContain("Get-NetTCPConnection -LocalPort 4312");
+    expect(spec.args.join(" ")).toContain("Stop-Process");
+  });
+
+  it("kills by port via lsof on POSIX", () => {
+    const spec = killByPortSpec(4312, "linux");
+    expect(spec.command).toBe("sh");
+    expect(spec.shell).toBe(false);
+    expect(spec.args).toEqual(["-c", "lsof -ti tcp:4312 | xargs -r kill"]);
   });
 });

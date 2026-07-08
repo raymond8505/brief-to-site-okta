@@ -39,3 +39,31 @@ export function devSpawnSpec(
     },
   };
 }
+
+export interface KillByPortSpec {
+  command: string;
+  args: string[];
+  shell: boolean;
+}
+
+/**
+ * Build the command that frees a listening port after a scripted `next dev` run (used by
+ * `capture:run` teardown). On Windows, killing the spawned `yarn` wrapper orphans its `next`
+ * grandchild — the port stays bound — so we kill **by port**: resolve the owning PID(s) with
+ * `Get-NetTCPConnection` and `Stop-Process` them. On POSIX the process tree behaves, but killing by
+ * port (`lsof` → `kill`) is still the robust catch-all. Both forms are self-contained (no separate
+ * PID lookup) and `-ErrorAction SilentlyContinue`/`xargs -r` no-op when the port is already free.
+ */
+export function killByPortSpec(
+  port: number,
+  platform: NodeJS.Platform = process.platform,
+): KillByPortSpec {
+  if (platform === "win32") {
+    const ps =
+      `Get-NetTCPConnection -LocalPort ${port} -State Listen -ErrorAction SilentlyContinue | ` +
+      `Select-Object -ExpandProperty OwningProcess -Unique | ` +
+      `ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }`;
+    return { command: "powershell", args: ["-NoProfile", "-Command", ps], shell: false };
+  }
+  return { command: "sh", args: ["-c", `lsof -ti tcp:${port} | xargs -r kill`], shell: false };
+}
