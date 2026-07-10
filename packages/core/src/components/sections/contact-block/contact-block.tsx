@@ -66,7 +66,7 @@ export function ContactBlock({
         {/* Copy column — always first in the DOM (FR-3.11: source order never changes). */}
         <div data-slot="contact-copy" className="flex flex-1 flex-col gap-6">
           {eyebrow ? (
-            <Badge variant="secondary" className="w-fit">
+            <Badge variant="brand" className="w-fit">
               {eyebrow}
             </Badge>
           ) : null}

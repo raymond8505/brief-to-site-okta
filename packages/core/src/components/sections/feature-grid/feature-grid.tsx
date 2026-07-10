@@ -76,7 +76,7 @@ export function FeatureGrid({
       {hasHeader ? (
         <div data-slot="feature-grid-header" className="mb-10 flex flex-col gap-4 md:mb-14">
           {eyebrow ? (
-            <Badge variant="secondary" className="w-fit">
+            <Badge variant="brand" className="w-fit">
               {eyebrow}
             </Badge>
           ) : null}
@@ -92,7 +92,14 @@ export function FeatureGrid({
       ) : null}
       <div data-slot="feature-grid" className={cn(featureGridVariants({ columns }))}>
         {features.map((feature, index) => (
-          <Card key={index} data-slot="feature-item">
+          <Card
+            key={index}
+            data-slot="feature-item"
+            /* Harmony accent — a decorative top rule in the derived secondary hue. No text sits on
+               it, so it uses the --brand-secondary hsl token directly (no contrast math needed) and
+               makes the colour harmony visible on every card. */
+            className="border-t-4 [border-top-color:var(--brand-secondary)]"
+          >
             <img
               src={feature.imageSrc ?? placeholderDataUri(PLACEHOLDER_SPECS.feature)}
               alt={feature.imageAlt}

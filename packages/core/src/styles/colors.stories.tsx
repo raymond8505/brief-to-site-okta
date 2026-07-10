@@ -136,10 +136,12 @@ export const WarmSeed: Story = { args: { h: 24, s: 90, l: 50 }, play: assertDeri
 /* ────────────────────────── Role mapping (FR-2.8) ────────────────────────── */
 
 /**
- * Roles are just var indirections onto brand tokens. core maps --primary / --ring → --brand-primary;
- * the operator opts other roles in (here we remap --secondary → --brand-tertiary on a subtree — the
- * theme.css mechanism; a role remap works from any scope because the final `background: var(--role)`
- * resolves against the already-derived brand token). play() confirms both.
+ * Roles are just var indirections onto brand tokens. core maps --primary / --ring → --brand-primary
+ * and the surface roles (--secondary/--muted/--accent/--border/--background) → the light brand tints
+ * by default; a site's theme.css can remap any role further (here we remap --secondary →
+ * --brand-tertiary on a subtree — the theme.css mechanism; a role remap works from any scope because
+ * the final `background: var(--role)` resolves against the already-derived brand token). play()
+ * confirms --primary/--ring resolve to the brand primary and the subtree remap wins locally.
  */
 export const RoleMapping: Story = {
   render: ({ h, s, l }: SeedArgs) => (

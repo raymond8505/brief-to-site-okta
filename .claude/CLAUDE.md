@@ -47,8 +47,19 @@ shell out to platform commands and never branch on `process.platform`.
 - **Legible foreground is a CSS + component concern, not JS.** `.wcag-contrast` (contrast-math.css)
   needs only `--r/--g/--b`; a colored-background component sets those from the brand RGB
   (`--brand-r/g/b`, defaulted in colors.css and emitted per-site by `theme:build` via `hexToRgb` —
-  no luminance math). `--primary-foreground` is left at core's near-white default; wiring a specific
-  component (e.g. the primary Button) to `.wcag-contrast` is a component-level task.
+  no luminance math). `--primary-foreground` is left at core's near-white default; a saturated
+  brand fill that carries text uses `.wcag-contrast` instead — see the **`Badge` `brand` variant**
+  (`wcag-contrast [--r:var(--brand-r)] …`), which the section eyebrows use.
+- **Branded by default, contrast-safe (PR10 fix).** `globals.css` `:root` no longer maps *only*
+  `--primary`/`--ring` to brand. The surface roles (`--background`/`--secondary`/`--muted`/`--accent`/
+  `--border`/`--input`) point at the **light** brand tints (`--brand-surface` l96 / `--brand-muted`
+  l90), so the whole page picks up the brand hue while the dark base-nova foregrounds stay legible
+  with **no contrast math** (light tint + dark text is always ≥4.5:1). `--card`/`--popover` stay white
+  so cards lift off the tint. Saturated hues that carry text go through `.wcag-contrast` (the Badge
+  variant); a saturated hue with **no** text (the `FeatureGrid` card top-accent = `--brand-secondary`)
+  can use the hsl token directly. A site's `theme.css` can still remap any role — the derived-var
+  cascade resolves each override against that site's seed. The earlier "minimal by design" stance is
+  superseded. (Before PR10, brand colour only reached the primary Button — everything else was neutral.)
 - **Default brand seed = Tailwind blue-600** (`#2563eb` = hsl(221 83% 53%) = rgb(37 99 235)) in both
   `colors.css` and `sites/_template` — one canonical default.
 
