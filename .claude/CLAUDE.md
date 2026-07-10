@@ -60,6 +60,14 @@ shell out to platform commands and never branch on `process.platform`.
   can use the hsl token directly. A site's `theme.css` can still remap any role — the derived-var
   cascade resolves each override against that site's seed. The earlier "minimal by design" stance is
   superseded. (Before PR10, brand colour only reached the primary Button — everything else was neutral.)
+- **`.wcag-contrast` legitimately picks DARK text on mid-tone brands — don't "fix" it to white.** A
+  mid green like `#090` (rgb 0 153 0) only clears ~3.8:1 against white, so the utility correctly
+  chooses **dark** text on a green `brand` Badge (amber/violet, being darker, get white). Naive
+  white-on-brand would fail WCAG; the util adapting per-hue is the whole point (FR-2.9). The contrast
+  split to respect when branding an element: *light tint + dark text* needs no contrast math;
+  *saturated fill carrying text* must use `.wcag-contrast` with `--r/--g/--b` (**primary only** —
+  derived secondary/tertiary are HSL-only, no RGB); *saturated with no text* (a decorative rule, the
+  FeatureGrid card top-accent) can use the `--brand-secondary`/`-tertiary` hsl token directly.
 - **Default brand seed = Tailwind blue-600** (`#2563eb` = hsl(221 83% 53%) = rgb(37 99 235)) in both
   `colors.css` and `sites/_template` — one canonical default.
 
@@ -173,6 +181,11 @@ shell out to platform commands and never branch on `process.platform`.
   harmonies + a spread of variants. `example-site.test.ts` runs its structural checks over an
   `EXAMPLE_SITES` table via `describe.each` — **adding another example site means adding a row
   there**, or it silently goes unguarded (the test won't fail, it just won't cover it).
+- **Build/verify one site with `yarn workspace @brief-to-site/site-<slug> build`** (there is no
+  `sites:build` script); `yarn sites:dev <slug>` for dev, `yarn capture:run <slug> --run <name>` for a
+  named throwaway capture. Heads-up inconsistency: `northwind/config/viewports.json` has only 2
+  viewports (375/1280) while `_template` (and meridian/lee-carvalo) ship the default 4 — so northwind
+  captures 6 images, the others 12.
 
 ## Testing
 
