@@ -44,6 +44,9 @@ the hard-won gotchas the scripts assume.
 - `yarn install` at the repo root (workspaces).
 - For capture only: `yarn playwright install chromium` once per machine (the browser binary is not
   committed).
+- **Required MCP tooling for assembly:** the **Storybook MCP** and **shadcn MCP** must be available —
+  the assemble step (§5) depends on them for section/primitive docs and **stops** if either is
+  missing (never assemble from memory).
 
 ---
 
@@ -85,17 +88,17 @@ replace, plus `config/*.json`, `theme.css`, and `next.config.ts` already wired t
 
 ## 3. Author config
 
-Edit the four **per-site** JSON files (one concern each, Zod-validated). The schemas in
-`packages/core/src/config/*.schema.ts` are the source of truth; the shapes:
+Edit the four **per-site** JSON files, one concern each (`meta`, `brand`, `pages`, `viewports`),
+all Zod-validated. **Don't hand-copy the shapes — retrieve them on demand** (printed straight from
+the schemas, so they can't drift):
 
-| file             | shape                                                                                     |
-| ---------------- | ----------------------------------------------------------------------------------------- |
-| `meta.json`      | `{ name, description, tagline?, logoSrc? }`                                                |
-| `brand.json`     | `{ primary: "#hex", secondary?, tertiary?, harmony? }` · harmony: `complementary`\|`triadic`\|`analogous` (default complementary) |
-| `pages.json`     | `[{ slug, title, instructions?, nav? }]` · `slug:""` = Home · at least one · unique slugs |
-| `viewports.json` | `[{ label?, width, height }]` · defaults ship (mobile/tablet/desktop/wide)                |
+```bash
+yarn config:schema            # all concerns as JSON Schema
+yarn config:schema brand      # just one: meta | brand | pages | viewports | generation
+```
 
-Rules:
+The Zod schemas in `packages/core/src/config/*.schema.ts` are the source of truth; `config:schema`
+serializes them (`z.toJSONSchema`). Rules (gotchas the schema can't express):
 
 - **Image paths are root-relative** `/images/...` — a relative `images/...` 404s under nested
   routes like `/about`.
@@ -122,41 +125,31 @@ This is the house style for every site; the brief supplies the *content*, this s
 
 ## 5. Assemble the pages
 
-Select sections **by brief** (FR-3.0a) and arrange them into `app/**/page.tsx`. **Consult
-Storybook** for the catalog and each section's documented variants before choosing — it is the
-source of truth for what exists and how it looks:
+**Required tooling — STOP if missing.** This step needs the **Storybook MCP** (section catalog +
+each section's documented props/variants) and the **shadcn MCP** (primitive docs). Before you
+assemble, confirm both respond (e.g. Storybook MCP `list-all-documentation`). **If either is
+unavailable, abort and tell the operator — never assemble from memory or guess a section's
+props/variants.**
 
-- Use the Storybook MCP tools: `list-all-documentation` → `get-documentation` for a section.
-- Never assume a prop or variant that isn't documented.
+Select sections **by brief** (FR-3.0a) and arrange them into `app/**/page.tsx`:
 
-The three shipping sections (imported from `@brief-to-site/core/sections`); every section also
-accepts the shared **`density`** axis (`compact` | `comfortable` | `spacious`), `className`, `id`:
-
-- **`Hero`** — `headline` (req), `imageAlt` (req), `eyebrow?`, `subcopy?`, `actions?`
-  (React slot for CTAs), `imageSrc?`. Variants: `align` (`start`|`center`), `media`
-  (`inline-end`|`inline-start`).
-- **`FeatureGrid`** — `features: { title, imageAlt (req), description?, imageSrc? }[]` (req),
-  `eyebrow?`, `heading?`, `subcopy?`. Variant: `columns` (`two`|`three`|`four`).
-- **`ContactBlock`** — `heading` (req), `eyebrow?`, `subcopy?`, `submitLabel?`. Variant: `form`
-  (`inline-end`|`inline-start`). **Presentational** — no submit handler; keep it a server component.
-
-Variants are **CSS-only and deterministic** (alignment / spacing / child-order) — they never change
-DOM order or structure. `sites/_template/components` has no extra sections; `_template`'s section
-archetype is a copy-me reference, **not** importable.
+- Pull the section catalog + each section's props/variants from the **Storybook MCP**
+  (`list-all-documentation` → `get-documentation`), and primitive (Button, etc.) usage from the
+  **shadcn MCP**. That is the source of truth for what exists and how it looks — never assume a prop
+  or variant that isn't documented there.
+- Sections import from `@brief-to-site/core/sections`; primitives from `@brief-to-site/core`.
+- Variants are **CSS-only and deterministic** (alignment / spacing / child-order) — never DOM order
+  or structure. `_template`'s section archetype is a copy-me reference, **not** importable.
 
 Authoring rules (model on [`sites/northwind/app/page.tsx`](../../../sites/northwind/app/page.tsx)):
 
-- Import sections from `@brief-to-site/core/sections`; primitives (e.g. `Button`) from
-  `@brief-to-site/core`.
-- Write copy **inline in the JSX** (TS-enforced), grounded in `brief.md`, obeying the generation
-  config.
-- Every `imageSrc` is a root-relative `/images/placeholders/<name>.svg`; every image needs
-  `imageAlt`.
+- Write copy **inline in the JSX** (TS-enforced), grounded in `brief.md`, obeying the generation config.
+- Every `imageSrc` is a root-relative `/images/placeholders/<name>.svg`; every image needs `imageAlt`.
 - CTAs are links: `<Button render={<Link href="/contact" />}>…</Button>` (Base UI `render` slot).
 - Non-Home pages `export const metadata = { title: "… — <Site Name>" }`.
 - **Do not** add runtime `fs` reads — `app/layout.tsx` already static-imports config; the shell
-  (`MicrositeShell` + `SiteNav`) renders header/nav/footer with **no sticky header** (keeps the
-  full-page capture clean). Don't re-implement nav or add fixed elements.
+  (`MicrositeShell` + `SiteNav`) renders header/nav/footer with **no sticky header**. Don't
+  re-implement nav or add fixed elements. `ContactBlock` is presentational — keep it a server component.
 
 ## 6. Theme + placeholder assets
 

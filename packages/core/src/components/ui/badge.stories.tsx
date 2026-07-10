@@ -19,11 +19,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
-/**
- * Solid brand-primary fill with a WCAG-4.5:1 text colour chosen by the pure-CSS `.wcag-contrast`
- * utility from the brand RGB seed (--brand-r/g/b) — legible for any primary, no JS. Sections use
- * this for their eyebrow kicker.
- */
 export const Brand: Story = { args: { variant: "brand" } };
 export const Secondary: Story = { args: { variant: "secondary" } };
 export const Destructive: Story = { args: { variant: "destructive" } };
