@@ -157,11 +157,11 @@ shell out to platform commands and never branch on `process.platform`.
   (`packages/core/src/config/generation.schema.ts`); the studio-specific
   `packages/core/src/config/examples/generation.json` is a separate **loader fixture**, not this
   config — don't conflate them.
-- **Two committed example sites, both drift-guarded.** `sites/northwind` (complementary) and
-  `sites/meridian` (analogous) prove the pipeline across harmonies/variants. `example-site.test.ts`
-  runs its structural checks over an `EXAMPLE_SITES` table via `describe.each` — **adding a 3rd
-  example site means adding a row there**, or it silently goes unguarded (the test won't fail, it just
-  won't cover it).
+- **Three committed example sites, all drift-guarded.** `sites/northwind` (complementary),
+  `sites/meridian` (analogous), and `sites/lee-carvalo` (triadic) prove the pipeline across all three
+  harmonies + a spread of variants. `example-site.test.ts` runs its structural checks over an
+  `EXAMPLE_SITES` table via `describe.each` — **adding another example site means adding a row
+  there**, or it silently goes unguarded (the test won't fail, it just won't cover it).
 
 ## Testing
 

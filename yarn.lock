@@ -477,6 +477,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@brief-to-site/site-lee-carvalo@workspace:sites/lee-carvalo":
+  version: 0.0.0-use.local
+  resolution: "@brief-to-site/site-lee-carvalo@workspace:sites/lee-carvalo"
+  dependencies:
+    "@brief-to-site/core": "workspace:*"
+    "@types/node": "npm:^26.0.1"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    next: "npm:16.2.6"
+    react: "npm:19.2.4"
+    react-dom: "npm:19.2.4"
+    typescript: "npm:^5"
+  languageName: unknown
+  linkType: soft
+
 "@brief-to-site/site-meridian@workspace:sites/meridian":
   version: 0.0.0-use.local
   resolution: "@brief-to-site/site-meridian@workspace:sites/meridian"
