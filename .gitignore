@@ -37,6 +37,11 @@ sites/*/captures/
 .env.*.local
 !.env.example
 
+# Claude Code local settings (personal permission allow-lists w/ machine-specific paths;
+# keep .claude/CLAUDE.md + .claude/skills tracked)
+.claude/settings.json
+.claude/settings.local.json
+
 # logs / os
 *.log
 *storybook.log
