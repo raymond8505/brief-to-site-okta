@@ -208,9 +208,11 @@ shell out to platform commands and never branch on `process.platform`.
   **`git push --no-verify` is forbidden** (also a global rule). No CI by design (FR-5.6): this local
   hook IS the enforcement layer.
 - **Husky activates via `postinstall`, NOT `prepare`** — Yarn Berry never runs `prepare`
-  (yarnpkg/berry#2967). Fresh clones get the hook on first `yarn install`; repo is private so no
-  pinst dance. Hook files are v9 format: plain sh, no shebang/`husky.sh` sourcing (v8-isms, removed
-  in v10).
+  (yarnpkg/berry#2967). Fresh clones get the hook on first `yarn install` (no install-state yet →
+  scripts run); repo is private so no pinst dance. But Berry **skips `postinstall` when the dep tree
+  is unchanged** — verified: after `git config --unset core.hooksPath`, a plain `yarn install` does
+  NOT restore it. Manual re-activation: `yarn husky`. Hook files are v9 format: plain sh, no
+  shebang/`husky.sh` sourcing (v8-isms, removed in v10).
 - **`yarn typecheck` is full-repo** (`config/cli/typecheck-all.ts`): filesystem-discovers every tsc
   project — `packages/*`, `sites/*` **including `_template`** (deliberate exception to the
   skip-`_template` rule: the scaffold source must itself typecheck), plus root
