@@ -73,6 +73,19 @@ shell out to platform commands and never branch on `process.platform`.
 
 ## Sites & tooling (`sites:new` + `theme:build`, PR7)
 
+- **Site dependency split (PR#11 review).** `next`/`react`/`react-dom` live in **each site** +
+  `_template` (the site's own `next` bin must be on its workspace PATH, and FR-5.3 wants sites
+  self-buildable); devDeps (`@types/*`, `typescript`) live **only at root**. Do **not** hoist `next`
+  too — Yarn only exposes a dep's bin to a workspace that declares it, so it breaks
+  `yarn workspace @brief-to-site/site-<slug> build`. There is already no per-site `node_modules`
+  (node-modules linker hoists to one root), so this split costs nothing at install time.
+- **Config shapes are retrieved, never hand-documented.** `yarn config:schema
+  [meta|brand|pages|viewports|generation]` prints them as JSON Schema from the Zod schemas via
+  `z.toJSONSchema` (registry `packages/core/src/config/schemas.ts#configSchemas`; thin CLI
+  `config/cli/schema.ts`). SKILL.md points at it instead of a table (drift risk). Adding a config
+  concern → add it to `configSchemas` (the registry test guards the set). The CLI is typechecked by
+  `tsc -p packages/core` but not run by vitest (it `process.exit`s), so run `yarn typecheck`
+  separately and read its real exit.
 - **`theme:build <slug>`** reads `config/brand.json` (hex) and writes `sites/<slug>/theme.css`:
   `--brand-h/s/l` (via `palette.hexToHsl`) **and `--brand-r/g/b`** (via `palette.hexToRgb`, the input
   `.wcag-contrast` reads), the harmony offset vars, and explicit `--brand-secondary/tertiary-*`
