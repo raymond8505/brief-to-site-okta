@@ -9,6 +9,7 @@
     "sites/*"
   ],
   "scripts": {
+    "postinstall": "husky",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
@@ -32,6 +33,7 @@
     "@vitest/coverage-v8": "4.1.9",
     "eslint": "^9",
     "eslint-plugin-storybook": "^10.4.1",
+    "husky": "^9.1.7",
     "playwright": "^1.61.1",
     "tsx": "^4.22.4",
     "typescript": "^5",
