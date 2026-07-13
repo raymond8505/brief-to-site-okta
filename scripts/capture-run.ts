@@ -46,14 +46,16 @@ function parseArgs(argv: string[]): CliArgs | null {
   let port = DEFAULT_PORT;
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
+    if (arg === undefined) continue;
     if (arg === "--run") run = argv[++i];
     else if (arg.startsWith("--run=")) run = arg.slice("--run=".length);
     else if (arg === "--port") port = Number(argv[++i]);
     else if (arg.startsWith("--port=")) port = Number(arg.slice("--port=".length));
     else positional.push(arg);
   }
-  if (positional.length === 0 || !Number.isInteger(port) || port <= 0) return null;
-  return { site: positional[0], run, port };
+  const site = positional[0];
+  if (site === undefined || !Number.isInteger(port) || port <= 0) return null;
+  return { site, run, port };
 }
 
 const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
@@ -94,7 +96,9 @@ async function capture(shots: CaptureShot[], runDir: string): Promise<string[]> 
   const browser = await chromium.launch();
   try {
     for (const group of byViewport.values()) {
-      const { width, height } = group[0];
+      const first = group[0];
+      if (first === undefined) continue;
+      const { width, height } = first;
       const context = await browser.newContext({
         viewport: { width, height },
         reducedMotion: "reduce",
