@@ -158,8 +158,8 @@ shell out to platform commands and never branch on `process.platform`.
   (`config/capture.ts`: `captureManifest`, `formatTimestamp`, `pageBasename`, `pageUrl`,
   `runDirName`, `MOTION_FREE_CSS`, `HIDE_DEV_OVERLAY_CSS`; `config/dev.ts#devSpawnSpec`) so vitest
   collects their tests (the `packages/*/src/**` glob) and `tsc -p packages/core` checks them. The
-  root script is **not** covered by `yarn typecheck` (only `eslint .`), so keep it thin — push logic
-  into the typechecked core module.
+  root script is typechecked via `tsconfig.scripts.json` (part of full-repo `yarn typecheck`, PR12) —
+  still keep it thin and push logic into core, where vitest also covers it.
 - **`playwright` is a root devDependency (core lib, `chromium.launch()`), not `@playwright/test`** —
   capture is a script, not a test suite. The Chromium **binary is a separate one-time install**:
   `yarn playwright install chromium` (not committed; document it for any fresh clone).
@@ -199,6 +199,28 @@ shell out to platform commands and never branch on `process.platform`.
   named throwaway capture. Heads-up inconsistency: `northwind/config/viewports.json` has only 2
   viewports (375/1280) while `_template` (and meridian/lee-carvalo) ship the default 4 — so northwind
   captures 6 images, the others 12.
+
+## Quality gate (husky pre-push, PR12)
+
+- **`git push` is hard-gated**: `.husky/pre-push` runs `yarn typecheck` → `yarn lint` → `yarn test`,
+  each with its own `|| exit 1`. Born from PR#10, where a `| tail` pipe masked a real tsc failure —
+  the gate makes a broken typecheck a deterministic blocker, not something to remember to read.
+  **`git push --no-verify` is forbidden** (also a global rule). No CI by design (FR-5.6): this local
+  hook IS the enforcement layer.
+- **Husky activates via `postinstall`, NOT `prepare`** — Yarn Berry never runs `prepare`
+  (yarnpkg/berry#2967). Fresh clones get the hook on first `yarn install`; repo is private so no
+  pinst dance. Hook files are v9 format: plain sh, no shebang/`husky.sh` sourcing (v8-isms, removed
+  in v10).
+- **`yarn typecheck` is full-repo** (`config/cli/typecheck-all.ts`): filesystem-discovers every tsc
+  project — `packages/*`, `sites/*` **including `_template`** (deliberate exception to the
+  skip-`_template` rule: the scaffold source must itself typecheck), plus root
+  `tsconfig.scripts.json` (covers `scripts/`) — and runs them sequentially, reporting **all**
+  failures, not just the first. New sites are covered with zero registration; a drift test recomputes
+  coverage from `package.json#workspaces`. `typecheck:core` remains the fast core-only inner loop.
+- **Site typecheck needs Next's generated files** (`next-env.d.ts` + `.next/types/routes.d.ts` —
+  gitignored). On a fresh clone/scaffold they don't exist; `sitePreflight` reports the remedy
+  (`yarn workspace <name> exec next typegen`) instead of tsc's misleading TS2307. A stale
+  `.next/types/validator.ts` (e.g. a deleted page) has the same remedy.
 
 ## Testing
 
