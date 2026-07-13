@@ -27,10 +27,9 @@
      --brand-tertiary-h:  40;  --brand-tertiary-s:  90; --brand-tertiary-l:  50; */
 
   /* ── 2. Optional role remaps (FR-2.8) — point any shadcn role at any brand token ──
-     core maps --primary and --ring to --brand-primary by default. Opt other roles/surfaces in
-     here; sections read these role vars, so this is where "what uses which colour" is decided.
-     --secondary: var(--brand-secondary);
-     --accent:    var(--brand-tertiary);
-     --background: var(--brand-surface);
-     --muted:     var(--brand-muted); */
+     core already brands by default: --primary/--ring use --brand-primary, and the surface roles
+     (--background/--secondary/--muted/--accent/--border) use the light brand tints — so a site is
+     branded from the seed alone. Override here only to go further, e.g. a saturated role:
+     --accent: var(--brand-tertiary);   // needs legible text? use a component with .wcag-contrast
+     --secondary: var(--brand-secondary); */
 }

@@ -121,8 +121,31 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   full-page JPEGs (heights exceed the viewport, brand-styled), port freed after.
 
 ### Phase 6 — Skill
-- ☐ **PR10** `.claude/skills/microsite/SKILL.md` (intake → author → assemble → HITL → capture) +
-  `config/generation/*` (voice + guardrails) + `brief.md` convention; agent dry-run.
+- ◐ **PR10** `microsite` skill + system-level generation config + example sites. Landed:
+  **`.claude/skills/microsite/SKILL.md`** (FR-2.4) — the agent-facing work-script tying PR1–PR9's
+  discrete tools into one **intake → author → assemble → HITL → capture** pipeline; it points at the
+  scripts/schemas/Storybook rather than duplicating them, encodes the load-bearing invariants
+  (assembly-only, root-relative image paths, CSS-only variants, no sticky/fixed elements, no runtime
+  `fs` in pages, OS-agnostic entry points), and enforces the **one intentional HITL pause** before
+  capture (FR-2.1). **`config/generation/{generation.json,README.md}`** — the system-level voice +
+  guardrails (FR-3.4/3.5), one house style across every site, agent-read at assemble time (no runtime
+  code path; validates against the existing `generationSchema`), distinct from the studio-specific
+  loader fixture in core. The **`brief.md` convention** (already shipped by `_template`) is formalized
+  as the intake contract + single source of copy grounding. Agent **dry-run**: the skill was run
+  end-to-end to assemble **`sites/meridian`** ("Meridian Coffee Roasters", amber `#b45309`
+  **analogous** — Northwind is complementary), exercising variants Northwind doesn't (`Hero
+  align="center"`, `FeatureGrid columns="four"` at `density="spacious"`, `ContactBlock
+  form="inline-start"`). A 2nd operator-brief run then assembled **`sites/lee-carvalo`** ("Lee
+  Carvalo's Putting Challenge", green `#090` **triadic**) from a deliberately thin one-line brief —
+  exercising the low-context path (agent fills sensible defaults, flags every assumption at HITL) and
+  completing harmony coverage (complementary/analogous/triadic across the three examples).
+  `example-site.test.ts` now drift-guards **all three** committed sites via `describe.each`. Verified
+  **full pipeline incl. capture**: `sites:validate` clean, `next build`
+  prerenders all three routes + TypeScript passes, and `capture:run` shot **12 full-page JPEGs**
+  (3 pages × 4 viewports) for **both** meridian and lee-carvalo, styled with each brand — the
+  centered/side-flipped Heroes, three/four-column FeatureGrids, and both ContactBlock form sides all
+  render. Captures land in the gitignored `sites/<slug>/captures/` (the per-run deliverable, not
+  committed).
 
 ### Phase 7 — Hardening
 - ☐ **PR11** Coverage gaps, docs, ROADMAP finalize.

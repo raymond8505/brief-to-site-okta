@@ -47,13 +47,45 @@ shell out to platform commands and never branch on `process.platform`.
 - **Legible foreground is a CSS + component concern, not JS.** `.wcag-contrast` (contrast-math.css)
   needs only `--r/--g/--b`; a colored-background component sets those from the brand RGB
   (`--brand-r/g/b`, defaulted in colors.css and emitted per-site by `theme:build` via `hexToRgb` —
-  no luminance math). `--primary-foreground` is left at core's near-white default; wiring a specific
-  component (e.g. the primary Button) to `.wcag-contrast` is a component-level task.
+  no luminance math). `--primary-foreground` is left at core's near-white default; a saturated
+  brand fill that carries text uses `.wcag-contrast` instead — see the **`Badge` `brand` variant**
+  (`wcag-contrast [--r:var(--brand-r)] …`), which the section eyebrows use.
+- **Branded by default, contrast-safe (PR10 fix).** `globals.css` `:root` no longer maps *only*
+  `--primary`/`--ring` to brand. The surface roles (`--background`/`--secondary`/`--muted`/`--accent`/
+  `--border`/`--input`) point at the **light** brand tints (`--brand-surface` l96 / `--brand-muted`
+  l90), so the whole page picks up the brand hue while the dark base-nova foregrounds stay legible
+  with **no contrast math** (light tint + dark text is always ≥4.5:1). `--card`/`--popover` stay white
+  so cards lift off the tint. Saturated hues that carry text go through `.wcag-contrast` (the Badge
+  variant); a saturated hue with **no** text (the `FeatureGrid` card top-accent = `--brand-secondary`)
+  can use the hsl token directly. A site's `theme.css` can still remap any role — the derived-var
+  cascade resolves each override against that site's seed. The earlier "minimal by design" stance is
+  superseded. (Before PR10, brand colour only reached the primary Button — everything else was neutral.)
+- **`.wcag-contrast` legitimately picks DARK text on mid-tone brands — don't "fix" it to white.** A
+  mid green like `#090` (rgb 0 153 0) only clears ~3.8:1 against white, so the utility correctly
+  chooses **dark** text on a green `brand` Badge (amber/violet, being darker, get white). Naive
+  white-on-brand would fail WCAG; the util adapting per-hue is the whole point (FR-2.9). The contrast
+  split to respect when branding an element: *light tint + dark text* needs no contrast math;
+  *saturated fill carrying text* must use `.wcag-contrast` with `--r/--g/--b` (**primary only** —
+  derived secondary/tertiary are HSL-only, no RGB); *saturated with no text* (a decorative rule, the
+  FeatureGrid card top-accent) can use the `--brand-secondary`/`-tertiary` hsl token directly.
 - **Default brand seed = Tailwind blue-600** (`#2563eb` = hsl(221 83% 53%) = rgb(37 99 235)) in both
   `colors.css` and `sites/_template` — one canonical default.
 
 ## Sites & tooling (`sites:new` + `theme:build`, PR7)
 
+- **Site dependency split (PR#11 review).** `next`/`react`/`react-dom` live in **each site** +
+  `_template` (the site's own `next` bin must be on its workspace PATH, and FR-5.3 wants sites
+  self-buildable); devDeps (`@types/*`, `typescript`) live **only at root**. Do **not** hoist `next`
+  too — Yarn only exposes a dep's bin to a workspace that declares it, so it breaks
+  `yarn workspace @brief-to-site/site-<slug> build`. There is already no per-site `node_modules`
+  (node-modules linker hoists to one root), so this split costs nothing at install time.
+- **Config shapes are retrieved, never hand-documented.** `yarn config:schema
+  [meta|brand|pages|viewports|generation]` prints them as JSON Schema from the Zod schemas via
+  `z.toJSONSchema` (registry `packages/core/src/config/schemas.ts#configSchemas`; thin CLI
+  `config/cli/schema.ts`). SKILL.md points at it instead of a table (drift risk). Adding a config
+  concern → add it to `configSchemas` (the registry test guards the set). The CLI is typechecked by
+  `tsc -p packages/core` but not run by vitest (it `process.exit`s), so run `yarn typecheck`
+  separately and read its real exit.
 - **`theme:build <slug>`** reads `config/brand.json` (hex) and writes `sites/<slug>/theme.css`:
   `--brand-h/s/l` (via `palette.hexToHsl`) **and `--brand-r/g/b`** (via `palette.hexToRgb`, the input
   `.wcag-contrast` reads), the harmony offset vars, and explicit `--brand-secondary/tertiary-*`
@@ -142,6 +174,31 @@ shell out to platform commands and never branch on `process.platform`.
   showed up mid-page in the first real run.
 - Output is **JPEG** (FR-4.5, `type: "jpeg", quality: 90`), full-page (`fullPage: true`), into the
   **gitignored** `sites/<slug>/captures/<run>-<ts>/<page>_<width>.jpg`. `run` defaults to the slug.
+
+## Skill + generation config (`microsite`, PR10)
+
+- **`.claude/skills/microsite/SKILL.md` is the pipeline entry point** — the agent-facing work-script
+  for intake → author → assemble → HITL → capture. It **points at** the `yarn` scripts, Zod schemas,
+  and Storybook rather than duplicating them; keep it that way (Code Over Instructions). The one hard
+  rule it enforces that isn't code-checkable: **stop at the HITL checkpoint** and hand back to the
+  operator before `capture:run` (FR-2.1) — never auto-capture.
+- **`config/generation/generation.json` is SYSTEM-LEVEL** (repo root, FR-3.4), not per-site: one
+  house voice + guardrails for **every** site. It is **agent-read only** — there is **no runtime code
+  path** that consumes it (copy is written by the agent at assemble time, not templated at build), so
+  don't wire it into a site build or a CLI. It validates against `generationSchema`
+  (`packages/core/src/config/generation.schema.ts`); the studio-specific
+  `packages/core/src/config/examples/generation.json` is a separate **loader fixture**, not this
+  config — don't conflate them.
+- **Three committed example sites, all drift-guarded.** `sites/northwind` (complementary),
+  `sites/meridian` (analogous), and `sites/lee-carvalo` (triadic) prove the pipeline across all three
+  harmonies + a spread of variants. `example-site.test.ts` runs its structural checks over an
+  `EXAMPLE_SITES` table via `describe.each` — **adding another example site means adding a row
+  there**, or it silently goes unguarded (the test won't fail, it just won't cover it).
+- **Build/verify one site with `yarn workspace @brief-to-site/site-<slug> build`** (there is no
+  `sites:build` script); `yarn sites:dev <slug>` for dev, `yarn capture:run <slug> --run <name>` for a
+  named throwaway capture. Heads-up inconsistency: `northwind/config/viewports.json` has only 2
+  viewports (375/1280) while `_template` (and meridian/lee-carvalo) ship the default 4 — so northwind
+  captures 6 images, the others 12.
 
 ## Testing
 

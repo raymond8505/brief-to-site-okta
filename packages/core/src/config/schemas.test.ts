@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
+import { z } from "zod";
 
 import { metaSchema } from "./meta.schema";
 import { brandSchema } from "./brand.schema";
 import { pagesSchema } from "./pages.schema";
 import { viewportsSchema, DEFAULT_VIEWPORTS } from "./viewports.schema";
 import { generationSchema } from "./generation.schema";
+import { configSchemas } from "./schemas";
 import { DEFAULT_HARMONY } from "../styles/palette";
 
 describe("metaSchema", () => {
@@ -104,5 +106,35 @@ describe("generationSchema", () => {
   it("requires a voice and at least one guardrail", () => {
     expect(generationSchema.safeParse({ voice: "warm", guardrails: [] }).success).toBe(false);
     expect(generationSchema.safeParse({ guardrails: ["no prices"] }).success).toBe(false);
+  });
+});
+
+// The registry behind `config:schema`, which prints these as JSON Schema on demand so the SKILL.md
+// never documents config shapes by hand (drift risk). Guard that it covers every concern and that
+// each serializes cleanly.
+describe("configSchemas registry", () => {
+  it("covers the five config concerns", () => {
+    expect(Object.keys(configSchemas).sort()).toEqual([
+      "brand",
+      "generation",
+      "meta",
+      "pages",
+      "viewports",
+    ]);
+  });
+
+  it("every schema serializes to JSON Schema via z.toJSONSchema", () => {
+    for (const [name, schema] of Object.entries(configSchemas)) {
+      expect(z.toJSONSchema(schema), name).toBeTypeOf("object");
+    }
+  });
+
+  it("brand JSON Schema exposes the required primary hex field", () => {
+    const json = z.toJSONSchema(configSchemas.brand) as {
+      properties?: Record<string, unknown>;
+      required?: string[];
+    };
+    expect(json.properties).toHaveProperty("primary");
+    expect(json.required).toContain("primary");
   });
 });
