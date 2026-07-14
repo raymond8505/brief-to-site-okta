@@ -153,12 +153,15 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   pipe: a broken typecheck must be a **deterministic blocker to pushing**, not a check someone
   remembers to read. Landed: **husky pre-push hook** (`.husky/pre-push`: `typecheck` → `lint` →
   `test`, each gating with its own exit code; activation via `postinstall` — Yarn Berry never runs
-  `prepare`); **`yarn typecheck` went full-repo** — `config/typecheck.ts` + the `typecheck-all` CLI
-  filesystem-discover every tsc project (`packages/*`, `sites/*` **incl. `_template`**, new root
-  `tsconfig.scripts.json` covering `scripts/`), run sequentially via the OS-agnostic
-  `process.execPath` + resolved `typescript/bin/tsc` spawn (the `devSpawnSpec` pattern), and report
-  **all** failing projects; `sitePreflight` turns the fresh-clone missing-`next-env.d.ts` TS2307
-  into the actual remedy (`next typegen`). Bringing `scripts/` under tsc surfaced 8 latent
+  `prepare`); **`yarn typecheck` went full-repo via standard tooling** — a per-workspace `typecheck`
+  script (core: `tsc -p .`; each site **incl. `_template`**: `next typegen && tsc -p .`, so fresh
+  clones/scaffolds and stale `.next/types` **self-heal**) fanned out by
+  `yarn workspaces foreach -A -p` (exit codes verified to propagate on Yarn 4.17; `-p` = check all,
+  report every failure), plus root `tsconfig.scripts.json` covering `scripts/`. A ~275-line custom
+  runner was built first and **replaced in review with the foreach design** (survey existing tools
+  before writing a runner); the one real foreach gap — workspaces without the script are silently
+  skipped — is closed by the `workspace-scripts.test.ts` drift guard. Sites now declare
+  `typescript` (bin scoping). Bringing `scripts/` under tsc surfaced 8 latent
   `noUncheckedIndexedAccess` errors in `capture-run.ts` (fixed) — proof the gap was real.
   `typecheck:core` keeps the fast inner loop. No CI by design (FR-5.6): this hook is the
   enforcement layer.

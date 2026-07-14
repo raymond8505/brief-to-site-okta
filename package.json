@@ -13,7 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
-    "typecheck": "tsx packages/core/src/config/cli/typecheck-all.ts",
+    "typecheck": "tsc -p tsconfig.scripts.json && yarn workspaces foreach -A -p --exclude brief-to-site run typecheck",
     "typecheck:core": "tsc -p packages/core",
     "sites:new": "tsx packages/core/src/config/cli/new-site.ts",
     "sites:validate": "tsx packages/core/src/config/cli/validate.ts",

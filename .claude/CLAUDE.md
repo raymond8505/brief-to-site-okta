@@ -213,16 +213,23 @@ shell out to platform commands and never branch on `process.platform`.
   is unchanged** — verified: after `git config --unset core.hooksPath`, a plain `yarn install` does
   NOT restore it. Manual re-activation: `yarn husky`. Hook files are v9 format: plain sh, no
   shebang/`husky.sh` sourcing (v8-isms, removed in v10).
-- **`yarn typecheck` is full-repo** (`config/cli/typecheck-all.ts`): filesystem-discovers every tsc
-  project — `packages/*`, `sites/*` **including `_template`** (deliberate exception to the
-  skip-`_template` rule: the scaffold source must itself typecheck), plus root
-  `tsconfig.scripts.json` (covers `scripts/`) — and runs them sequentially, reporting **all**
-  failures, not just the first. New sites are covered with zero registration; a drift test recomputes
-  coverage from `package.json#workspaces`. `typecheck:core` remains the fast core-only inner loop.
-- **Site typecheck needs Next's generated files** (`next-env.d.ts` + `.next/types/routes.d.ts` —
-  gitignored). On a fresh clone/scaffold they don't exist; `sitePreflight` reports the remedy
-  (`yarn workspace <name> exec next typegen`) instead of tsc's misleading TS2307. A stale
-  `.next/types/validator.ts` (e.g. a deleted page) has the same remedy.
+- **`yarn typecheck` is full-repo via STANDARD tooling, not custom code**: root script =
+  `tsc -p tsconfig.scripts.json && yarn workspaces foreach -A -p --exclude brief-to-site run typecheck`,
+  with a `typecheck` script in **every** workspace — core (`tsc -p .`) and each site incl.
+  `_template` (`next typegen && tsc -p .`). A ~275-line custom runner (`config/typecheck.ts` +
+  `typecheck-all` CLI + `sitePreflight`) was built first and replaced in review — survey existing
+  tools before writing a runner. Key semantics (probed empirically on Yarn 4.17, July 2026):
+  foreach **exit codes propagate** (old berry#977-era bugs are fixed); **`-p` runs ALL workspaces**
+  and reports every failure (sequential mode stops at the first); `--exclude brief-to-site` prevents
+  the root script recursing into itself; workspaces **without the script are silently skipped** —
+  the `workspace-scripts.test.ts` drift guard asserts every workspace defines `typecheck`
+  (`_template` carrying it is what covers future scaffolded sites). `typecheck:core` remains the
+  fast core-only inner loop.
+- **`next typegen` (Next 15.5+) solves the generated-files problem** — sites' `typecheck` runs it
+  before tsc, so a fresh clone/scaffold (no `next-env.d.ts`/`.next/types`) and a stale
+  `validator.ts` **self-heal** instead of failing with a misleading TS2307. Consequence of the
+  bin-scoping rule: sites' scripts now invoke `tsc`, so every site declares `typescript` as a
+  devDependency (zero install cost — hoisted to one copy).
 
 ## Testing
 
