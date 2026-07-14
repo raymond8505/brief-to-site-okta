@@ -158,8 +158,8 @@ shell out to platform commands and never branch on `process.platform`.
   (`config/capture.ts`: `captureManifest`, `formatTimestamp`, `pageBasename`, `pageUrl`,
   `runDirName`, `MOTION_FREE_CSS`, `HIDE_DEV_OVERLAY_CSS`; `config/dev.ts#devSpawnSpec`) so vitest
   collects their tests (the `packages/*/src/**` glob) and `tsc -p packages/core` checks them. The
-  root script is **not** covered by `yarn typecheck` (only `eslint .`), so keep it thin — push logic
-  into the typechecked core module.
+  root script is typechecked via `tsconfig.scripts.json` (part of full-repo `yarn typecheck`, PR12) —
+  still keep it thin and push logic into core, where vitest also covers it.
 - **`playwright` is a root devDependency (core lib, `chromium.launch()`), not `@playwright/test`** —
   capture is a script, not a test suite. The Chromium **binary is a separate one-time install**:
   `yarn playwright install chromium` (not committed; document it for any fresh clone).
@@ -199,6 +199,34 @@ shell out to platform commands and never branch on `process.platform`.
   named throwaway capture. Heads-up inconsistency: `northwind/config/viewports.json` has only 2
   viewports (375/1280) while `_template` (and meridian/lee-carvalo) ship the default 4 — so northwind
   captures 6 images, the others 12.
+
+## Quality gate (husky pre-push, PR12)
+
+- **`git push --no-verify` is forbidden** (also a global rule). No CI by design (FR-5.6): this local
+  hook IS the enforcement layer.
+- **Husky activates via `postinstall`, NOT `prepare`** — Yarn Berry never runs `prepare`
+  (yarnpkg/berry#2967). Fresh clones get the hook on first `yarn install` (no install-state yet →
+  scripts run); repo is private so no pinst dance. But Berry **skips `postinstall` when the dep tree
+  is unchanged** — verified: after `git config --unset core.hooksPath`, a plain `yarn install` does
+  NOT restore it. Manual re-activation: `yarn husky`. Hook files are v9 format: plain sh, no
+  shebang/`husky.sh` sourcing (v8-isms, removed in v10).
+- **`yarn typecheck` is full-repo via STANDARD tooling, not custom code**: root script =
+  `tsc -p tsconfig.scripts.json && yarn workspaces foreach -A -p --exclude brief-to-site run typecheck`,
+  with a `typecheck` script in **every** workspace — core (`tsc -p .`) and each site incl.
+  `_template` (`next typegen && tsc -p .`). A ~275-line custom runner (`config/typecheck.ts` +
+  `typecheck-all` CLI + `sitePreflight`) was built first and replaced in review — survey existing
+  tools before writing a runner. Key semantics (probed empirically on Yarn 4.17, July 2026):
+  foreach **exit codes propagate** (old berry#977-era bugs are fixed); **`-p` runs ALL workspaces**
+  and reports every failure (sequential mode stops at the first); `--exclude brief-to-site` prevents
+  the root script recursing into itself; workspaces **without the script are silently skipped** —
+  the `workspace-scripts.test.ts` drift guard asserts every workspace defines `typecheck`
+  (`_template` carrying it is what covers future scaffolded sites). `typecheck:core` remains the
+  fast core-only inner loop.
+- **`next typegen` (Next 15.5+) solves the generated-files problem** — sites' `typecheck` runs it
+  before tsc, so a fresh clone/scaffold (no `next-env.d.ts`/`.next/types`) and a stale
+  `validator.ts` **self-heal** instead of failing with a misleading TS2307. Consequence of the
+  bin-scoping rule: sites' scripts now invoke `tsc`, so every site declares `typescript` as a
+  devDependency (zero install cost — hoisted to one copy).
 
 ## Testing
 

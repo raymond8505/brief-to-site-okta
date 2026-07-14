@@ -15,6 +15,7 @@
     "./styles/contrast-math.css": "./src/styles/contrast-math.css"
   },
   "scripts": {
+    "typecheck": "tsc -p .",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

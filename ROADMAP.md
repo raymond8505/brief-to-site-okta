@@ -149,6 +149,22 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
 
 ### Phase 7 — Hardening
 - ☐ **PR11** Coverage gaps, docs, ROADMAP finalize.
+- ◐ **PR12** Pre-push quality gate. After PR#10 nearly shipped a tsc failure masked by a `| tail`
+  pipe: a broken typecheck must be a **deterministic blocker to pushing**, not a check someone
+  remembers to read. Landed: **husky pre-push hook** (`.husky/pre-push`: `typecheck` → `lint` →
+  `test`, each gating with its own exit code; activation via `postinstall` — Yarn Berry never runs
+  `prepare`); **`yarn typecheck` went full-repo via standard tooling** — a per-workspace `typecheck`
+  script (core: `tsc -p .`; each site **incl. `_template`**: `next typegen && tsc -p .`, so fresh
+  clones/scaffolds and stale `.next/types` **self-heal**) fanned out by
+  `yarn workspaces foreach -A -p` (exit codes verified to propagate on Yarn 4.17; `-p` = check all,
+  report every failure), plus root `tsconfig.scripts.json` covering `scripts/`. A ~275-line custom
+  runner was built first and **replaced in review with the foreach design** (survey existing tools
+  before writing a runner); the one real foreach gap — workspaces without the script are silently
+  skipped — is closed by the `workspace-scripts.test.ts` drift guard. Sites now declare
+  `typescript` (bin scoping). Bringing `scripts/` under tsc surfaced 8 latent
+  `noUncheckedIndexedAccess` errors in `capture-run.ts` (fixed) — proof the gap was real.
+  `typecheck:core` keeps the fast inner loop. No CI by design (FR-5.6): this hook is the
+  enforcement layer.
 
 > The "Core 13" section inventory is deferred (provided later by the operator). Each section is an
 > additive PR (a section folder + stories) with no architecture change.
@@ -157,7 +173,8 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
 
 | script | phase | purpose |
 |---|---|---|
-| `test` · `test:watch` · `lint` · `typecheck` | PR1 | quality baseline |
+| `test` · `test:watch` · `lint` · `typecheck` | PR1 | quality baseline (`typecheck` = full-repo since PR12; `typecheck:core` = fast core-only loop) |
+| `postinstall` | PR12 | husky activation (pre-push gate: typecheck + lint + test) |
 | `storybook` | PR2 | section/primitive catalog (agent's selection vocabulary) |
 | `sites:new` | PR7 | scaffold a standalone site app |
 | `sites:validate` | PR6 | Zod-validate a site's `config/*.json` |
