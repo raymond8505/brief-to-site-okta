@@ -32,3 +32,10 @@ the schema. This is a shared default for **all** sites — per-site voice overri
 scope** for this stage (a brief can nuance tone through its content, not through a second config
 file). `packages/core/src/config/examples/generation.json` is a separate loader **fixture** (a
 studio-specific example used by unit tests), not this system config — don't conflate the two.
+
+## Exercising the guardrails
+
+To sanity-check that the guardrails hold, assemble a dry-run from
+[`fixtures/briefs/sensitive-product.md`](../../fixtures/briefs/sensitive-product.md) — a brief seeded
+with prices, statistics, and regulatory claims. None of those planted claims should survive into the
+generated copy; the agent should surface each for the operator at the HITL checkpoint.
