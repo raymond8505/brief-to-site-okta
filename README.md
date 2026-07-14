@@ -25,8 +25,16 @@ Each step is a discrete `yarn` script (`sites:new`, `sites:validate`, `theme:bui
   every page's copy derives from it (`What / Audience / Key messages / Pages / Notes`).
 - **`config/generation/`** holds the **system-level** voice + guardrails (one house style across
   all sites); the agent applies it to every line of generated copy.
-- **`sites/northwind`** (design studio, complementary) and **`sites/meridian`** (coffee roaster,
-  analogous) are the committed worked examples.
+- The three committed **worked examples** cover all three colour harmonies:
+
+  | site | product | brand | harmony |
+  | --------------------- | ------------- | --------- | ------------- |
+  | `sites/northwind`     | design studio | `#7c3aed` | complementary |
+  | `sites/meridian`      | coffee roaster| `#b45309` | analogous     |
+  | `sites/lee-carvalo`   | putting game  | `#090`    | triadic       |
+
+- **`fixtures/briefs/`** holds the named FR-5.5 test briefs (`low-context-brief.md`,
+  `sensitive-product.md`) for exercising the thin-brief and guardrail paths in a dry-run.
 
 See [ROADMAP.md](./ROADMAP.md) for the build phases and status.
 
