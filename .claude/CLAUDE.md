@@ -245,6 +245,11 @@ shell out to platform commands and never branch on `process.platform`.
   trade. **Mitigation = re-run** (FR-4.8: retry = re-run). If the **pre-push hook** (PR12) fails on
   this signature, just `git push` again; do not treat a single occurrence as a real test failure —
   confirm by re-running before investigating.
+- **`fixtures/briefs/` (FR-5.5) is deliberately NOT consumed by any test.** The two named briefs
+  (`low-context-brief.md`, `sensitive-product.md`) are operator/agent **dry-run inputs** — generation
+  is agent-driven and copy varies per FR-3.5/6, so there is no unit test asserting on generated copy.
+  Don't wire them into vitest expecting assertions; point the `microsite` skill at them for a manual
+  run. (The three committed `sites/*` briefs are full *post-assembly* examples, a different thing.)
 - No headless CI runner (FR-5.6 = no CI). CSS `pow()`/`calc()` can't be evaluated in jsdom, so the
   **`Colors/*` `play()` stories** confirm rendered values in a real browser (Storybook interactions
   panel); vitest covers only non-DOM math. Adding `@storybook/addon-vitest` to run play tests in CI
