@@ -202,10 +202,7 @@ shell out to platform commands and never branch on `process.platform`.
 
 ## Quality gate (husky pre-push, PR12)
 
-- **`git push` is hard-gated**: `.husky/pre-push` runs `yarn typecheck` → `yarn lint` → `yarn test`,
-  each with its own `|| exit 1`. Born from PR#10, where a `| tail` pipe masked a real tsc failure —
-  the gate makes a broken typecheck a deterministic blocker, not something to remember to read.
-  **`git push --no-verify` is forbidden** (also a global rule). No CI by design (FR-5.6): this local
+- **`git push --no-verify` is forbidden** (also a global rule). No CI by design (FR-5.6): this local
   hook IS the enforcement layer.
 - **Husky activates via `postinstall`, NOT `prepare`** — Yarn Berry never runs `prepare`
   (yarnpkg/berry#2967). Fresh clones get the hook on first `yarn install` (no install-state yet →
