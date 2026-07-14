@@ -148,8 +148,17 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   committed).
 
 ### Phase 7 — Hardening
-- ☐ **PR11** Coverage gaps, docs, ROADMAP finalize.
-- ◐ **PR12** Pre-push quality gate. After PR#10 nearly shipped a tsc failure masked by a `| tail`
+- ◐ **PR11** Coverage gaps, docs, ROADMAP finalize. Landed: **six base-nova primitive smoke tests**
+  (badge/card/input/label/separator/textarea — only `button` had one; suite **150 → 170**); the two
+  **named FR-5.5 fixture briefs** (`fixtures/briefs/{low-context-brief,sensitive-product}.md` +
+  README) that exercise the thin-brief and guardrail paths in a dry-run; **docs finalize** — README
+  now tables all three worked examples + their harmonies and points at `fixtures/briefs/`, and
+  `config:schema` is added to the namespaced-scripts table below. A rare **vitest cold-start init
+  flake** (all files fail at import with `reading 'config'`, observed ~1/17, unreproducible —
+  already on vitest's default `forks` pool) was investigated and **documented rather than
+  guess-patched** (CLAUDE.md Testing note): the honest outcome given it can't be reproduced to
+  verify a fix; mitigation is re-run (FR-4.8). Closes the planned build.
+- ☑ **PR12** Pre-push quality gate. After PR#10 nearly shipped a tsc failure masked by a `| tail`
   pipe: a broken typecheck must be a **deterministic blocker to pushing**, not a check someone
   remembers to read. Landed: **husky pre-push hook** (`.husky/pre-push`: `typecheck` → `lint` →
   `test`, each gating with its own exit code; activation via `postinstall` — Yarn Berry never runs
@@ -166,7 +175,9 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   `typecheck:core` keeps the fast inner loop. No CI by design (FR-5.6): this hook is the
   enforcement layer.
 
-> The "Core 13" section inventory is deferred (provided later by the operator). Each section is an
+> **Planned build complete (PR1–PR12).** The intake → author → assemble → HITL → capture pipeline
+> ships end-to-end with the quality gate in place. The only remaining, operator-gated follow-on is
+> the deferred **"Core 13"** section inventory (provided later by the operator). Each section is an
 > additive PR (a section folder + stories) with no architecture change.
 
 ## Namespaced scripts (target API; each lands in its phase)
@@ -178,6 +189,7 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
 | `storybook` | PR2 | section/primitive catalog (agent's selection vocabulary) |
 | `sites:new` | PR7 | scaffold a standalone site app |
 | `sites:validate` | PR6 | Zod-validate a site's `config/*.json` |
+| `config:schema` | PR6 | print a config concern's JSON Schema (`[meta\|brand\|pages\|viewports\|generation]`) |
 | `theme:build` | PR7 | `brand.json` → `sites/<slug>/theme.css` |
 | `placeholders:copy` | PR8 | write section placeholder SVGs into `sites/<slug>/public/images/placeholders/` |
 | `sites:dev` | PR8 | run a site's dev server |
