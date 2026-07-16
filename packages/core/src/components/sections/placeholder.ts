@@ -1,11 +1,11 @@
 /**
- * Section-owned placeholder image (FR-3.7). Every section takes an `imageSrc` path prop; when the
+ * Section-owned placeholder image. Every section takes an `imageSrc` path prop; when the
  * operator hasn't wired one yet, the section falls back to this so Storybook and dev renders still
  * show a correctly-sized image box. It returns an inline `data:image/svg+xml` URI — a solid neutral
  * bg with a centred label — so it flows through the very same `<img … object-cover>` element a real
  * asset would, with zero bundler/asset-pipeline config (identical in Storybook's vite build, a
  * Next.js site, and jsdom tests). The same SVG markup is also written as real files into a site's
- * `public/images/placeholders/` by `placeholders:copy` (PR8) for the operator to overwrite; both
+ * `public/images/placeholders/` by `placeholders:copy` for the operator to overwrite; both
  * paths share `placeholderSvg` so the inline fallback and the file on disk can never diverge.
  *
  * The SVG can't read the page's brand CSS vars (an image in `<img src>` is an isolated document), so
@@ -66,7 +66,7 @@ export const PLACEHOLDER_SPECS = {
   hero: { width: 1600, height: 900, label: "Hero image" },
   /** FeatureGrid card art (4:3). */
   feature: { width: 800, height: 600, label: "Feature image" },
-  /** MicrositeShell header logo (FR-3.8). */
+  /** MicrositeShell header logo. */
   logo: { width: 160, height: 40, label: "Logo" },
 } as const satisfies Record<string, Required<PlaceholderOptions>>;
 

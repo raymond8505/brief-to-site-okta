@@ -32,7 +32,7 @@ describe("SiteNav", () => {
     expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("aria-current", "page");
   });
 
-  it("is not sticky or fixed (FR-3.6)", () => {
+  it("is not sticky or fixed", () => {
     const { container } = render(<SiteNav pages={pages} />);
     const nav = container.querySelector("[data-slot=site-nav]")!;
     expect(nav.className).not.toMatch(/\b(sticky|fixed)\b/);

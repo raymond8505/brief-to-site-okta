@@ -1,5 +1,5 @@
 /* ============================================================================================
-   Brand colour derivation (FR-2.7 / FR-2.8)
+   Brand colour derivation
 
    Deterministic HSL palette built from a single seed (the brand primary). The operator supplies
    ≥1 colour; missing secondary/tertiary are a fixed HSL transform of the primary — no randomness,
@@ -62,7 +62,7 @@
     var(--brand-tertiary-h) calc(var(--brand-tertiary-s) * 1%) calc(var(--brand-tertiary-l) * 1%)
   );
 
-  /* ── Brand-tinted neutrals (FR-2.7 "may apply to backgrounds") ──
+  /* ── Brand-tinted neutrals ("may apply to backgrounds") ──
      Available for the operator to opt into for surfaces to avoid muddy grey pairings; the default
      role mapping keeps the base-nova neutrals. Lightness values mirror NEUTRAL_TINT in palette.ts. */
   --brand-surface: hsl(var(--brand-h) calc(var(--brand-s) * 1%) 96%);

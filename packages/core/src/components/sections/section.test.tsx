@@ -15,7 +15,7 @@ describe("Section", () => {
     expect(screen.getByText("Body")).toBeInTheDocument();
   });
 
-  it("places children inside the centred max-w-7xl container (FR-3.10)", () => {
+  it("places children inside the centred max-w-7xl container", () => {
     render(
       <Section>
         <p>Body</p>

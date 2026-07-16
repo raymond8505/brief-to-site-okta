@@ -12,7 +12,7 @@ import { Section, type SectionProps } from "@core/components/sections/section";
  * ContactBlock — the section contract proven across a **presentational form**. A two-column split of
  * copy (eyebrow, heading, subcopy) beside a contact form (Name / Email / Message + submit), stacking
  * on small screens. It composes `Section` for the shell/container/density and adds one **CSS-only**
- * layout CVA (FR-3.11): the `form` axis chooses which side the form sits on via `flex-direction`
+ * layout CVA: the `form` axis chooses which side the form sits on via `flex-direction`
  * only — the DOM order is fixed **copy → form** and never changes (the direct analog of Hero's
  * `media` axis; see `ContactBlock → FormStart`).
  *
@@ -69,7 +69,7 @@ export function ContactBlock({
   return (
     <Section density={density} id={id} className={className}>
       <div data-slot="contact-block" className={cn(contactBlockVariants({ form }))}>
-        {/* Copy column — always first in the DOM (FR-3.11: source order never changes). */}
+        {/* Copy column — always first in the DOM (source order never changes). */}
         <div data-slot="contact-copy" className="flex flex-1 flex-col gap-6">
           {eyebrow ? (
             <Badge variant="brand" className="w-fit">

@@ -10,11 +10,11 @@ import { PLACEHOLDER_SPECS, placeholderDataUri } from "@core/components/sections
  * Hero — the first section and the worked example of the section contract (see `section.tsx`). A
  * two-column split of copy (eyebrow, headline, subcopy, CTAs) beside a media image, stacking on
  * small screens. It composes `Section` for the shell/container/density and adds its own **CSS-only**
- * layout CVA (FR-3.11): every variant maps a semantic value to a class string and changes only CSS —
+ * layout CVA: every variant maps a semantic value to a class string and changes only CSS —
  * text alignment, and which side the image sits — never DOM/source order.
  *
  * The DOM order is fixed **copy → media**; the `media: inline-start` variant moves the image to the
- * visual left with `flex-row-reverse` (a CSS reorder, not a source reorder). This is the FR-3.11
+ * visual left with `flex-row-reverse` (a CSS reorder, not a source reorder). This is the layout
  * exemplar: visual order decouples from DOM order via CSS only. The `MediaStart` story's play() reads
  * the computed `flex-direction` to prove the reorder is real.
  */
@@ -47,7 +47,7 @@ export const heroVariants = cva(
   heroVariantsConfig,
 );
 
-/** A single call-to-action rendered by the Hero. `href` is presentational (real nav lands in PR6). */
+/** A single call-to-action rendered by the Hero. `href` is presentational. */
 export interface HeroCta {
   label: string;
   href?: string;
@@ -64,7 +64,7 @@ export interface HeroProps
   subcopy?: string;
   /** CTA buttons/links. Passed as a slot so the page decides button-vs-link markup. */
   actions?: React.ReactNode;
-  /** Image path. Omit to fall back to the section-owned placeholder (FR-3.7). */
+  /** Image path. Omit to fall back to the section-owned placeholder. */
   imageSrc?: string;
   /** Alt text for the media image. Required so the box is always described. */
   imageAlt: string;
@@ -86,7 +86,7 @@ export function Hero({
   return (
     <Section density={density} id={id} className={className}>
       <div data-slot="hero" className={cn(heroVariants({ align, media }))}>
-        {/* Copy column — always first in the DOM (FR-3.11: source order never changes). */}
+        {/* Copy column — always first in the DOM (source order never changes). */}
         <div data-slot="hero-copy" className="flex flex-1 flex-col gap-6">
           {eyebrow ? (
             <Badge variant="brand" className="w-fit">

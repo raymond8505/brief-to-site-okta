@@ -1,7 +1,7 @@
 # `config/generation/` — system-level generation config
 
 `generation.json` governs **how copy is written across every site** — it is **system-level**
-config (FR-3.4), deliberately separate from the four per-site concerns in `sites/<slug>/config/`
+config, deliberately separate from the four per-site concerns in `sites/<slug>/config/`
 (`meta`, `brand`, `pages`, `viewports`). One voice and one guardrail set apply to the whole tool;
 the per-site *content* comes from each site's `brief.md`.
 
@@ -21,7 +21,7 @@ Validated by `generationSchema` in
 | field          | type       | required | purpose                                                        |
 | -------------- | ---------- | -------- | -------------------------------------------------------------- |
 | `voice`        | `string`   | yes      | The writing persona/tone copy should adopt.                    |
-| `guardrails`   | `string[]` | yes (≥1) | General dos/don'ts (FR-3.5 — e.g. no invented prices/claims).  |
+| `guardrails`   | `string[]` | yes (≥1) | General dos/don'ts (e.g. no invented prices/claims).           |
 | `forbidden`    | `string[]` | no       | Explicit words/phrases to avoid outright.                      |
 | `readingLevel` | `string`   | no       | Target reading level, e.g. `"plain / grade 8"`.                |
 

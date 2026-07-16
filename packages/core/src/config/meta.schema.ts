@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 /**
- * `meta.json` — site-level identity (FR-2.2: one JSON file per concern). Feeds document titles and
- * the `MicrositeShell` header. `logoSrc` is a replaceable placeholder image path (FR-3.8); when it's
+ * `meta.json` — site-level identity (one JSON file per concern). Feeds document titles and
+ * the `MicrositeShell` header. `logoSrc` is a replaceable placeholder image path; when it's
  * omitted the shell falls back to the section-owned `placeholderDataUri`.
  */
 export const metaSchema = z.object({
@@ -12,7 +12,7 @@ export const metaSchema = z.object({
   description: z.string().min(1),
   /** Optional supporting tagline. */
   tagline: z.string().min(1).optional(),
-  /** Optional logo image path (replaceable placeholder, FR-3.8). */
+  /** Optional logo image path (replaceable placeholder). */
   logoSrc: z.string().min(1).optional(),
 });
 

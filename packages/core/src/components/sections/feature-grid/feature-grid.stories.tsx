@@ -5,9 +5,9 @@ import { FeatureGrid, type FeatureGridItem } from "@core/components/sections/fea
 
 /**
  * FeatureGrid — the section contract on a **content** section. Its one layout axis (`columns`) is
- * CSS-only and deterministic (FR-3.11); every meaningful variant gets its own story so the Storybook
- * MCP addon can surface the vocabulary the agent selects from (FR-3.11a). It also exercises the
- * FR-3.7 image contract in a repeating context: each feature has an `imageSrc` path with a
+ * CSS-only and deterministic; every meaningful variant gets its own story so the Storybook
+ * MCP addon can surface the vocabulary the agent selects from. It also exercises the
+ * image contract in a repeating context: each feature has an `imageSrc` path with a
  * placeholder fallback.
  */
 
@@ -67,7 +67,7 @@ export const TwoUp: Story = {
 
 /**
  * `columns: three` — the default three-up grid. The play() confirms the CSS grid resolves to three
- * tracks in a real browser (the column count is CSS-only; DOM order never changes — FR-3.11).
+ * tracks in a real browser (the column count is CSS-only; DOM order never changes).
  */
 export const ThreeUp: Story = {
   args: { columns: "three", features: sampleFeatures.slice(0, 3) },
@@ -97,7 +97,7 @@ export const Spacious: Story = {
 };
 
 /**
- * No `imageSrc` on any feature — each card shows the section-owned placeholder (FR-3.7). This is the
+ * No `imageSrc` on any feature — each card shows the section-owned placeholder. This is the
  * default `args` state too; the story names it explicitly for the contract catalog.
  */
 export const WithPlaceholders: Story = {};

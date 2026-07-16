@@ -34,10 +34,9 @@ Intake (brief + colour[s])
   → Capture         yarn capture:run <slug>
 ```
 
-Every step is **non-interactive except the one HITL pause** before capture (FR-2.1). All scripts
-run from the **repo root** and take a `<slug>` (or an explicit site path). Read
-[`ROADMAP.md`](../../../ROADMAP.md) and the project [`CLAUDE.md`](../../CLAUDE.md) first — they hold
-the hard-won gotchas the scripts assume.
+Every step is **non-interactive except the one HITL pause** before capture. All scripts
+run from the **repo root** and take a `<slug>` (or an explicit site path). Read the project
+[`CLAUDE.md`](../../CLAUDE.md) first — it holds the hard-won gotchas the scripts assume.
 
 ## Prerequisites
 
@@ -55,7 +54,7 @@ the hard-won gotchas the scripts assume.
 Collect from the operator:
 
 - The **brief** — freeform text about the business, audience, and message. At least one **brand
-  hex colour** is required (FR-2.6); up to three accepted.
+  hex colour** is required; up to three accepted.
 - Which **pages** (default Home / About / Contact) and any per-page steer.
 
 Write the brief into `sites/<slug>/brief.md` using the **convention** (the scaffold ships this
@@ -113,11 +112,11 @@ yarn sites:validate <slug>    # collected per-field Zod errors; fix and re-run
 
 ## 4. Read the generation config
 
-Read [`config/generation/generation.json`](../../../config/generation/generation.json) (system-level,
-FR-3.4) and apply it to **all** copy you write:
+Read [`config/generation/generation.json`](../../../config/generation/generation.json) (system-level)
+and apply it to **all** copy you write:
 
 - `voice` — the persona/tone to adopt.
-- `guardrails` + `forbidden` — hard dos/don'ts (FR-3.5): **no invented prices, stats, dates, or
+- `guardrails` + `forbidden` — hard dos/don'ts: **no invented prices, stats, dates, or
   legal/medical/financial claims; no superlatives; placeholder-grade copy the operator finalizes.**
 - `readingLevel` — target reading level.
 
@@ -137,7 +136,7 @@ variants (with defaults), and a copy-me usage snippet — derived straight from 
 section analog of `config:schema`). This is the authoritative source for **what props/variants
 exist**; use it instead of reading section source or spinning up a subagent to map the catalog.
 
-Select sections **by brief** (FR-3.0a) and arrange them into `app/**/page.tsx`:
+Select sections **by brief** and arrange them into `app/**/page.tsx`:
 
 - Get props/variants from `yarn sections:catalog` (above). The **Storybook MCP**
   (`list-all-documentation` → `get-documentation`) and **shadcn MCP** (primitive docs) are for
@@ -190,7 +189,7 @@ e.g.:
 > the files under `public/images/placeholders/`) and tweak copy/layout, or say the word and I'll
 > capture." Flag any thin-brief gaps you filled with defaults here.
 
-This is the **one intentional pause** in the pipeline (FR-2.1). Only proceed on the operator's go.
+This is the **one intentional pause** in the pipeline. Only proceed on the operator's go.
 
 ## 9. Capture
 

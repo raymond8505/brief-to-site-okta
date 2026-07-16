@@ -5,8 +5,8 @@ import { ContactBlock } from "@core/components/sections/contact-block/contact-bl
 
 /**
  * ContactBlock — the section contract on a **presentational form**. The `form` axis is CSS-only and
- * deterministic (FR-3.11); each meaningful variant gets its own story so the Storybook MCP addon can
- * surface the vocabulary the agent selects from (FR-3.11a). The form is presentational — real
+ * deterministic; each meaningful variant gets its own story so the Storybook MCP addon can
+ * surface the vocabulary the agent selects from. The form is presentational — real
  * labelled fields and a submit button, no handler or client state.
  */
 
@@ -35,7 +35,7 @@ export const Default: Story = {};
 
 /**
  * `form: inline-start` — form on the visual left. The DOM order is still copy → form; only CSS
- * `flex-direction` changes (FR-3.11). The play() confirms the reorder is CSS-only in a real browser.
+ * `flex-direction` changes. The play() confirms the reorder is CSS-only in a real browser.
  */
 export const FormStart: Story = {
   args: { form: "inline-start" },

@@ -1,5 +1,5 @@
 /**
- * The spawn recipe behind `sites:dev` / `capture:run` (FR-2.x site lifecycle): run a site's Next.js
+ * The spawn recipe behind `sites:dev` / `capture:run` (site lifecycle): run a site's Next.js
  * dev server. Kept **OS-agnostic by design** — everything goes through Node APIs, never a shell
  * wrapper or a `process.platform` branch (see the OS-agnostic rule in the project CLAUDE.md). We run
  * `next` with the current Node binary (`process.execPath`) and the CLI entry located via Node module

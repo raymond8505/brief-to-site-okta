@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-/* PR3 colour system: brand tokens (HSL derivation) + pure-CSS WCAG contrast utility. Roles are
+/* Colour system: brand tokens (HSL derivation) + pure-CSS WCAG contrast utility. Roles are
    mapped onto the brand tokens in :root below. */
 @import "./colors.css";
 @import "./contrast-math.css";
@@ -16,7 +16,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* Tailwind theme tokens → CSS variables. The colour role variables below are the static
-   base-nova scaffold; PR3 layers the deterministic --primary-driven derivation + WCAG
+   base-nova scaffold; the colour system layers the deterministic --primary-driven derivation + WCAG
    contrast math on top. Font tokens resolve to the next/font/google vars set by the shared
    `font/siteFont` module (see src/font/siteFont.ts). */
 @theme inline {
@@ -70,7 +70,7 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  /* Brand role mapping (FR-2.8) — branded by default, contrast-safe.
+  /* Brand role mapping — branded by default, contrast-safe.
      Surfaces (background/secondary/muted/accent/border/input) point at the LIGHT brand tints
      (--brand-surface l96 / --brand-muted l90), so the dark base-nova foregrounds stay WCAG-legible
      with no contrast math — the whole page picks up the brand hue. --primary/--ring use the full

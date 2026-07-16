@@ -3,10 +3,10 @@ import { z } from "zod";
 import { HARMONIES, DEFAULT_HARMONY } from "../styles/palette";
 
 /**
- * `brand.json` — the operator supplies ≥1 colour (FR-2.6); up to three are accepted. Colours are
- * stored as **hex strings** (what a brief provides, human-editable) — `theme:build` (PR7) converts
+ * `brand.json` — the operator supplies ≥1 colour; up to three are accepted. Colours are
+ * stored as **hex strings** (what a brief provides, human-editable) — `theme:build` converts
  * them to the HSL channels the CSS colour system consumes. Missing secondary/tertiary are derived
- * deterministically from `primary` via the chosen `harmony` (FR-2.7); the enum is built from
+ * deterministically from `primary` via the chosen `harmony`; the enum is built from
  * `palette.ts`'s `HUE_OFFSETS` so it can't drift from the colour system.
  */
 const HEX = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;

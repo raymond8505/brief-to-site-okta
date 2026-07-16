@@ -26,7 +26,7 @@ describe("Hero", () => {
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 
-  it("falls back to the section-owned placeholder when no imageSrc is given (FR-3.7)", () => {
+  it("falls back to the section-owned placeholder when no imageSrc is given", () => {
     render(<Hero headline="H" imageAlt="Hero" />);
     expect(screen.getByRole("img", { name: "Hero" }).getAttribute("src")).toMatch(
       /^data:image\/svg\+xml,/,
@@ -40,7 +40,7 @@ describe("Hero", () => {
     expect(img).toHaveClass("object-cover", "object-center");
   });
 
-  it("keeps DOM order copy → media regardless of the media variant (FR-3.11: no source reorder)", () => {
+  it("keeps DOM order copy → media regardless of the media variant (no source reorder)", () => {
     for (const media of ["inline-end", "inline-start"] as const) {
       const { container, unmount } = render(<Hero headline="H" imageAlt="x" media={media} />);
       const row = container.querySelector("[data-slot=hero]")!;

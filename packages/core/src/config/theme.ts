@@ -2,7 +2,7 @@ import { hexToHsl, hexToRgb, type HSL, type RGB } from "../styles/palette";
 import type { BrandConfig } from "./brand.schema";
 
 /**
- * `buildThemeCss` — the core of `theme:build` (PR7). Turns a validated `brand.json` into the
+ * `buildThemeCss` — the core of `theme:build`. Turns a validated `brand.json` into the
  * per-site `theme.css` that overrides core's brand seeds (imported after globals.css). Pure and
  * fs-free so it is unit-testable and reusable by `sites:new` (which writes the initial theme).
  *

@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { Button, buttonVariants } from "@core/components/ui/button";
 
 // Exemplar render/variant test — establishes the jsdom + Testing Library pattern that the
-// section suite (PR4+) reuses. Vendored primitives aren't each unit-tested; this one proves
+// section suite reuses. Vendored primitives aren't each unit-tested; this one proves
 // the harness (alias resolution, JSX transform, jest-dom matchers) works end to end.
 describe("Button", () => {
   it("renders its children as a button", () => {

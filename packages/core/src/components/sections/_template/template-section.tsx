@@ -14,11 +14,11 @@ import { placeholderDataUri } from "@core/components/sections/placeholder";
  * │                                                                                                 │
  * │ The contract, in three rules:                                                                   │
  * │   1. Render through `Section` — you inherit the centred `max-w-7xl` container + `density`.      │
- * │   2. Layout variants are CVA + **CSS-only** (FR-3.11): a semantic name → a class string, only   │
+ * │   2. Layout variants are CVA + **CSS-only**: a semantic name → a class string, only             │
  * │      alignment / spacing / child-order via `order`/`flex-direction`. Never change DOM order or  │
- * │      child structure. Give each meaningful variant its own story (FR-3.11a) for agent           │
+ * │      child structure. Give each meaningful variant its own story for agent                      │
  * │      selection via the Storybook MCP addon.                                                     │
- * │   3. Image props are paths; fall back to `placeholderDataUri` and use `object-cover` (FR-3.7).  │
+ * │   3. Image props are paths; fall back to `placeholderDataUri` and use `object-cover`.           │
  * └────────────────────────────────────────────────────────────────────────────────────────────────┘
  */
 

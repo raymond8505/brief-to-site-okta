@@ -1,14 +1,14 @@
 /**
  * Deterministic colour math for the CSS colour system.
  *
- * The heavy lifting is the **HSL palette derivation** (FR-2.7): missing brand colours are a
+ * The heavy lifting is the **HSL palette derivation**: missing brand colours are a
  * deterministic HSL transform of the primary (no randomness, no LLM). The constants here
  * (`HUE_OFFSETS`, `NEUTRAL_TINT`) are the same numbers `styles/colors.css` uses in its `calc()`
  * derivation, so the colour stories compute *expected* values from here and assert the rendered
- * CSS matches — any drift surfaces as a failing `play()` assertion. `theme:build` (PR7) reuses
+ * CSS matches — any drift surfaces as a failing `play()` assertion. `theme:build` reuses
  * these transforms to precompute concrete palette values.
  *
- * Contrast (FR-2.9) is NOT reproduced here — `styles/contrast-math.css` owns choosing the text
+ * Contrast is NOT reproduced here — `styles/contrast-math.css` owns choosing the text
  * colour at runtime. We keep only the WCAG *measurement* primitives (`relativeLuminance`,
  * `contrastRatio`) so the Colors/Contrast story can independently verify the rendered text clears
  * 4.5:1.
@@ -32,7 +32,7 @@ export interface RGB {
   b: number;
 }
 
-/* ─────────────────────────── HSL derivation (FR-2.7) ─────────────────────────── */
+/* ─────────────────────────── HSL derivation ─────────────────────────── */
 
 /**
  * Named colour-harmony hue offsets (degrees) used to derive the secondary/tertiary brand colours
@@ -65,7 +65,7 @@ export const HUE_OFFSET = HUE_OFFSETS[DEFAULT_HARMONY];
 
 /**
  * Lightness deltas (percentage points) for the derived brand-tinted neutral tokens. Available for
- * the operator to opt into for backgrounds (FR-2.7 "may apply to backgrounds"); the default role
+ * the operator to opt into for backgrounds ("may apply to backgrounds"); the default role
  * mapping leaves the OKLCH neutrals in place. Mirrored in colors.css.
  */
 export const NEUTRAL_TINT = {
@@ -85,12 +85,12 @@ export function rotateHue(hsl: HSL, deg: number): HSL {
   return { ...hsl, h: normalizeHue(hsl.h + deg) };
 }
 
-/** Deterministic secondary derived from the primary via the chosen harmony (FR-2.7). */
+/** Deterministic secondary derived from the primary via the chosen harmony. */
 export function deriveSecondary(primary: HSL, harmony: ColorHarmony = DEFAULT_HARMONY): HSL {
   return rotateHue(primary, HUE_OFFSETS[harmony].secondary);
 }
 
-/** Deterministic tertiary derived from the primary via the chosen harmony (FR-2.7). */
+/** Deterministic tertiary derived from the primary via the chosen harmony. */
 export function deriveTertiary(primary: HSL, harmony: ColorHarmony = DEFAULT_HARMONY): HSL {
   return rotateHue(primary, HUE_OFFSETS[harmony].tertiary);
 }
@@ -140,7 +140,7 @@ export function hslToRgb({ h, s, l }: HSL): RGB {
   };
 }
 
-/* ─────────────────── hex → HSL (theme:build input, FR-2.6) ───────────────────
+/* ─────────────────── hex → HSL (theme:build input) ───────────────────
  *
  * `brand.json` stores colours as hex (what a brief provides); the CSS colour system consumes HSL
  * channels. `theme:build` turns one into the other via `hexToHsl`. This is the inverse path of the
@@ -191,7 +191,7 @@ export function hexToHsl(hex: string): HSL {
   return { h: normalizeHue(Math.round(h)), s: Math.round(s), l: Math.round(l) };
 }
 
-/* ─────────────────── WCAG contrast measurement (FR-2.9) ───────────────────
+/* ─────────────────── WCAG contrast measurement ───────────────────
  *
  * We deliberately DON'T reproduce contrast-math.css's job (picking the text colour) in JS — the
  * CSS owns that at runtime. These are only the WCAG *measurement* primitives the Colors/Contrast

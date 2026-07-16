@@ -5,15 +5,15 @@ import { cn } from "@core/lib/utils";
 
 /**
  * The section contract (spec §3). Sections are compound components the agent assembles into SSR
- * pages (FR-3.0, FR-3.2). `Section` is the shell every section renders through: a full-bleed
+ * pages. `Section` is the shell every section renders through: a full-bleed
  * `<section>` carrying the one variant axis common to all sections — spacing **density** — wrapping
- * an inner centred container so content lands on the standard Tailwind grid (FR-3.10: centred
+ * an inner centred container so content lands on the standard Tailwind grid (centred
  * `max-w-7xl`, default breakpoints, responsive gutters). Because the shell is full-bleed, a section
- * can set its own background on the outer element (helps FR-2.7 muddy-pairing avoidance) while its
+ * can set its own background on the outer element (helps muddy-pairing avoidance) while its
  * copy still aligns to the shared column.
  *
  * Per-section layout variants (alignment, child order, …) live on each section's own CVA and must be
- * **CSS-only and deterministic** (FR-3.11): they map a semantic value to a class string — alignment,
+ * **CSS-only and deterministic**: they map a semantic value to a class string — alignment,
  * margin/padding, and child order via `order` / `flex-direction` — and never change DOM/source order
  * or child structure. See the Hero section and `_template` for worked examples.
  */
@@ -25,8 +25,8 @@ import { cn } from "@core/lib/utils";
 export const sectionVariantsConfig = {
   variants: {
     /**
-     * Vertical rhythm — the spacing-density axis shared by every section (FR-3.11). Semantic names
-     * form part of the agent's selection vocabulary (FR-3.11a).
+     * Vertical rhythm — the spacing-density axis shared by every section. Semantic names
+     * form part of the agent's selection vocabulary.
      */
     density: {
       compact: "py-8 md:py-12",

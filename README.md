@@ -33,9 +33,7 @@ Each step is a discrete `yarn` script (`sites:new`, `sites:validate`, `theme:bui
   | `sites/meridian`      | coffee roaster| `#b45309` | analogous     |
   | `sites/lee-carvalo`   | putting game  | `#090`    | triadic       |
 
-- **`fixtures/briefs/`** holds the named FR-5.5 test briefs (`low-context-brief.md`,
+- **`fixtures/briefs/`** holds named test briefs (`low-context-brief.md`,
   `sensitive-product.md`) for exercising the thin-brief and guardrail paths in a dry-run.
 
-See [ROADMAP.md](./ROADMAP.md) for the build phases and status.
-
-> Greenfield build. The `shadcn-poc` is conceptual reference only.
+> The `shadcn-poc` is conceptual reference only.

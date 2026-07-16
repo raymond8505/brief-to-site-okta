@@ -6,8 +6,8 @@ import { Hero } from "@core/components/sections/hero/hero";
 
 /**
  * Hero — the first section and the worked example of the section contract. Its layout variants are
- * CSS-only and deterministic (FR-3.11); every meaningful variant gets its own story below so the
- * Storybook MCP addon can surface the vocabulary the agent selects from (FR-3.11a).
+ * CSS-only and deterministic; every meaningful variant gets its own story below so the
+ * Storybook MCP addon can surface the vocabulary the agent selects from.
  */
 
 const sampleActions = (
@@ -46,7 +46,7 @@ export const Default: Story = {};
 
 /**
  * `media: inline-start` — image on the visual left. The DOM order is still copy → media; only CSS
- * `flex-direction` changes (FR-3.11). The play() confirms the reorder is CSS-only in a real browser.
+ * `flex-direction` changes. The play() confirms the reorder is CSS-only in a real browser.
  */
 export const MediaStart: Story = {
   args: { media: "inline-start" },
@@ -82,7 +82,7 @@ export const Spacious: Story = {
   args: { density: "spacious" },
 };
 
-/** No `imageSrc` — the section-owned placeholder fills the fixed-aspect box (FR-3.7). */
+/** No `imageSrc` — the section-owned placeholder fills the fixed-aspect box. */
 export const WithPlaceholder: Story = {
   args: { imageSrc: undefined },
 };
