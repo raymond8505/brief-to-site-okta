@@ -85,19 +85,24 @@ shell out to platform commands and never branch on `process.platform`.
   concern → add it to `configSchemas` (the registry test guards the set). The CLI is typechecked by
   `tsc -p packages/core` but not run by vitest (it `process.exit`s), so run `yarn typecheck`
   separately and read its real exit.
-- **Section shapes are retrieved too — `yarn sections:catalog [hero|feature-grid|contact-block]`.**
-  The assemble-step analog of `config:schema`: prints each section's props, CSS-only variants (+
-  defaults), and a copy-me usage snippet as JSON, so the agent never reads section source or needs a
-  running Storybook just to learn a section's shape (that rediscovery was the main per-build tax).
-  **Zero-drift by construction:** variant values are read at runtime from each section's exported
-  `*VariantsConfig` (the object passed to `cva` — so `heroVariants` etc. now `cva(base, heroVariantsConfig)`);
-  content props are a compile-time-**exhaustive** `Record` keyed by the component's own prop names, so
-  adding/removing a prop breaks `tsc` until the catalog (`components/sections/catalog.ts`) is updated.
-  Registry set guarded by `catalog.test.ts` (add a section → add a row). The CLI
-  (`config/cli/sections-catalog.ts`) imports component modules, so unlike the other CLIs it needs
-  `--tsconfig packages/core/tsconfig.json` for tsx to resolve the `@core` alias + React at runtime
-  (wired in the `sections:catalog` script). SKILL.md step 5 points at it; Storybook/shadcn MCP are now
-  for **visual review**, not the props source.
+- **Section shapes come from the Storybook MCP, not a bespoke CLI.** `get-documentation` (per section)
+  returns everything the old catalog did, from three sources: (1) the **component description** — the
+  JSDoc block **immediately above `const meta`** in each `*.stories.tsx` (react-docgen only attaches
+  the leading comment adjacent to the default-export meta; a `const` between the comment and `meta`
+  drops it — verified empirically). Put the section's **purpose + CSS-only variant vocabulary +
+  defaults** there. (2) **copy-me usage + every variant value** — the per-variant **stories** (each
+  meaningful variant has its own story; the `Default` story is the type-checked copy-me snippet, which
+  is why we don't hand-write a usage block — that would drift). (3) **content-prop docs** — the
+  interface JSDoc. `tags: ["autodocs"]` generates the human Docs page and enriched variant `argTypes`
+  (`description` + `table.defaultValue`) document the variant props there (they don't surface in
+  `get-documentation`). Note `parameters.docs.description.component` does **not** surface in
+  `get-documentation` — use the meta-leading JSDoc for the MCP-visible description.
+  - The old `yarn sections:catalog` CLI (`components/sections/catalog.ts` + `catalog.test.ts` +
+    `config/cli/sections-catalog.ts` + per-section exported `*VariantsConfig`) was **removed**; the
+    configs are inlined back into each `cva()` call. Consequence: story `argTypes` variant lists and
+    the JSDoc variant vocabulary are **hand-maintained** and can drift from the `cva` config (the
+    catalog's zero-drift guarantee was intentionally dropped; no replacement drift test). SKILL.md
+    step 5 points at the Storybook MCP as the authoritative props source.
 - **`theme:build <slug>`** reads `config/brand.json` (hex) and writes `sites/<slug>/theme.css`:
   `--brand-h/s/l` (via `palette.hexToHsl`) **and `--brand-r/g/b`** (via `palette.hexToRgb`, the input
   `.wcag-contrast` reads), the harmony offset vars, and explicit `--brand-secondary/tertiary-*`

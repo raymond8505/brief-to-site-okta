@@ -19,11 +19,7 @@ import { PLACEHOLDER_SPECS, placeholderDataUri } from "@core/components/sections
  * the computed `flex-direction` to prove the reorder is real.
  */
 
-/**
- * The Hero CVA config, extracted so `sections:catalog` can read its axes at runtime (single source —
- * the catalog never re-lists variant values by hand). Passed straight to `cva`.
- */
-export const heroVariantsConfig = {
+export const heroVariants = cva("flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-16", {
   variants: {
     /** Copy alignment. Text alignment inherits; the copy column's cross-axis follows. */
     align: {
@@ -40,12 +36,7 @@ export const heroVariantsConfig = {
     align: "start",
     media: "inline-end",
   },
-} as const;
-
-export const heroVariants = cva(
-  "flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-16",
-  heroVariantsConfig,
-);
+});
 
 /** A single call-to-action rendered by the Hero. `href` is presentational. */
 export interface HeroCta {

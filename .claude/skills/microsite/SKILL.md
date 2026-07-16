@@ -124,24 +124,22 @@ This is the house style for every site; the brief supplies the *content*, this s
 
 ## 5. Assemble the pages
 
-**Required tooling — STOP if missing.** This step needs the **Storybook MCP** (section catalog +
-each section's documented props/variants) and the **shadcn MCP** (primitive docs). Before you
-assemble, confirm both respond (e.g. Storybook MCP `list-all-documentation`). **If either is
-unavailable, abort and tell the operator — never assemble from memory or guess a section's
-props/variants.**
+**Required tooling — STOP if missing.** This step needs the **Storybook MCP** (each section's
+documented props/variants) and the **shadcn MCP** (primitive docs). Before you assemble, confirm both
+respond (e.g. Storybook MCP `list-all-documentation`). **If either is unavailable, abort and tell the
+operator — never assemble from memory or guess a section's props/variants.**
 
-**Section props/variants — retrieve them, don't rediscover them.** Run `yarn sections:catalog
-[hero|feature-grid|contact-block]` for a deterministic, offline JSON of each section's props, CSS-only
-variants (with defaults), and a copy-me usage snippet — derived straight from the components (the
-section analog of `config:schema`). This is the authoritative source for **what props/variants
-exist**; use it instead of reading section source or spinning up a subagent to map the catalog.
+**Section props/variants — retrieve them from the Storybook MCP, don't rediscover them.** Each section
+story carries `tags: ["autodocs"]`, so `list-all-documentation` → `get-documentation` returns each
+section's **props (with descriptions), CSS-only variant vocabulary (with defaults), and a copy-me
+usage snippet**. This is the authoritative source for **what props/variants exist** — use it instead
+of reading section source or spinning up a subagent to map the components.
 
 Select sections **by brief** and arrange them into `app/**/page.tsx`:
 
-- Get props/variants from `yarn sections:catalog` (above). The **Storybook MCP**
-  (`list-all-documentation` → `get-documentation`) and **shadcn MCP** (primitive docs) are for
-  **visual/story review** and primitive (Button, etc.) usage — never assume a prop or variant that
-  isn't in the catalog or documented there.
+- Get section props/variants from the **Storybook MCP** (`list-all-documentation` →
+  `get-documentation`); get primitive (Button, etc.) usage from the **shadcn MCP**. Never assume a
+  prop or variant that isn't documented there.
 - Sections import from `@brief-to-site/core/sections`; primitives from `@brief-to-site/core`.
 - Variants are **CSS-only and deterministic** (alignment / spacing / child-order) — never DOM order
   or structure. `_template`'s section archetype is a copy-me reference, **not** importable.
