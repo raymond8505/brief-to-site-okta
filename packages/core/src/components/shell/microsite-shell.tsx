@@ -8,7 +8,7 @@ import type { MetaConfig } from "@core/config/meta.schema";
 import type { PageConfig } from "@core/config/pages.schema";
 
 /**
- * MicrositeShell — the page frame every generated page renders through (spec §3). A **non-sticky**
+ * MicrositeShell — the page frame every generated page renders through. A **non-sticky**
  * header (logo + `SiteNav`), the page `<main>`, and a footer. Nothing is sticky/fixed so the
  * full-page screenshot stitch stays clean. The logo is a replaceable placeholder image: it
  * uses `meta.logoSrc` when set, otherwise the section-owned `placeholderDataUri`. Server component.

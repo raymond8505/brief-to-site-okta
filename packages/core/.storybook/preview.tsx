@@ -20,7 +20,7 @@ const preview: Preview = {
       },
     },
     // a11y violations surface in the addon panel only (deliverable is images; a11y is out
-    // of scope per spec §6/§7) — 'todo' keeps them visible without failing anything.
+    // of scope) — 'todo' keeps them visible without failing anything.
     a11y: { test: "todo" },
   },
 };

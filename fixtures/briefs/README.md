@@ -14,6 +14,6 @@ Each follows the intake contract from `sites/_template/brief.md`
 | `low-context-brief.md` | Thin brief (name + colour only) → the agent fills sensible defaults and flags every assumption at HITL, inventing no facts. |
 | `sensitive-product.md` | Brief seeded with prices/stats/health/legal claims → the generation guardrails must keep those out of the copy and surface them for operator sign-off. |
 
-These map to the two live risks in the spec's risk register — *empty/awkward layouts from thin
+These map to two live risks — *empty/awkward layouts from thin
 briefs* and *a hallucinated price/stat reading as real* — and complement the three committed worked
 examples under `sites/` (which are full, post-assembly briefs).

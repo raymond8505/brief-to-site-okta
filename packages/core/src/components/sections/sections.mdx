@@ -4,7 +4,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Section suite
 
-The tool is an **assembly engine** (spec §3): the agent composes SSR pages from these compound
+The tool is an **assembly engine**: the agent composes SSR pages from these compound
 **sections**, applies the deterministic theme, and fills brief-grounded copy.
 This page is the contract every section follows — and the vocabulary the agent selects from via the
 Storybook MCP addon.
@@ -31,7 +31,7 @@ Colour: sections consume **role tokens** (`bg-background`, `text-foreground`, `t
 ## Why CSS-only order (and not DOM order)
 
 Visual reordering via CSS decouples visual order from DOM/focus order — normally an a11y concern, but
-**moot here**: the deliverable is images and a11y is out of scope (spec §6/§7). This is flagged so
+**moot here**: the deliverable is images and a11y is out of scope. This is flagged so
 structural (DOM-changing) variants are not reintroduced later. See **Sections/Hero → MediaStart**:
 the image moves to the visual left via `flex-row-reverse` while the DOM stays copy → media.
 

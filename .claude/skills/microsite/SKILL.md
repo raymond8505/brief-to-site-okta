@@ -44,7 +44,7 @@ run from the **repo root** and take a `<slug>` (or an explicit site path). Read 
 - For capture only: `yarn playwright install chromium` once per machine (the browser binary is not
   committed).
 - **Required MCP tooling for assembly:** the **Storybook MCP** and **shadcn MCP** must be available —
-  the assemble step (§5) depends on them for section/primitive docs and **stops** if either is
+  the assemble step (step 5) depends on them for section/primitive docs and **stops** if either is
   missing (never assemble from memory).
 
 ---

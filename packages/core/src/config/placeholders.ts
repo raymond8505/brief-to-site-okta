@@ -8,7 +8,7 @@ import {
 } from "../components/sections/placeholder";
 
 /**
- * The "copy section placeholders" step of the site lifecycle (spec §2: scaffold → author →
+ * The "copy section placeholders" step of the site lifecycle (scaffold → author →
  * assemble → theme:build + placeholders → HITL). Writes one real SVG file per `PLACEHOLDER_SPECS`
  * entry into a site's `public/images/placeholders/`, so assembled pages can reference stable
  * `imageSrc` paths that the operator later overwrites with real art — the HITL image workflow —

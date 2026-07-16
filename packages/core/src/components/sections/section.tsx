@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@core/lib/utils";
 
 /**
- * The section contract (spec §3). Sections are compound components the agent assembles into SSR
+ * The section contract. Sections are compound components the agent assembles into SSR
  * pages. `Section` is the shell every section renders through: a full-bleed
  * `<section>` carrying the one variant axis common to all sections — spacing **density** — wrapping
  * an inner centred container so content lands on the standard Tailwind grid (centred

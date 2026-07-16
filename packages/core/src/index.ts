@@ -42,7 +42,7 @@ export { Label } from "./components/ui/label";
 export { Separator } from "./components/ui/separator";
 export { Textarea } from "./components/ui/textarea";
 
-// Section suite. Compound components the agent assembles into SSR pages (spec §3); each carries
+// Section suite. Compound components the agent assembles into SSR pages; each carries
 // CSS-only, deterministic CVA variants. Also available via the "./sections" subpath.
 export { Section, sectionVariants } from "./components/sections/section";
 export type { SectionProps } from "./components/sections/section";
@@ -55,7 +55,7 @@ export type { PlaceholderOptions, PlaceholderName } from "./components/sections/
 export { Hero, heroVariants } from "./components/sections/hero/hero";
 export type { HeroProps, HeroCta } from "./components/sections/hero/hero";
 
-// Microsite shell. The page frame + manifest-driven nav generated pages render through (§3).
+// Microsite shell. The page frame + manifest-driven nav generated pages render through.
 export { MicrositeShell } from "./components/shell/microsite-shell";
 export type { MicrositeShellProps } from "./components/shell/microsite-shell";
 export { SiteNav } from "./components/shell/site-nav";
