@@ -525,6 +525,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@brief-to-site/site-putting-challenge@workspace:sites/putting-challenge":
+  version: 0.0.0-use.local
+  resolution: "@brief-to-site/site-putting-challenge@workspace:sites/putting-challenge"
+  dependencies:
+    "@brief-to-site/core": "workspace:*"
+    next: "npm:16.2.6"
+    react: "npm:19.2.4"
+    react-dom: "npm:19.2.4"
+    typescript: "npm:^5"
+  languageName: unknown
+  linkType: soft
+
 "@brief-to-site/site-template@workspace:sites/_template":
   version: 0.0.0-use.local
   resolution: "@brief-to-site/site-template@workspace:sites/_template"

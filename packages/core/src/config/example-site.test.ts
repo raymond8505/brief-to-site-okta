@@ -28,6 +28,12 @@ const EXAMPLE_SITES = [
     primary: "#090",
     slugs: ["", "about", "contact"],
   },
+  {
+    slug: "putting-challenge",
+    name: "Lee Carvalo's Putting Challenge",
+    primary: "#355E3B",
+    slugs: ["", "about", "contact"],
+  },
 ] as const;
 
 const readJson = (path: string): Record<string, unknown> =>
