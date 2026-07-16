@@ -19,26 +19,32 @@ import { PLACEHOLDER_SPECS, placeholderDataUri } from "@core/components/sections
  * the computed `flex-direction` to prove the reorder is real.
  */
 
-export const heroVariants = cva(
-  "flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-16",
-  {
-    variants: {
-      /** Copy alignment. Text alignment inherits; the copy column's cross-axis follows. */
-      align: {
-        start: "text-left [&_[data-slot=hero-copy]]:items-start",
-        center: "text-center [&_[data-slot=hero-copy]]:items-center",
-      },
-      /** Which side the media sits on — CSS `flex-direction` only; DOM order is unchanged. */
-      media: {
-        "inline-end": "", // copy left / media right (matches DOM order — default)
-        "inline-start": "lg:flex-row-reverse", // media visually left; DOM order still copy → media
-      },
+/**
+ * The Hero CVA config, extracted so `sections:catalog` can read its axes at runtime (single source —
+ * the catalog never re-lists variant values by hand). Passed straight to `cva`.
+ */
+export const heroVariantsConfig = {
+  variants: {
+    /** Copy alignment. Text alignment inherits; the copy column's cross-axis follows. */
+    align: {
+      start: "text-left [&_[data-slot=hero-copy]]:items-start",
+      center: "text-center [&_[data-slot=hero-copy]]:items-center",
     },
-    defaultVariants: {
-      align: "start",
-      media: "inline-end",
+    /** Which side the media sits on — CSS `flex-direction` only; DOM order is unchanged. */
+    media: {
+      "inline-end": "", // copy left / media right (matches DOM order — default)
+      "inline-start": "lg:flex-row-reverse", // media visually left; DOM order still copy → media
     },
   },
+  defaultVariants: {
+    align: "start",
+    media: "inline-end",
+  },
+} as const;
+
+export const heroVariants = cva(
+  "flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-16",
+  heroVariantsConfig,
 );
 
 /** A single call-to-action rendered by the Hero. `href` is presentational (real nav lands in PR6). */

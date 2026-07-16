@@ -18,7 +18,11 @@ import { cn } from "@core/lib/utils";
  * or child structure. See the Hero section and `_template` for worked examples.
  */
 
-export const sectionVariants = cva("w-full", {
+/**
+ * The `Section` CVA config, extracted so `sections:catalog` can read the density axis at runtime
+ * (single source — the catalog never re-lists variant values by hand). Passed straight to `cva`.
+ */
+export const sectionVariantsConfig = {
   variants: {
     /**
      * Vertical rhythm — the spacing-density axis shared by every section (FR-3.11). Semantic names
@@ -33,7 +37,9 @@ export const sectionVariants = cva("w-full", {
   defaultVariants: {
     density: "comfortable",
   },
-});
+} as const;
+
+export const sectionVariants = cva("w-full", sectionVariantsConfig);
 
 export interface SectionProps
   extends React.ComponentProps<"section">,

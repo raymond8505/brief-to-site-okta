@@ -190,6 +190,7 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
 | `sites:new` | PR7 | scaffold a standalone site app |
 | `sites:validate` | PR6 | Zod-validate a site's `config/*.json` |
 | `config:schema` | PR6 | print a config concern's JSON Schema (`[meta\|brand\|pages\|viewports\|generation]`) |
+| `sections:catalog` | post-build | print a section's props/variants/usage as JSON (`[hero\|feature-grid\|contact-block]`) — the assemble-step source of truth, section analog of `config:schema` |
 | `theme:build` | PR7 | `brand.json` → `sites/<slug>/theme.css` |
 | `placeholders:copy` | PR8 | write section placeholder SVGs into `sites/<slug>/public/images/placeholders/` |
 | `sites:dev` | PR8 | run a site's dev server |

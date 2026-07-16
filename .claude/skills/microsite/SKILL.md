@@ -131,12 +131,18 @@ assemble, confirm both respond (e.g. Storybook MCP `list-all-documentation`). **
 unavailable, abort and tell the operator — never assemble from memory or guess a section's
 props/variants.**
 
+**Section props/variants — retrieve them, don't rediscover them.** Run `yarn sections:catalog
+[hero|feature-grid|contact-block]` for a deterministic, offline JSON of each section's props, CSS-only
+variants (with defaults), and a copy-me usage snippet — derived straight from the components (the
+section analog of `config:schema`). This is the authoritative source for **what props/variants
+exist**; use it instead of reading section source or spinning up a subagent to map the catalog.
+
 Select sections **by brief** (FR-3.0a) and arrange them into `app/**/page.tsx`:
 
-- Pull the section catalog + each section's props/variants from the **Storybook MCP**
-  (`list-all-documentation` → `get-documentation`), and primitive (Button, etc.) usage from the
-  **shadcn MCP**. That is the source of truth for what exists and how it looks — never assume a prop
-  or variant that isn't documented there.
+- Get props/variants from `yarn sections:catalog` (above). The **Storybook MCP**
+  (`list-all-documentation` → `get-documentation`) and **shadcn MCP** (primitive docs) are for
+  **visual/story review** and primitive (Button, etc.) usage — never assume a prop or variant that
+  isn't in the catalog or documented there.
 - Sections import from `@brief-to-site/core/sections`; primitives from `@brief-to-site/core`.
 - Variants are **CSS-only and deterministic** (alignment / spacing / child-order) — never DOM order
   or structure. `_template`'s section archetype is a copy-me reference, **not** importable.

@@ -86,6 +86,19 @@ shell out to platform commands and never branch on `process.platform`.
   concern → add it to `configSchemas` (the registry test guards the set). The CLI is typechecked by
   `tsc -p packages/core` but not run by vitest (it `process.exit`s), so run `yarn typecheck`
   separately and read its real exit.
+- **Section shapes are retrieved too — `yarn sections:catalog [hero|feature-grid|contact-block]`.**
+  The assemble-step analog of `config:schema`: prints each section's props, CSS-only variants (+
+  defaults), and a copy-me usage snippet as JSON, so the agent never reads section source or needs a
+  running Storybook just to learn a section's shape (that rediscovery was the main per-build tax).
+  **Zero-drift by construction:** variant values are read at runtime from each section's exported
+  `*VariantsConfig` (the object passed to `cva` — so `heroVariants` etc. now `cva(base, heroVariantsConfig)`);
+  content props are a compile-time-**exhaustive** `Record` keyed by the component's own prop names, so
+  adding/removing a prop breaks `tsc` until the catalog (`components/sections/catalog.ts`) is updated.
+  Registry set guarded by `catalog.test.ts` (add a section → add a row, like `EXAMPLE_SITES`). The CLI
+  (`config/cli/sections-catalog.ts`) imports component modules, so unlike the other CLIs it needs
+  `--tsconfig packages/core/tsconfig.json` for tsx to resolve the `@core` alias + React at runtime
+  (wired in the `sections:catalog` script). SKILL.md step 5 points at it; Storybook/shadcn MCP are now
+  for **visual review**, not the props source.
 - **`theme:build <slug>`** reads `config/brand.json` (hex) and writes `sites/<slug>/theme.css`:
   `--brand-h/s/l` (via `palette.hexToHsl`) **and `--brand-r/g/b`** (via `palette.hexToRgb`, the input
   `.wcag-contrast` reads), the harmony offset vars, and explicit `--brand-secondary/tertiary-*`

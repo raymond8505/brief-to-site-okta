@@ -21,7 +21,11 @@ import { PLACEHOLDER_SPECS, placeholderDataUri } from "@core/components/sections
  * art bleeding to the card's rounded edge.
  */
 
-export const featureGridVariants = cva("grid grid-cols-1 gap-6 md:gap-8", {
+/**
+ * The FeatureGrid CVA config, extracted so `sections:catalog` can read the `columns` axis at runtime
+ * (single source — the catalog never re-lists variant values by hand). Passed straight to `cva`.
+ */
+export const featureGridVariantsConfig = {
   variants: {
     /** How many columns the grid resolves to at its widest — CSS `grid-template-columns` only. */
     columns: {
@@ -33,7 +37,9 @@ export const featureGridVariants = cva("grid grid-cols-1 gap-6 md:gap-8", {
   defaultVariants: {
     columns: "three",
   },
-});
+} as const;
+
+export const featureGridVariants = cva("grid grid-cols-1 gap-6 md:gap-8", featureGridVariantsConfig);
 
 /** One feature cell. `imageSrc` is a path; omit it to fall back to the section-owned placeholder. */
 export interface FeatureGridItem {

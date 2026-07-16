@@ -21,20 +21,26 @@ import { Section, type SectionProps } from "@core/components/sections/section";
  * Field submission is a later concern. Field ids are static (single-instance) — fine for an exemplar.
  */
 
-export const contactBlockVariants = cva(
-  "flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-16",
-  {
-    variants: {
-      /** Which side the form sits on — CSS `flex-direction` only; DOM order is unchanged. */
-      form: {
-        "inline-end": "", // copy left / form right (matches DOM order — default)
-        "inline-start": "lg:flex-row-reverse", // form visually left; DOM order still copy → form
-      },
-    },
-    defaultVariants: {
-      form: "inline-end",
+/**
+ * The ContactBlock CVA config, extracted so `sections:catalog` can read the `form` axis at runtime
+ * (single source — the catalog never re-lists variant values by hand). Passed straight to `cva`.
+ */
+export const contactBlockVariantsConfig = {
+  variants: {
+    /** Which side the form sits on — CSS `flex-direction` only; DOM order is unchanged. */
+    form: {
+      "inline-end": "", // copy left / form right (matches DOM order — default)
+      "inline-start": "lg:flex-row-reverse", // form visually left; DOM order still copy → form
     },
   },
+  defaultVariants: {
+    form: "inline-end",
+  },
+} as const;
+
+export const contactBlockVariants = cva(
+  "flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-16",
+  contactBlockVariantsConfig,
 );
 
 export interface ContactBlockProps
