@@ -1,5 +1,6 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
+import { isValidElement } from "react"
 
 import { cn } from "@core/lib/utils"
 
@@ -44,12 +45,23 @@ function Button({
   className,
   variant = "default",
   size = "default",
+  nativeButton,
+  render,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  // Base UI's `nativeButton` defaults to true ("the rendered element is a real <button>"). When a
+  // caller replaces the element via `render` — the documented CTA pattern is `render={<Link/>}`,
+  // which renders an <a> — that default strips button semantics and Base UI warns. Infer it from
+  // the render element's type so a Link/anchor CTA is correct with no per-call-site prop; an
+  // explicit `nativeButton` always wins, and a function `render` falls back to the native default.
+  const isNativeButton =
+    nativeButton ?? (isValidElement(render) ? render.type === "button" : true)
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      nativeButton={isNativeButton}
+      render={render}
       {...props}
     />
   )
