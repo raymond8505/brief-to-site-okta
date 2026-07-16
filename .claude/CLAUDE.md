@@ -94,7 +94,7 @@ shell out to platform commands and never branch on `process.platform`.
   `*VariantsConfig` (the object passed to `cva` — so `heroVariants` etc. now `cva(base, heroVariantsConfig)`);
   content props are a compile-time-**exhaustive** `Record` keyed by the component's own prop names, so
   adding/removing a prop breaks `tsc` until the catalog (`components/sections/catalog.ts`) is updated.
-  Registry set guarded by `catalog.test.ts` (add a section → add a row, like `EXAMPLE_SITES`). The CLI
+  Registry set guarded by `catalog.test.ts` (add a section → add a row). The CLI
   (`config/cli/sections-catalog.ts`) imports component modules, so unlike the other CLIs it needs
   `--tsconfig packages/core/tsconfig.json` for tsx to resolve the `@core` alias + React at runtime
   (wired in the `sections:catalog` script). SKILL.md step 5 points at it; Storybook/shadcn MCP are now
@@ -202,11 +202,10 @@ shell out to platform commands and never branch on `process.platform`.
   (`packages/core/src/config/generation.schema.ts`); the studio-specific
   `packages/core/src/config/examples/generation.json` is a separate **loader fixture**, not this
   config — don't conflate them.
-- **Three committed example sites, all drift-guarded.** `sites/northwind` (complementary),
-  `sites/meridian` (analogous), and `sites/lee-carvalo` (triadic) prove the pipeline across all three
-  harmonies + a spread of variants. `example-site.test.ts` runs its structural checks over an
-  `EXAMPLE_SITES` table via `describe.each` — **adding another example site means adding a row
-  there**, or it silently goes unguarded (the test won't fail, it just won't cover it).
+- **Three committed example sites.** `sites/northwind` (complementary), `sites/meridian` (analogous),
+  and `sites/lee-carvalo` (triadic) prove the pipeline across all three harmonies + a spread of
+  variants. (They used to be drift-guarded by `example-site.test.ts`, since removed — no automated
+  check now asserts the committed sites stay in sync with the tooling that generates them.)
 - **Build/verify one site with `yarn workspace @brief-to-site/site-<slug> build`** (there is no
   `sites:build` script); `yarn sites:dev <slug>` for dev, `yarn capture:run <slug> --run <name>` for a
   named throwaway capture. Heads-up inconsistency: `northwind/config/viewports.json` has only 2

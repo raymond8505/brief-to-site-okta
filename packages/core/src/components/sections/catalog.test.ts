@@ -13,8 +13,8 @@ import { contactBlockVariantsConfig } from "./contact-block/contact-block";
 
 /**
  * Drift guards for the section catalog. The registry-set assertion is the one that fails when a
- * section is added or removed without updating the catalog (mirrors example-site.test.ts's
- * EXAMPLE_SITES guard); the per-section checks confirm the runtime reader stays faithful to each
+ * section is added or removed without updating the catalog; the per-section checks confirm the
+ * runtime reader stays faithful to each
  * section's own CVA config, so a variant added/removed in a component surfaces here.
  */
 

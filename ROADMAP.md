@@ -95,8 +95,9 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   pages reference them by **root-relative** `/images/...` URLs (relative would break under `/about`).
   **`sites:dev <slug> [args…]`** spawns the site's `next dev` via a pure, unit-tested `devSpawnSpec`
   (win32 needs `shell: true` for `yarn.cmd`; whole command string when shelling — DEP0190).
-  `example-site.test.ts` drift-guards the committed artifacts (config↔schemas, theme.css↔
-  `buildThemeCss`, SVGs↔`placeholderSvg`, referenced images exist, slugs↔routes). SSR verified on
+  (`example-site.test.ts` originally drift-guarded the committed artifacts — config↔schemas,
+  theme.css↔`buildThemeCss`, SVGs↔`placeholderSvg`, referenced images exist, slugs↔routes — but that
+  test was later removed.) SSR verified on
   `next build` + `start`: all routes prerender with section markup, nav, titles, placeholder assets
   200, and the violet seed winning the `:root` cascade in the built CSS.
 
@@ -139,7 +140,8 @@ approved planning doc; key decisions are mirrored in `README.md` and per-area do
   Carvalo's Putting Challenge", green `#090` **triadic**) from a deliberately thin one-line brief —
   exercising the low-context path (agent fills sensible defaults, flags every assumption at HITL) and
   completing harmony coverage (complementary/analogous/triadic across the three examples).
-  `example-site.test.ts` now drift-guards **all three** committed sites via `describe.each`. Verified
+  (`example-site.test.ts` drift-guarded **all three** committed sites via `describe.each`; that test
+  has since been removed.) Verified
   **full pipeline incl. capture**: `sites:validate` clean, `next build`
   prerenders all three routes + TypeScript passes, and `capture:run` shot **12 full-page JPEGs**
   (3 pages × 4 viewports) for **both** meridian and lee-carvalo, styled with each brand — the
