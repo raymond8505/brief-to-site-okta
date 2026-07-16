@@ -29,7 +29,7 @@ describe("ContactBlock", () => {
     expect(screen.queryByText("Say hi")).not.toBeInTheDocument();
   });
 
-  it("keeps DOM order copy → form regardless of the form variant (FR-3.11: no source reorder)", () => {
+  it("keeps DOM order copy → form regardless of the form variant (no source reorder)", () => {
     for (const form of ["inline-end", "inline-start"] as const) {
       const { container, unmount } = render(<ContactBlock heading="H" form={form} />);
       const row = container.querySelector("[data-slot=contact-block]")!;

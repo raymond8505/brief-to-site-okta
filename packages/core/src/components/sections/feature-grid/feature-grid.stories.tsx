@@ -3,14 +3,6 @@ import { expect } from "storybook/test";
 
 import { FeatureGrid, type FeatureGridItem } from "@core/components/sections/feature-grid/feature-grid";
 
-/**
- * FeatureGrid — the section contract on a **content** section. Its one layout axis (`columns`) is
- * CSS-only and deterministic (FR-3.11); every meaningful variant gets its own story so the Storybook
- * MCP addon can surface the vocabulary the agent selects from (FR-3.11a). It also exercises the
- * FR-3.7 image contract in a repeating context: each feature has an `imageSrc` path with a
- * placeholder fallback.
- */
-
 const sampleFeatures: FeatureGridItem[] = [
   {
     title: "Brief in, site out",
@@ -37,13 +29,32 @@ const sampleFeatures: FeatureGridItem[] = [
 const unsplash = (id: string) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=80`;
 
+/**
+ * FeatureGrid — a responsive grid of feature cards (each an image + title + description) above an
+ * optional section header. One CSS-only layout axis: `columns` (`two` | `three` | `four`, default
+ * `three`); the shared `density` axis is `compact` | `comfortable` | `spacious` (default
+ * `comfortable`). `features` is an array of `FeatureGridItem` ({ title, description?, imageSrc?,
+ * imageAlt }). Every meaningful variant has its own story below. Import from
+ * `@brief-to-site/core/sections`.
+ */
 const meta = {
   title: "Sections/FeatureGrid",
   component: FeatureGrid,
+  tags: ["autodocs"],
   parameters: { layout: "fullscreen" },
   argTypes: {
-    columns: { control: "inline-radio", options: ["two", "three", "four"] },
-    density: { control: "inline-radio", options: ["compact", "comfortable", "spacious"] },
+    columns: {
+      control: "inline-radio",
+      options: ["two", "three", "four"],
+      description: "How many columns the grid resolves to at its widest — CSS `grid-template-columns` only. Default `three`.",
+      table: { defaultValue: { summary: "three" } },
+    },
+    density: {
+      control: "inline-radio",
+      options: ["compact", "comfortable", "spacious"],
+      description: "Vertical rhythm from the shared Section axis. Default `comfortable`.",
+      table: { defaultValue: { summary: "comfortable" } },
+    },
   },
   args: {
     eyebrow: "Why brief-to-site",
@@ -67,7 +78,7 @@ export const TwoUp: Story = {
 
 /**
  * `columns: three` — the default three-up grid. The play() confirms the CSS grid resolves to three
- * tracks in a real browser (the column count is CSS-only; DOM order never changes — FR-3.11).
+ * tracks in a real browser (the column count is CSS-only; DOM order never changes).
  */
 export const ThreeUp: Story = {
   args: { columns: "three", features: sampleFeatures.slice(0, 3) },
@@ -97,7 +108,7 @@ export const Spacious: Story = {
 };
 
 /**
- * No `imageSrc` on any feature — each card shows the section-owned placeholder (FR-3.7). This is the
+ * No `imageSrc` on any feature — each card shows the section-owned placeholder. This is the
  * default `args` state too; the story names it explicitly for the contract catalog.
  */
 export const WithPlaceholders: Story = {};

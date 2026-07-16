@@ -24,7 +24,7 @@ describe("loadSiteConfig", () => {
     expect(result.config.viewports).toHaveLength(2);
   });
 
-  it("collects structured per-field issues across all files (FR-2.3)", () => {
+  it("collects structured per-field issues across all files", () => {
     const result = loadSiteConfig(fixture("./examples/site-invalid"));
     expect(result.ok).toBe(false);
     if (result.ok) return;

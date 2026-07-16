@@ -5,13 +5,13 @@ import { Meta } from "@storybook/addon-docs/blocks";
 # Colour system
 
 The microsite theme is driven by **one required brand colour** (the primary). Everything else is
-**deterministic** — no randomness, no LLM (spec FR-2.6–FR-2.9). Two independent mechanisms:
+**deterministic** — no randomness, no LLM. Two independent mechanisms:
 
-## 1. HSL palette derivation (FR-2.7)
+## 1. HSL palette derivation
 
 A single seed (`--brand-h` / `--brand-s` / `--brand-l`, unitless HSL channels) produces the palette
 via fixed HSL transforms. The same constants live in [`palette.ts`](?path=/story/colors-palette--default)
-(`HUE_OFFSETS`, `NEUTRAL_TINT`) so tooling (`theme:build`, PR7) and the CSS never drift.
+(`HUE_OFFSETS`, `NEUTRAL_TINT`) so tooling (`theme:build`) and the CSS never drift.
 
 Secondary/tertiary use a **named colour harmony** (default **complementary**). Switch it by pointing
 `--secondary-h-offset` / `--tertiary-h-offset` at another pair, e.g. `var(--secondary-h--triadic)`:
@@ -32,14 +32,14 @@ Secondary/tertiary use a **named colour harmony** (default **complementary**). S
 
 Supply an explicit 2nd/3rd colour by overriding `--brand-secondary-*` / `--brand-tertiary-*`.
 
-## 2. WCAG 4.5:1 contrast (FR-2.9)
+## 2. WCAG 4.5:1 contrast
 
 The `.wcag-contrast` utility (ported verbatim from
 [raymond8505/pure-css-wcag-compliant-dynamic-colors](https://github.com/raymond8505/pure-css-wcag-compliant-dynamic-colors))
 takes a background as `--r` / `--g` / `--b` and applies a guaranteed-legible text colour using pure
 CSS `pow()`. Chromium (the capture engine) supports it. See the **Contrast** story.
 
-## Role assignment (FR-2.8) — operator-controlled
+## Role assignment — operator-controlled
 
 Brand tokens are **not** force-assigned to shadcn role vars. core wires only `--primary` and
 `--ring` to `--brand-primary`; the operator/agent decides what else uses which colour by pointing

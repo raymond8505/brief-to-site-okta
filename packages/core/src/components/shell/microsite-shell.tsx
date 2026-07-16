@@ -8,9 +8,9 @@ import type { MetaConfig } from "@core/config/meta.schema";
 import type { PageConfig } from "@core/config/pages.schema";
 
 /**
- * MicrositeShell — the page frame every generated page renders through (spec §3). A **non-sticky**
- * header (logo + `SiteNav`), the page `<main>`, and a footer. Nothing is sticky/fixed (FR-3.6) so the
- * full-page screenshot stitch stays clean. The logo is a replaceable placeholder image (FR-3.8): it
+ * MicrositeShell — the page frame every generated page renders through. A **non-sticky**
+ * header (logo + `SiteNav`), the page `<main>`, and a footer. Nothing is sticky/fixed so the
+ * full-page screenshot stitch stays clean. The logo is a replaceable placeholder image: it
  * uses `meta.logoSrc` when set, otherwise the section-owned `placeholderDataUri`. Server component.
  */
 
@@ -43,11 +43,11 @@ export function MicrositeShell({
       data-slot="microsite-shell"
       className={cn("flex min-h-screen flex-col bg-background text-foreground", className)}
     >
-      {/* Non-sticky header (FR-3.6) — a normal block element, never `sticky`/`fixed`. */}
+      {/* Non-sticky header — a normal block element, never `sticky`/`fixed`. */}
       <header data-slot="site-header" className="w-full border-b border-border">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <Link href="/" data-slot="site-logo" className="flex items-center gap-3">
-            {/* Fixed dims + object-contain so the operator can overwrite the file (FR-3.7/3.8). */}
+            {/* Fixed dims + object-contain so the operator can overwrite the file. */}
             <img src={logoSrc} alt={meta.name} className="h-8 w-auto object-contain" />
             <span className="text-base font-semibold tracking-tight">{meta.name}</span>
           </Link>

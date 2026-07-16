@@ -5,7 +5,7 @@ import { loadBrandConfig, resolveSiteDir } from "../loadSiteConfig";
 import { buildThemeCss } from "../theme";
 
 /**
- * `theme:build <slug-or-path>` — the CLI behind FR-2.6/2.7. Validates a site's `brand.json` and
+ * `theme:build <slug-or-path>` — the CLI for building a site's theme. Validates a site's `brand.json` and
  * writes `<siteDir>/theme.css` (the hex→HSL seed + harmony + auto foreground). Mirrors the
  * deterministic status + exit codes of `sites:validate`: 0 written, 1 invalid brand, 2 usage.
  */

@@ -76,7 +76,7 @@ const swatchBox: React.CSSProperties = {
 
 const row: React.CSSProperties = { display: "flex", gap: 12, flexWrap: "wrap" };
 
-/* ─────────────────────────────── Palette (FR-2.7) ─────────────────────────────── */
+/* ─────────────────────────────── Palette ─────────────────────────────── */
 
 const meta = {
   title: "Colors/Palette",
@@ -133,7 +133,7 @@ export const Default: Story = { play: assertDerivation };
 /** A warm primary — proves the derivation is deterministic across the hue wheel, not tuned to blue. */
 export const WarmSeed: Story = { args: { h: 24, s: 90, l: 50 }, play: assertDerivation };
 
-/* ────────────────────────── Role mapping (FR-2.8) ────────────────────────── */
+/* ────────────────────────── Role mapping ────────────────────────── */
 
 /**
  * Roles are just var indirections onto brand tokens. core maps --primary / --ring → --brand-primary
@@ -180,7 +180,7 @@ export const RoleMapping: Story = {
   },
 };
 
-/* ──────────────────────── WCAG contrast (FR-2.9) ──────────────────────── */
+/* ──────────────────────── WCAG contrast ──────────────────────── */
 
 // A spread of backgrounds (dark → light, across hues) the contrast utility must stay legible on.
 const CONTRAST_BACKGROUNDS: RGB[] = [

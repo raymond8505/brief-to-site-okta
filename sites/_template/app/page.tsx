@@ -1,7 +1,7 @@
 import { Hero } from "@brief-to-site/core/sections";
 
 /**
- * Placeholder home page. `sites:new` copies this template; the authoring step (PR8) replaces it
+ * Placeholder home page. `sites:new` copies this template; the authoring step replaces it
  * with assembled sections. It exists so a freshly scaffolded app renders something.
  */
 export default function HomePage() {

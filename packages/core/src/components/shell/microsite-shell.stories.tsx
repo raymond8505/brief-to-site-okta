@@ -6,7 +6,7 @@ import { Hero } from "@core/components/sections/hero/hero";
 
 /**
  * MicrositeShell frames a page with a non-sticky header (logo + `SiteNav`), the page `<main>`, and a
- * footer (FR-3.6). Stories render a real `Hero` inside so the frame is shown in context; `ActiveNav`
+ * footer. Stories render a real `Hero` inside so the frame is shown in context; `ActiveNav`
  * proves the current page is marked, and `FooterOverride` swaps the default © line.
  */
 const pages = [

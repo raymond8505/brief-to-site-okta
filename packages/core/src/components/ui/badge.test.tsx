@@ -16,7 +16,7 @@ describe("Badge", () => {
     expect(screen.getByText("Default")).toHaveClass("bg-primary");
   });
 
-  it("uses the pure-CSS contrast utility for the brand variant (FR-2.9)", () => {
+  it("uses the pure-CSS contrast utility for the brand variant", () => {
     render(<Badge variant="brand">Brand</Badge>);
     expect(screen.getByText("Brand")).toHaveClass("wcag-contrast");
   });

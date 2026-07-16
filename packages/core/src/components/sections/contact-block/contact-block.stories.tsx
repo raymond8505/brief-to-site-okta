@@ -4,19 +4,31 @@ import { expect } from "storybook/test";
 import { ContactBlock } from "@core/components/sections/contact-block/contact-block";
 
 /**
- * ContactBlock — the section contract on a **presentational form**. The `form` axis is CSS-only and
- * deterministic (FR-3.11); each meaningful variant gets its own story so the Storybook MCP addon can
- * surface the vocabulary the agent selects from (FR-3.11a). The form is presentational — real
- * labelled fields and a submit button, no handler or client state.
+ * ContactBlock — a two-column split of copy (eyebrow, heading, subcopy) beside a presentational
+ * contact form (labelled fields + submit; no handler or client state, so it stays a server
+ * component). One CSS-only layout axis: `form` (`inline-end` | `inline-start`, default `inline-end`);
+ * the shared `density` axis is `compact` | `comfortable` | `spacious` (default `comfortable`). Every
+ * meaningful variant has its own story below. Import from `@brief-to-site/core/sections`.
  */
 
 const meta = {
   title: "Sections/ContactBlock",
   component: ContactBlock,
+  tags: ["autodocs"],
   parameters: { layout: "fullscreen" },
   argTypes: {
-    form: { control: "inline-radio", options: ["inline-end", "inline-start"] },
-    density: { control: "inline-radio", options: ["compact", "comfortable", "spacious"] },
+    form: {
+      control: "inline-radio",
+      options: ["inline-end", "inline-start"],
+      description: "Which side the form sits on — CSS `flex-direction` only, DOM order unchanged. Default `inline-end`.",
+      table: { defaultValue: { summary: "inline-end" } },
+    },
+    density: {
+      control: "inline-radio",
+      options: ["compact", "comfortable", "spacious"],
+      description: "Vertical rhythm from the shared Section axis. Default `comfortable`.",
+      table: { defaultValue: { summary: "comfortable" } },
+    },
   },
   args: {
     eyebrow: "Contact",
@@ -35,7 +47,7 @@ export const Default: Story = {};
 
 /**
  * `form: inline-start` — form on the visual left. The DOM order is still copy → form; only CSS
- * `flex-direction` changes (FR-3.11). The play() confirms the reorder is CSS-only in a real browser.
+ * `flex-direction` changes. The play() confirms the reorder is CSS-only in a real browser.
  */
 export const FormStart: Story = {
   args: { form: "inline-start" },

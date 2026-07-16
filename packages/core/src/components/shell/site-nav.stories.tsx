@@ -4,7 +4,7 @@ import { expect } from "storybook/test";
 import { SiteNav } from "@core/components/shell/site-nav";
 
 /**
- * SiteNav renders the page manifest (FR-3.1) as live `next/link`s. Stories show the default nav and
+ * SiteNav renders the page manifest as live `next/link`s. Stories show the default nav and
  * the active-link state; `HiddenPage` proves a `nav: false` page is omitted.
  */
 const pages = [

@@ -1,6 +1,6 @@
 # brief-to-site — project notes
 
-Cross-session build tracker is **ROADMAP.md** (read first). This file holds hard-won gotchas.
+This file holds hard-won gotchas for working on brief-to-site.
 
 ## OS-agnostic — no platform-specific code (project-wide rule)
 
@@ -22,7 +22,7 @@ shell out to platform commands and never branch on `process.platform`.
 - **Detecting a platform assumption in review is a defect**, not a nuance — refactor it to a Node API
   and, if the fix reveals a reusable pattern, note it here.
 
-## Colour system (`packages/core/src/styles`, PR3)
+## Colour system (`packages/core/src/styles`)
 
 - **CSS custom-property scope is the core gotcha.** Derived tokens (`--brand-secondary`,
   `--brand-tertiary`, …) are declared and **resolved at `:root`**, then inherit as fixed values.
@@ -39,8 +39,8 @@ shell out to platform commands and never branch on `process.platform`.
   Do not re-derive or "tidy" the formula — its directional `round(up/down)` is what guarantees
   ≥4.5:1 after integer snapping. There is deliberately **no JS twin**; `relativeLuminance` /
   `contrastRatio` only *measure* (to verify legibility in the story), they don't pick the text
-  colour. The CSS owns that at runtime — **no exceptions** (a PR7 `contrastText` JS picker was
-  added then removed in review; don't reintroduce JS luminance/colour-picking).
+  colour. The CSS owns that at runtime — **no exceptions**: don't reintroduce JS
+  luminance/colour-picking.
 - **Named harmonies** default to complementary (`DEFAULT_HARMONY`). Offsets:
   triadic 120/240, complementary 150/210, analogous 330/30. Switch via `--secondary-h-offset` /
   `--tertiary-h-offset` at `:root`.
@@ -50,7 +50,7 @@ shell out to platform commands and never branch on `process.platform`.
   no luminance math). `--primary-foreground` is left at core's near-white default; a saturated
   brand fill that carries text uses `.wcag-contrast` instead — see the **`Badge` `brand` variant**
   (`wcag-contrast [--r:var(--brand-r)] …`), which the section eyebrows use.
-- **Branded by default, contrast-safe (PR10 fix).** `globals.css` `:root` no longer maps *only*
+- **Branded by default, contrast-safe.** `globals.css` `:root` no longer maps *only*
   `--primary`/`--ring` to brand. The surface roles (`--background`/`--secondary`/`--muted`/`--accent`/
   `--border`/`--input`) point at the **light** brand tints (`--brand-surface` l96 / `--brand-muted`
   l90), so the whole page picks up the brand hue while the dark base-nova foregrounds stay legible
@@ -58,12 +58,11 @@ shell out to platform commands and never branch on `process.platform`.
   so cards lift off the tint. Saturated hues that carry text go through `.wcag-contrast` (the Badge
   variant); a saturated hue with **no** text (the `FeatureGrid` card top-accent = `--brand-secondary`)
   can use the hsl token directly. A site's `theme.css` can still remap any role — the derived-var
-  cascade resolves each override against that site's seed. The earlier "minimal by design" stance is
-  superseded. (Before PR10, brand colour only reached the primary Button — everything else was neutral.)
+  cascade resolves each override against that site's seed.
 - **`.wcag-contrast` legitimately picks DARK text on mid-tone brands — don't "fix" it to white.** A
   mid green like `#090` (rgb 0 153 0) only clears ~3.8:1 against white, so the utility correctly
   chooses **dark** text on a green `brand` Badge (amber/violet, being darker, get white). Naive
-  white-on-brand would fail WCAG; the util adapting per-hue is the whole point (FR-2.9). The contrast
+  white-on-brand would fail WCAG; the util adapting per-hue is the whole point. The contrast
   split to respect when branding an element: *light tint + dark text* needs no contrast math;
   *saturated fill carrying text* must use `.wcag-contrast` with `--r/--g/--b` (**primary only** —
   derived secondary/tertiary are HSL-only, no RGB); *saturated with no text* (a decorative rule, the
@@ -71,10 +70,10 @@ shell out to platform commands and never branch on `process.platform`.
 - **Default brand seed = Tailwind blue-600** (`#2563eb` = hsl(221 83% 53%) = rgb(37 99 235)) in both
   `colors.css` and `sites/_template` — one canonical default.
 
-## Sites & tooling (`sites:new` + `theme:build`, PR7)
+## Sites & tooling (`sites:new` + `theme:build`)
 
-- **Site dependency split (PR#11 review).** `next`/`react`/`react-dom` live in **each site** +
-  `_template` (the site's own `next` bin must be on its workspace PATH, and FR-5.3 wants sites
+- **Site dependency split.** `next`/`react`/`react-dom` live in **each site** +
+  `_template` (the site's own `next` bin must be on its workspace PATH, and sites must be
   self-buildable); devDeps (`@types/*`, `typescript`) live **only at root**. Do **not** hoist `next`
   too — Yarn only exposes a dep's bin to a workspace that declares it, so it breaks
   `yarn workspace @brief-to-site/site-<slug> build`. There is already no per-site `node_modules`
@@ -86,6 +85,24 @@ shell out to platform commands and never branch on `process.platform`.
   concern → add it to `configSchemas` (the registry test guards the set). The CLI is typechecked by
   `tsc -p packages/core` but not run by vitest (it `process.exit`s), so run `yarn typecheck`
   separately and read its real exit.
+- **Section shapes come from the Storybook MCP, not a bespoke CLI.** `get-documentation` (per section)
+  returns everything the old catalog did, from three sources: (1) the **component description** — the
+  JSDoc block **immediately above `const meta`** in each `*.stories.tsx` (react-docgen only attaches
+  the leading comment adjacent to the default-export meta; a `const` between the comment and `meta`
+  drops it — verified empirically). Put the section's **purpose + CSS-only variant vocabulary +
+  defaults** there. (2) **copy-me usage + every variant value** — the per-variant **stories** (each
+  meaningful variant has its own story; the `Default` story is the type-checked copy-me snippet, which
+  is why we don't hand-write a usage block — that would drift). (3) **content-prop docs** — the
+  interface JSDoc. `tags: ["autodocs"]` generates the human Docs page and enriched variant `argTypes`
+  (`description` + `table.defaultValue`) document the variant props there (they don't surface in
+  `get-documentation`). Note `parameters.docs.description.component` does **not** surface in
+  `get-documentation` — use the meta-leading JSDoc for the MCP-visible description.
+  - The old `yarn sections:catalog` CLI (`components/sections/catalog.ts` + `catalog.test.ts` +
+    `config/cli/sections-catalog.ts` + per-section exported `*VariantsConfig`) was **removed**; the
+    configs are inlined back into each `cva()` call. Consequence: story `argTypes` variant lists and
+    the JSDoc variant vocabulary are **hand-maintained** and can drift from the `cva` config (the
+    catalog's zero-drift guarantee was intentionally dropped; no replacement drift test). SKILL.md
+    step 5 points at the Storybook MCP as the authoritative props source.
 - **`theme:build <slug>`** reads `config/brand.json` (hex) and writes `sites/<slug>/theme.css`:
   `--brand-h/s/l` (via `palette.hexToHsl`) **and `--brand-r/g/b`** (via `palette.hexToRgb`, the input
   `.wcag-contrast` reads), the harmony offset vars, and explicit `--brand-secondary/tertiary-*`
@@ -102,16 +119,15 @@ shell out to platform commands and never branch on `process.platform`.
   `theme:build` after editing brand.json. A drift test asserts `_template/theme.css === buildThemeCss(brand)`
   and `viewports.json === DEFAULT_VIEWPORTS`. Scaffold changes are tested by generating a site from
   `_template` into a temp dir (scaffold.test.ts). `_template` IS committed (it's the tool); the
-  **example site** assembled end-to-end is separate and lands in PR8.
-  - Future `sites/*` iteration (e.g. capture in PR9) must **skip the `_template` dir** (and `isValidSlug`
+  **example sites** assembled end-to-end are separate.
+  - Future `sites/*` iteration (e.g. capture) must **skip the `_template` dir** (and `isValidSlug`
     already rejects the `_` prefix, so `sites:new _template` can't collide).
-- **Core is consumed as raw source** (no build step), so two things are load-bearing and were only
-  exercised once PR7 created the first consumer:
+- **Core is consumed as raw source** (no build step), so two things are load-bearing:
   - **Core internals use the `@core/*` alias, not `@/*`.** A bare `@/*` resolves to the *site* root
     from a consuming app (Turbopack + tsc both read the site's tsconfig paths), so it breaks there.
     `@core/*` → core's `src/*` is declared in every resolver: core's tsconfig, `.storybook/main.ts`,
     `vitest.config.ts`, **and the shared `tsconfig.site.json`** (repo root) that every site extends
-    (`sites/_template` + scaffolds inherit it — PR8 review lifted it out of the per-site tsconfigs).
+    (`sites/_template` + scaffolds inherit it, rather than declaring it per-site).
     Turbopack resolves the inherited `@core` path for core's transpiled files — verified via
     `next build`; no `turbopack.resolveAlias` fallback needed. Never use `@/*` in a core file a site
     imports.
@@ -150,7 +166,7 @@ shell out to platform commands and never branch on `process.platform`.
   Node `child.kill()` frees the port on every OS — no port-scanning, no `Get-NetTCPConnection`/`lsof`.
   Reuse `devSpawnSpec`/`resolveNextBin` for future child-process CLIs (capture:run).
 
-## Capture (`capture:run`, PR9)
+## Capture (`capture:run`)
 
 - **The Playwright driver lives at repo-root `scripts/capture-run.ts`, NOT in core — deliberately.**
   Core is consumed as **raw TS source** by every site (`transpilePackages`), so a `playwright` import
@@ -158,7 +174,7 @@ shell out to platform commands and never branch on `process.platform`.
   (`config/capture.ts`: `captureManifest`, `formatTimestamp`, `pageBasename`, `pageUrl`,
   `runDirName`, `MOTION_FREE_CSS`, `HIDE_DEV_OVERLAY_CSS`; `config/dev.ts#devSpawnSpec`) so vitest
   collects their tests (the `packages/*/src/**` glob) and `tsc -p packages/core` checks them. The
-  root script is typechecked via `tsconfig.scripts.json` (part of full-repo `yarn typecheck`, PR12) —
+  root script is typechecked via `tsconfig.scripts.json` (part of full-repo `yarn typecheck`) —
   still keep it thin and push logic into core, where vitest also covers it.
 - **`playwright` is a root devDependency (core lib, `chromium.launch()`), not `@playwright/test`** —
   capture is a script, not a test suite. The Chromium **binary is a separate one-time install**:
@@ -172,37 +188,36 @@ shell out to platform commands and never branch on `process.platform`.
   indicator/error toasts into a `<nextjs-portal>` (shadow DOM); `HIDE_DEV_OVERLAY_CSS` hides the host
   element, injected alongside `MOTION_FREE_CSS` per page. Found empirically — the "N Issues" badge
   showed up mid-page in the first real run.
-- Output is **JPEG** (FR-4.5, `type: "jpeg", quality: 90`), full-page (`fullPage: true`), into the
+- Output is **JPEG** (`type: "jpeg", quality: 90`), full-page (`fullPage: true`), into the
   **gitignored** `sites/<slug>/captures/<run>-<ts>/<page>_<width>.jpg`. `run` defaults to the slug.
 
-## Skill + generation config (`microsite`, PR10)
+## Skill + generation config (`microsite`)
 
 - **`.claude/skills/microsite/SKILL.md` is the pipeline entry point** — the agent-facing work-script
   for intake → author → assemble → HITL → capture. It **points at** the `yarn` scripts, Zod schemas,
   and Storybook rather than duplicating them; keep it that way (Code Over Instructions). The one hard
   rule it enforces that isn't code-checkable: **stop at the HITL checkpoint** and hand back to the
-  operator before `capture:run` (FR-2.1) — never auto-capture.
-- **`config/generation/generation.json` is SYSTEM-LEVEL** (repo root, FR-3.4), not per-site: one
+  operator before `capture:run` — never auto-capture.
+- **`config/generation/generation.json` is SYSTEM-LEVEL** (repo root), not per-site: one
   house voice + guardrails for **every** site. It is **agent-read only** — there is **no runtime code
   path** that consumes it (copy is written by the agent at assemble time, not templated at build), so
   don't wire it into a site build or a CLI. It validates against `generationSchema`
   (`packages/core/src/config/generation.schema.ts`); the studio-specific
   `packages/core/src/config/examples/generation.json` is a separate **loader fixture**, not this
   config — don't conflate them.
-- **Three committed example sites, all drift-guarded.** `sites/northwind` (complementary),
-  `sites/meridian` (analogous), and `sites/lee-carvalo` (triadic) prove the pipeline across all three
-  harmonies + a spread of variants. `example-site.test.ts` runs its structural checks over an
-  `EXAMPLE_SITES` table via `describe.each` — **adding another example site means adding a row
-  there**, or it silently goes unguarded (the test won't fail, it just won't cover it).
+- **Three committed example sites.** `sites/northwind` (complementary), `sites/meridian` (analogous),
+  and `sites/lee-carvalo` (triadic) prove the pipeline across all three harmonies + a spread of
+  variants. (They used to be drift-guarded by `example-site.test.ts`, since removed — no automated
+  check now asserts the committed sites stay in sync with the tooling that generates them.)
 - **Build/verify one site with `yarn workspace @brief-to-site/site-<slug> build`** (there is no
   `sites:build` script); `yarn sites:dev <slug>` for dev, `yarn capture:run <slug> --run <name>` for a
   named throwaway capture. Heads-up inconsistency: `northwind/config/viewports.json` has only 2
   viewports (375/1280) while `_template` (and meridian/lee-carvalo) ship the default 4 — so northwind
   captures 6 images, the others 12.
 
-## Quality gate (husky pre-push, PR12)
+## Quality gate (husky pre-push)
 
-- **`git push --no-verify` is forbidden** (also a global rule). No CI by design (FR-5.6): this local
+- **`git push --no-verify` is forbidden** (also a global rule). No CI by design: this local
   hook IS the enforcement layer.
 - **Husky activates via `postinstall`, NOT `prepare`** — Yarn Berry never runs `prepare`
   (yarnpkg/berry#2967). Fresh clones get the hook on first `yarn install` (no install-state yet →
@@ -242,15 +257,15 @@ shell out to platform commands and never branch on `process.platform`.
   guide — so "switch to forks" is a no-op; the flake happened *under* forks). The remaining in-forks
   levers (`poolOptions.forks.singleFork`, `fileParallelism: false`) can't be *verified* against an
   unreproducible flake and would serialize the suite / weaken isolation for a ~6% event — a bad
-  trade. **Mitigation = re-run** (FR-4.8: retry = re-run). If the **pre-push hook** (PR12) fails on
+  trade. **Mitigation = re-run** (retry = re-run). If the **pre-push hook** fails on
   this signature, just `git push` again; do not treat a single occurrence as a real test failure —
   confirm by re-running before investigating.
-- **`fixtures/briefs/` (FR-5.5) is deliberately NOT consumed by any test.** The two named briefs
+- **`fixtures/briefs/` is deliberately NOT consumed by any test.** The two named briefs
   (`low-context-brief.md`, `sensitive-product.md`) are operator/agent **dry-run inputs** — generation
-  is agent-driven and copy varies per FR-3.5/6, so there is no unit test asserting on generated copy.
+  is agent-driven and copy varies per brief, so there is no unit test asserting on generated copy.
   Don't wire them into vitest expecting assertions; point the `microsite` skill at them for a manual
   run. (The three committed `sites/*` briefs are full *post-assembly* examples, a different thing.)
-- No headless CI runner (FR-5.6 = no CI). CSS `pow()`/`calc()` can't be evaluated in jsdom, so the
+- No headless CI runner (no CI). CSS `pow()`/`calc()` can't be evaluated in jsdom, so the
   **`Colors/*` `play()` stories** confirm rendered values in a real browser (Storybook interactions
   panel); vitest covers only non-DOM math. Adding `@storybook/addon-vitest` to run play tests in CI
   is a deliberate scope decision NOT yet taken.

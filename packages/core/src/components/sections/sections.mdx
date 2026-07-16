@@ -4,23 +4,23 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Section suite
 
-The tool is an **assembly engine** (spec §3): the agent composes SSR pages from these compound
-**sections** (FR-3.0, FR-3.2), applies the deterministic PR3 theme, and fills brief-grounded copy.
+The tool is an **assembly engine**: the agent composes SSR pages from these compound
+**sections**, applies the deterministic theme, and fills brief-grounded copy.
 This page is the contract every section follows — and the vocabulary the agent selects from via the
-Storybook MCP addon (FR-3.11a).
+Storybook MCP addon.
 
 ## The contract
 
 1. **Render through `Section`.** The shell is a full-bleed `<section>` that provides the standard
-   centred container (`max-w-7xl`, default breakpoints, responsive gutters — FR-3.10) and the one
+   centred container (`max-w-7xl`, default breakpoints, responsive gutters) and the one
    variant axis shared by all sections: spacing **density** (`compact` / `comfortable` / `spacious`).
    Because it is full-bleed, a section may carry its own background on the outer element while its
    copy still lands on the shared column.
-2. **Layout variants are CVA + CSS-only (FR-3.11).** A variant maps a **semantic name** to a class
+2. **Layout variants are CVA + CSS-only.** A variant maps a **semantic name** to a class
    string, and may only change *alignment*, *spacing*, or *child order* (via `order` /
    `flex-direction`). It must **never** change DOM/source order or child structure. Variants use
    theme CSS vars only and must hold across breakpoints. Give each meaningful variant its own story.
-3. **Images are paths with a section-owned placeholder (FR-3.7).** Sections take an `imageSrc` path
+3. **Images are paths with a section-owned placeholder.** Sections take an `imageSrc` path
    prop and fall back to `placeholderDataUri(...)` when it is absent. The `<img>` uses
    `object-fit: cover; object-position: center` so an operator overwrites art of any size without
    resizing.
@@ -31,7 +31,7 @@ Colour: sections consume **role tokens** (`bg-background`, `text-foreground`, `t
 ## Why CSS-only order (and not DOM order)
 
 Visual reordering via CSS decouples visual order from DOM/focus order — normally an a11y concern, but
-**moot here**: the deliverable is images and a11y is out of scope (spec §6/§7). This is flagged so
+**moot here**: the deliverable is images and a11y is out of scope. This is flagged so
 structural (DOM-changing) variants are not reintroduced later. See **Sections/Hero → MediaStart**:
 the image moves to the visual left via `flex-row-reverse` while the DOM stays copy → media.
 

@@ -1,8 +1,8 @@
 /**
- * `capture:run <site-slug-or-path> [--run <name>] [--port <n>]` — the multi-viewport screenshot tool
- * (FR-4.x). It self-manages the whole capture: spawn the site's `next dev` (FR-4.7), wait until it
- * serves, then drive Playwright/Chromium to shoot every page × viewport **full-page** (FR-4.3) and
- * **motion-free** (FR-4.4), writing JPEGs into `sites/<slug>/captures/<run>-<ts>/` (FR-4.5), and
+ * `capture:run <site-slug-or-path> [--run <name>] [--port <n>]` — the multi-viewport screenshot tool.
+ * It self-manages the whole capture: spawn the site's `next dev`, wait until it
+ * serves, then drive Playwright/Chromium to shoot every page × viewport **full-page** and
+ * **motion-free**, writing JPEGs into `sites/<slug>/captures/<run>-<ts>/`, and
  * finally tear the server down.
  *
  * This driver lives at the repo root — **not** in `packages/core` — on purpose: core is consumed as
@@ -60,7 +60,7 @@ function parseArgs(argv: string[]): CliArgs | null {
 
 const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** Poll the served URL until it responds (FR-4.4 wait-for-load starts at the server being up). */
+/** Poll the served URL until it responds (wait-for-load starts at the server being up). */
 async function waitForServer(url: string, timeoutMs: number): Promise<boolean> {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {

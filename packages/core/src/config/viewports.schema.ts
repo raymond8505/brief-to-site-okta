@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 /**
- * `viewports.json` — the capture viewport set (FR-4.2). `capture:run` (PR9) shoots each page
- * full-page (FR-4.3) at every viewport; `width` drives the output filename (FR-4.5). A sensible
+ * `viewports.json` — the capture viewport set. `capture:run` shoots each page
+ * full-page at every viewport; `width` drives the output filename. A sensible
  * default set ships as `DEFAULT_VIEWPORTS` so a site need not declare one.
  */
 export const viewportSchema = z.object({

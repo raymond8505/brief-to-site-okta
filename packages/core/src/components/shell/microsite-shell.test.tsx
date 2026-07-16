@@ -22,7 +22,7 @@ describe("MicrositeShell", () => {
     expect(main).toContainElement(screen.getByText("page body"));
   });
 
-  it("falls back to a placeholder logo when logoSrc is absent (FR-3.8)", () => {
+  it("falls back to a placeholder logo when logoSrc is absent", () => {
     render(<MicrositeShell meta={meta} pages={pages}>x</MicrositeShell>);
     expect(screen.getByRole("img", { name: "Northwind" }).getAttribute("src")).toMatch(
       /^data:image\/svg\+xml,/,
@@ -56,7 +56,7 @@ describe("MicrositeShell", () => {
     expect(screen.getByText("custom footer")).toBeInTheDocument();
   });
 
-  it("keeps the header non-sticky/non-fixed (FR-3.6)", () => {
+  it("keeps the header non-sticky/non-fixed", () => {
     const { container } = render(<MicrositeShell meta={meta} pages={pages}>x</MicrositeShell>);
     const header = container.querySelector("[data-slot=site-header]")!;
     expect(header.className).not.toMatch(/\b(sticky|fixed)\b/);

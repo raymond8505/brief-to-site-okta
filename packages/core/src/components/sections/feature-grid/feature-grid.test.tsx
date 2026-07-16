@@ -34,7 +34,7 @@ describe("FeatureGrid", () => {
     expect(screen.queryByRole("heading", { level: 2 })).not.toBeInTheDocument();
   });
 
-  it("falls back to the section-owned placeholder when a feature has no imageSrc (FR-3.7)", () => {
+  it("falls back to the section-owned placeholder when a feature has no imageSrc", () => {
     render(<FeatureGrid features={[{ title: "T", imageAlt: "Art" }]} />);
     expect(screen.getByRole("img", { name: "Art" }).getAttribute("src")).toMatch(
       /^data:image\/svg\+xml,/,

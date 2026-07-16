@@ -1,5 +1,5 @@
 // Public barrel for the section suite (`@brief-to-site/core/sections`). Sections are the compound
-// components the agent assembles into pages (spec §3). The `_template` archetype is intentionally
+// components the agent assembles into pages. The `_template` archetype is intentionally
 // excluded — it is a copy-me reference, not a shipping section.
 export { Section, sectionVariants } from "./section";
 export type { SectionProps } from "./section";

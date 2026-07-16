@@ -39,7 +39,7 @@ describe("normalizeHue", () => {
   });
 });
 
-describe("HSL derivation (FR-2.7)", () => {
+describe("HSL derivation", () => {
   it("rotateHue preserves saturation and lightness", () => {
     const rotated = rotateHue({ h: 100, s: 42, l: 37 }, 90);
     expect(rotated).toEqual({ h: 190, s: 42, l: 37 });
@@ -116,7 +116,7 @@ describe("hex → HSL (theme:build input)", () => {
 // Measurement primitives only — contrast-math.css owns choosing the text colour at runtime; the
 // ≥4.5:1 guarantee for the CSS is asserted in the Colors/Contrast story (a real browser). These
 // helpers exist so that story can measure the rendered result.
-describe("WCAG measurement primitives (FR-2.9)", () => {
+describe("WCAG measurement primitives", () => {
   it("relative luminance is ordered black < mid < white", () => {
     const black = relativeLuminance({ r: 0, g: 0, b: 0 });
     const white = relativeLuminance({ r: 255, g: 255, b: 255 });

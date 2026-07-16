@@ -1,7 +1,7 @@
 /* ============================================================================================
    Per-site theme override — TEMPLATE (not imported by core)
 
-   Each generated site (sites/<slug>, PR7+) ships a theme.css that it imports AFTER core's
+   Each generated site (sites/<slug>) ships a theme.css that it imports AFTER core's
    globals.css. It overrides only the brand seed(s) and, optionally, remaps shadcn role vars onto
    the derived brand tokens. Everything else — the secondary/tertiary derivation, the WCAG contrast
    utility — comes from core. Copy this file to sites/<slug>/theme.css and edit the seeds.
@@ -26,7 +26,7 @@
      --brand-secondary-h: 190; --brand-secondary-s: 80; --brand-secondary-l: 45;
      --brand-tertiary-h:  40;  --brand-tertiary-s:  90; --brand-tertiary-l:  50; */
 
-  /* ── 2. Optional role remaps (FR-2.8) — point any shadcn role at any brand token ──
+  /* ── 2. Optional role remaps — point any shadcn role at any brand token ──
      core already brands by default: --primary/--ring use --brand-primary, and the surface roles
      (--background/--secondary/--muted/--accent/--border) use the light brand tints — so a site is
      branded from the seed alone. Override here only to go further, e.g. a saturated role:

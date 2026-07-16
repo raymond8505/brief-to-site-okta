@@ -10,11 +10,11 @@ import { PLACEHOLDER_SPECS, placeholderDataUri } from "@core/components/sections
  * FeatureGrid — the section contract proven across a **content** section (see `section.tsx` and the
  * Hero worked example). A responsive grid of feature cards, each pairing an image with a title and a
  * short description, above an optional section header (eyebrow / heading / subcopy). It composes
- * `Section` for the shell/container/density and adds one **CSS-only** layout CVA (FR-3.11): the
+ * `Section` for the shell/container/density and adds one **CSS-only** layout CVA: the
  * `columns` axis maps a semantic count to `grid-template-columns` classes and changes only CSS —
  * never DOM/source order or child structure.
  *
- * This is the FR-3.7 image contract exercised in a **repeating** context: every feature takes an
+ * This is the image contract exercised in a **repeating** context: every feature takes an
  * `imageSrc` path and falls back to `placeholderDataUri(...)`, flowing through the same
  * `<img … object-cover>` element a real asset would (identical in Storybook, a Next.js site, and
  * jsdom tests). Feature cards use the `Card` primitive, whose flush-top `<img>` support keeps the
@@ -41,7 +41,7 @@ export interface FeatureGridItem {
   title: string;
   /** Supporting description under the title. */
   description?: string;
-  /** Image path. Omit to fall back to the section-owned placeholder (FR-3.7). */
+  /** Image path. Omit to fall back to the section-owned placeholder. */
   imageSrc?: string;
   /** Alt text for the feature image. Required so the box is always described. */
   imageAlt: string;

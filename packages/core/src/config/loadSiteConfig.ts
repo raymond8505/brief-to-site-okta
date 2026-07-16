@@ -9,9 +9,9 @@ import { viewportsSchema, type ViewportsConfig } from "./viewports.schema";
 import { generationSchema, type GenerationConfig } from "./generation.schema";
 
 /**
- * Config loading (FR-2.3): read a site's per-concern JSON, validate with Zod, and return either the
+ * Config loading: read a site's per-concern JSON, validate with Zod, and return either the
  * inferred, typed config or **structured per-field issues** the agent can relay before a run — never
- * throwing on operator error. `generation` is system-level (FR-3.4) and loaded separately.
+ * throwing on operator error. `generation` is system-level and loaded separately.
  *
  * fs-touching, so this module is exposed only via the `@brief-to-site/core/config` subpath (and the
  * `sites:validate` CLI); the browser-safe schemas are what the main barrel re-exports at runtime.
@@ -88,7 +88,7 @@ export function resolveSiteDir(arg: string): string {
 
 /**
  * Validate a site's `config/{meta,brand,pages,viewports}.json`. Returns a discriminated union
- * (deterministic status, FR-2.5): all issues across all four files are collected, so the operator
+ * (deterministic status): all issues across all four files are collected, so the operator
  * sees everything wrong in one pass rather than one error at a time.
  */
 export function loadSiteConfig(siteDir: string): LoadResult {
@@ -126,7 +126,7 @@ export function loadBrandConfig(
   return result.ok ? { ok: true, config: result.value } : { ok: false, issues: result.issues };
 }
 
-/** Validate the system-level `generation.json` at an explicit path (FR-3.4). */
+/** Validate the system-level `generation.json` at an explicit path. */
 export function loadGenerationConfig(
   filePath: string,
 ): { ok: true; config: GenerationConfig } | { ok: false; issues: ConfigIssue[] } {

@@ -5,7 +5,7 @@ import { isValidSlug, scaffoldSite } from "../scaffold";
 
 /**
  * `sites:new <slug>` — scaffold a standalone Next.js app under `sites/<slug>/` by copying the
- * `sites/_template` workspace (FR-1.x). Thin fs + exit-code wrapper around `scaffoldSite`; mirrors
+ * `sites/_template` workspace. Thin fs + exit-code wrapper around `scaffoldSite`; mirrors
  * the other CLIs' status: 0 created, 1 slug invalid / already exists, 2 usage.
  */
 function main(): void {

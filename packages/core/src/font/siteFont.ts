@@ -6,9 +6,9 @@ import { Geist, Geist_Mono } from "next/font/google";
  * font plugin). Each loader emits a className that sets its CSS variable; `globals.css`
  * maps Tailwind's `--font-sans` / `--font-mono` tokens to these vars.
  *
- * Default is Geist + Geist Mono. Per-site font choice (FR-3.9) is layered on in a later PR;
- * this module is the single source of truth consumed by the Storybook preview now and by
- * each site's `layout.tsx` `<html className>` later.
+ * Default is Geist + Geist Mono. Per-site font choice is not yet implemented; this module is
+ * the single source of truth consumed by the Storybook preview and by each site's `layout.tsx`
+ * `<html className>`.
  */
 export const sansFont = Geist({
   variable: "--font-geist-sans",

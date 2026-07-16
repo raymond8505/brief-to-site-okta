@@ -1,10 +1,10 @@
-// Public barrel for @brief-to-site/core. Re-exports grow per PR as modules land
+// Public barrel for @brief-to-site/core. Re-exports grow as modules land
 // (colour system, schemas, microsite shell, sections live behind their own subpath exports).
 export { cn, navHref } from "./lib/utils";
 export { sansFont, monoFont, siteFontClassName } from "./font/siteFont";
 
-// Colour system (PR3). Deterministic HSL derivation + WCAG contrast math — the single source of
-// truth shared by the CSS (styles/colors.css, styles/contrast-math.css) and theme:build (PR7).
+// Colour system. Deterministic HSL derivation + WCAG contrast math — the single source of
+// truth shared by the CSS (styles/colors.css, styles/contrast-math.css) and theme:build.
 export {
   HUE_OFFSETS,
   HUE_OFFSET,
@@ -42,8 +42,8 @@ export { Label } from "./components/ui/label";
 export { Separator } from "./components/ui/separator";
 export { Textarea } from "./components/ui/textarea";
 
-// Section suite (PR4). Compound components the agent assembles into SSR pages (spec §3); each carries
-// CSS-only, deterministic CVA variants (FR-3.11). Also available via the "./sections" subpath.
+// Section suite. Compound components the agent assembles into SSR pages; each carries
+// CSS-only, deterministic CVA variants. Also available via the "./sections" subpath.
 export { Section, sectionVariants } from "./components/sections/section";
 export type { SectionProps } from "./components/sections/section";
 export {
@@ -55,13 +55,13 @@ export type { PlaceholderOptions, PlaceholderName } from "./components/sections/
 export { Hero, heroVariants } from "./components/sections/hero/hero";
 export type { HeroProps, HeroCta } from "./components/sections/hero/hero";
 
-// Microsite shell (PR6). The page frame + manifest-driven nav generated pages render through (§3).
+// Microsite shell. The page frame + manifest-driven nav generated pages render through.
 export { MicrositeShell } from "./components/shell/microsite-shell";
 export type { MicrositeShellProps } from "./components/shell/microsite-shell";
 export { SiteNav } from "./components/shell/site-nav";
 export type { SiteNavProps, NavItem } from "./components/shell/site-nav";
 
-// Config schemas (PR6). Browser-safe Zod schemas + inferred types (FR-2.3). The fs-touching loaders
+// Config schemas. Browser-safe Zod schemas + inferred types. The fs-touching loaders
 // (`loadSiteConfig`, `loadGenerationConfig`) live behind the "./config" subpath (node-only); only
 // their result types are re-exported here.
 export { metaSchema } from "./config/meta.schema";

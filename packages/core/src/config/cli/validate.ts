@@ -3,7 +3,7 @@ import { relative } from "node:path";
 import { loadSiteConfig, resolveSiteDir, siteConfigPath } from "../loadSiteConfig";
 
 /**
- * `sites:validate <slug-or-path>` — the CLI behind FR-2.3/2.5. Resolves a site directory, validates
+ * `sites:validate <slug-or-path>` — the CLI for site config validation. Resolves a site directory, validates
  * its `config/*.json`, and reports deterministic status: on success the validated file paths; on
  * failure the structured per-field issues + a non-zero exit code the agent can key off.
  */

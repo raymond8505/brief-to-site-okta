@@ -2,11 +2,11 @@ import { cpSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative, resolve, sep } from "node:path";
 
 /**
- * `scaffoldSite` — the core of `sites:new` (PR7). A new site is a **copy of the real
+ * `scaffoldSite` — the core of `sites:new`. A new site is a **copy of the real
  * `sites/_template` workspace** (an installed, buildable Next.js app) with a few structured edits,
  * not a bundle of template strings. So the scaffold is maintained the same way sites are — its
  * dependencies live in a real `package.json`, it can be built in place, and scaffold changes are
- * tested by generating a site from it (see scaffold.test.ts). PR8 replaces the placeholder pages.
+ * tested by generating a site from it (see scaffold.test.ts).
  *
  * The only per-site edits are the values derived from the slug (the workspace name + the site name);
  * everything else — including the generated `theme.css` — is copied verbatim. The operator edits

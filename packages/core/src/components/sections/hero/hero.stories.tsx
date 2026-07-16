@@ -4,12 +4,6 @@ import { expect } from "storybook/test";
 import { Button } from "@core/components/ui/button";
 import { Hero } from "@core/components/sections/hero/hero";
 
-/**
- * Hero — the first section and the worked example of the section contract. Its layout variants are
- * CSS-only and deterministic (FR-3.11); every meaningful variant gets its own story below so the
- * Storybook MCP addon can surface the vocabulary the agent selects from (FR-3.11a).
- */
-
 const sampleActions = (
   <>
     <Button>Get started</Button>
@@ -17,14 +11,37 @@ const sampleActions = (
   </>
 );
 
+/**
+ * Hero — the first section: a two-column split of copy (eyebrow, headline, subcopy, CTAs) beside a
+ * media image, stacking on small screens. CSS-only layout variants: `align` (`start` | `center`,
+ * default `start`) and `media` (`inline-end` | `inline-start`, default `inline-end`); the shared
+ * `density` axis is `compact` | `comfortable` | `spacious` (default `comfortable`). Every meaningful
+ * variant has its own story below. Import from `@brief-to-site/core/sections`.
+ */
 const meta = {
   title: "Sections/Hero",
   component: Hero,
+  tags: ["autodocs"],
   parameters: { layout: "fullscreen" },
   argTypes: {
-    align: { control: "inline-radio", options: ["start", "center"] },
-    media: { control: "inline-radio", options: ["inline-end", "inline-start"] },
-    density: { control: "inline-radio", options: ["compact", "comfortable", "spacious"] },
+    align: {
+      control: "inline-radio",
+      options: ["start", "center"],
+      description: "Copy alignment (CSS-only). Default `start`.",
+      table: { defaultValue: { summary: "start" } },
+    },
+    media: {
+      control: "inline-radio",
+      options: ["inline-end", "inline-start"],
+      description: "Which side the media sits on — CSS `flex-direction` only, DOM order unchanged. Default `inline-end`.",
+      table: { defaultValue: { summary: "inline-end" } },
+    },
+    density: {
+      control: "inline-radio",
+      options: ["compact", "comfortable", "spacious"],
+      description: "Vertical rhythm from the shared Section axis. Default `comfortable`.",
+      table: { defaultValue: { summary: "comfortable" } },
+    },
     imageSrc: { control: "text" },
     actions: { control: false },
   },
@@ -46,7 +63,7 @@ export const Default: Story = {};
 
 /**
  * `media: inline-start` — image on the visual left. The DOM order is still copy → media; only CSS
- * `flex-direction` changes (FR-3.11). The play() confirms the reorder is CSS-only in a real browser.
+ * `flex-direction` changes. The play() confirms the reorder is CSS-only in a real browser.
  */
 export const MediaStart: Story = {
   args: { media: "inline-start" },
@@ -82,7 +99,7 @@ export const Spacious: Story = {
   args: { density: "spacious" },
 };
 
-/** No `imageSrc` — the section-owned placeholder fills the fixed-aspect box (FR-3.7). */
+/** No `imageSrc` — the section-owned placeholder fills the fixed-aspect box. */
 export const WithPlaceholder: Story = {
   args: { imageSrc: undefined },
 };
