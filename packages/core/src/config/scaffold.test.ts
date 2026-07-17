@@ -75,6 +75,7 @@ describe("scaffoldSite", () => {
       "config/viewports.json",
       "theme.css",
       "brief.md",
+      "components/sections/README.md",
       "public/images/.gitkeep",
     ];
     for (const file of expected) expect(existsSync(join(siteDir, file))).toBe(true);

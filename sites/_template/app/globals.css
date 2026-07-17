@@ -3,3 +3,8 @@
    generated theme.css (which wins the cascade because it comes later). */
 @import "@brief-to-site/core/styles/globals.css";
 @import "../theme.css";
+
+/* Scan this site's own components (site-local sections live in ../components/sections/). Core's
+   @source covers core's tree, not the site's; without this, classes used only in a site-local
+   section wouldn't be emitted. Resolved relative to this file, so it points at sites/<slug>/components. */
+@source "../components";
