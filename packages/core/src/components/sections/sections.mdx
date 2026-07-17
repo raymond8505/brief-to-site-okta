@@ -49,6 +49,18 @@ and replace the body. It is a minimal, green, story-documented compound section 
 starting point for all three rules. Export the new section from `components/sections/index.ts` (the
 `_template` itself is intentionally not exported).
 
+## Site-local sections
+
+Not every section belongs in core. When a single brief needs a layout no core section provides, the
+assembly agent authors a **site-local** section that lives in that site alone, at
+`sites/<slug>/components/sections/<name>/`, and imports it into the page by relative path. It follows
+**this same contract** — render through `Section`, compound `data-slot` slots filled only with core
+blocks, `assertAllowedChildren`, `MediaFrame` — but imports from the **public** package surface
+(`@brief-to-site/core/sections` / `/blocks` / `/lib/utils`), not core-internal `@core/*` paths, and
+ships **no story/test**. It never introduces new blocks/colour math/layout — only a new arrangement
+of the existing vocabulary. `yarn sites:sections <slug>` lists them for the HITL report; the operator
+decides whether any is worth **promoting** into core (copy it here, add a story + tests, export it).
+
 Live examples: **Sections/Hero** (split / centered / with-stats / quote-led compositions),
 **Sections/FeatureGrid** (`FeatureCard` blocks in a CSS-only `columns` grid, optional header slot),
 **Sections/ContactBlock** (a `ContactCopy` slot + a presentational `ContactForm`, CSS-only

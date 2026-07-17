@@ -13,9 +13,12 @@ look good and render responsively.
 
 You are the **coding agent** in the pipeline. The tool is fundamentally an **assembly engine**: you
 compose pre-built **sections** — each a compound family whose named slots you fill with **block
-primitives** (`@brief-to-site/core/blocks`) — and write brief-grounded copy into them. You do **not**
-invent new sections, blocks, colour math, or layout mechanisms — those are owned by `packages/core`
-and its Storybook.
+primitives** (`@brief-to-site/core/blocks`) — and write brief-grounded copy into them. **Prefer core
+sections.** When a brief genuinely needs a layout no core section provides (in any documented
+composition), you may author a **site-local** section — one that lives in that site only, under
+`sites/<slug>/components/sections/`, following the same contract (see step 5). You still do **not**
+invent new **blocks, colour math, or layout mechanisms** — those are owned by `packages/core`; a
+site-local section is only a new *arrangement of the existing block vocabulary*.
 
 ## When to use
 
@@ -100,6 +103,9 @@ yarn config:schema brand      # just one: meta | brand | pages | viewports | gen
 The Zod schemas in `packages/core/src/config/*.schema.ts` are the source of truth; `config:schema`
 serializes them (`z.toJSONSchema`). Rules (gotchas the schema can't express):
 
+- **`brand.radius` is a style signal** — pick it from the brief's tone (sharp/tight read
+  elegant/serious/editorial; rounded/playful read friendly/casual). Omit it for the balanced default.
+  It rescales every corner site-wide via `theme:build`.
 - **Image paths are root-relative** `/images/...` — a relative `images/...` 404s under nested
   routes like `/about`.
 - `logoSrc` and section images point at `/images/placeholders/<name>.svg` (written in step 5).
@@ -151,6 +157,23 @@ Compose sections **by brief** into `app/**/page.tsx`:
   primitives from `@brief-to-site/core`. `_template`'s section archetype is a copy-me reference,
   **not** importable.
 
+**Authoring a site-local section (only when no core section fits).** If — and only if — the brief
+needs a layout no core section provides in any composition, author a section that lives in this site
+alone:
+
+- Put it at `sites/<slug>/components/sections/<kebab-name>/<kebab-name>.tsx`, one folder per section.
+  See [`sites/_template/components/sections/README.md`](../../../sites/_template/components/sections/README.md).
+- Copy the **contract** from core's archetype
+  [`packages/core/src/components/sections/_template/`](../../../packages/core/src/components/sections/_template/template-section.tsx):
+  render through `Section`, a compound family of `data-slot` subcomponents filled **only** with core
+  blocks, `assertAllowedChildren` guard, images via `MediaFrame`. Import from the **public** surface
+  (`@brief-to-site/core/sections`, `@brief-to-site/core/blocks`, `@brief-to-site/core/lib/utils`) —
+  not core-internal `@core/*` deep paths. **No new blocks / colour math / layout mechanisms.**
+- Import it into the page by **relative path** (`../components/sections/<name>/<name>`;
+  `../../` from a nested route). There is no site-local `@/*` alias.
+- It has no story/test (sites don't run Storybook/vitest) — those are added if the operator promotes
+  it to core. You must **report it at the HITL checkpoint** (step 8).
+
 Authoring rules (model on [`sites/northwind/app/page.tsx`](../../../sites/northwind/app/page.tsx)):
 
 - Write copy **inline in the JSX** (TS-enforced), grounded in `brief.md`, obeying the generation config.
@@ -194,6 +217,10 @@ e.g.:
 > the files under `public/images/placeholders/`) and tweak copy/layout, or say the word and I'll
 > capture." Flag any thin-brief gaps you filled with defaults here.
 
+Run `yarn sites:sections <slug>` and include its output in the report. For **each** site-local
+section listed, note its purpose, why no core section fit, and that it's a candidate to formalize
+into core (the operator decides — alone or with the coding agent). If the list is empty, say so.
+
 This is the **one intentional pause** in the pipeline. Only proceed on the operator's go.
 
 ## 9. Capture
@@ -210,8 +237,9 @@ artifact paths. `captures/` is gitignored — these are the deliverable, handed 
 
 ## Invariants (don't violate)
 
-- **Assembly only** — compose existing sections from existing blocks; don't author new
-  sections/blocks/colour math/layout here.
+- **Compose first** — build from existing core sections; author a **site-local** section (in
+  `sites/<slug>/components/sections/`, per the contract) only when no core section fits, and report
+  it at HITL. Never author new **blocks / colour math / layout mechanisms** — those stay in core.
 - **Root-relative image paths** `/images/...` always.
 - **Copy is brief-grounded and guardrailed** — no invented facts, prices, stats, or claims.
 - **A variant is a composition** — fill section slots with blocks from `@brief-to-site/core/blocks`;
