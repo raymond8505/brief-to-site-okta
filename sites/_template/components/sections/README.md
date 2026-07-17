@@ -1,9 +1,12 @@
 # Site-local sections
 
 Sections are normally pre-authored in `packages/core` and composed into pages from
-`@brief-to-site/core/sections`. **Prefer those.** But when a brief needs a layout that no core
-section provides (in any documented composition), the assembly agent may author a **site-local**
-section here — one that lives in this site only and is **not** promoted to core.
+`@brief-to-site/core/sections`. Check those first (via the Storybook MCP) — a "variant" is a
+composition, so one usually fits. But when a brief needs a layout no core section provides in any
+documented composition, **author a site-local section** here — an arrangement of core blocks that
+lives in this site only until an operator promotes it. This is an expected move, not a last resort.
+(Need a piece the block vocabulary itself can't express? Author a site-local **block** — see the
+sibling [`../blocks/README.md`](../blocks/README.md).)
 
 ## Where they go
 
@@ -26,8 +29,10 @@ rules:
    guard warns on wrong-slot children.
 3. **Images through `MediaFrame`** — never a raw `<img>`.
 
-**Do not** author new blocks, colour math, or layout mechanisms — those stay core-only. A site-local
-section is a new *arrangement of the existing block vocabulary*, nothing more.
+A site-local section is a new *arrangement of the existing block vocabulary*. If the vocabulary falls
+short, author a site-local **block** (`../blocks/`) rather than dropping raw markup in — but **colour
+math and the token/theme system stay core-only** (consume role tokens + `.wcag-contrast`; never a JS
+colour twin).
 
 ## Imports — use the public package surface
 
@@ -48,5 +53,5 @@ site-local `@/*` alias is deliberately not configured.
 
 - **No story/test here** — sites don't run Storybook/vitest. Those get added when a section is
   promoted into core.
-- Run `yarn sites:sections <slug>` to list every site-local section; the agent includes that in the
-  HITL report so you can decide which (if any) are worth formalizing.
+- Run `yarn sites:novel <slug>` to list every site-local section **and** block; the agent includes
+  that in the HITL report so you can decide which (if any) are worth promoting.

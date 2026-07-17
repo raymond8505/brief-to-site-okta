@@ -113,21 +113,29 @@ shell out to platform commands and never branch on `process.platform`.
   closed `@brief-to-site/core/blocks` import surface + review. `MediaFrame` is the **sole** render-time
   consumer of `PLACEHOLDER_SPECS`; no section renders a raw `<img>`. The section contract doc is
   `components/sections/sections.mdx`; the copy-me archetype is `components/sections/_template/`.
-- **Sections are no longer core-only — the agent may author *site-local* sections.** When no core
-  section fits a brief, the assembly agent authors one under `sites/<slug>/components/sections/<name>/`
-  (mirrors core's layout so promotion is a copy). Same contract, but it imports from the **public**
-  surface (`@brief-to-site/core/sections` / `/blocks` / `/lib/utils`), **not** core-internal `@core/*`
-  deep paths, is imported into pages by **relative path** (no site-local `@/*` alias — TS replaces the
-  whole `paths` object on override, which would force re-declaring `@core/*` per leaf), and ships **no
-  story/test** (sites run neither SB nor vitest) until promoted to core. Still **no new
-  blocks/colour math/layout** — only a new arrangement of the existing blocks. Two load-bearing wiring
+- **Sites & core follow an escalation ladder — the agent may author *site-local* components.** The
+  agent checks the existing tier first, then goes one rung further when nothing fits: compose a core
+  **section** → author a site-local **section** (arrangement of core blocks, under
+  `sites/<slug>/components/sections/<name>/`) → author a site-local **block** (arrangement of core
+  primitives, under `sites/<slug>/components/blocks/<name>/`) → **add a core primitive** via the shadcn
+  MCP (into `components/ui/`, re-exported from core's `src/index.ts`). Locality/QA split: **primitives
+  go straight to core** (registry-vetted, reviewed as ordinary core changes); **bespoke blocks &
+  sections start site-local** and are promoted to core only if the operator decides at HITL. Both
+  mirror core's dir layout so promotion is a copy. Site-local blocks/sections import from the
+  **public** surface (`@brief-to-site/core` / `/sections` / `/blocks` / `/lib/utils`), **not**
+  core-internal `@core/*` deep paths, are imported into pages by **relative path** (no site-local
+  `@/*` alias — TS replaces the whole `paths` object on override, which would force re-declaring
+  `@core/*` per leaf), and ship **no story/test** (sites run neither SB nor vitest) until promoted. The
+  one hard bound that never goes site-local: **colour/contrast math + the token/theme system stay
+  core-only** (CSS-only, no JS twin — consume role tokens + `.wcag-contrast`). Two load-bearing wiring
   pieces: `_template/app/globals.css` has `@source "../components"` so Tailwind scans the site's own
-  tree (core's `@source` covers only core — verified: a class used solely in a site-local section, e.g.
-  `max-w-2xl`, is emitted only because of this), and `_template/components/sections/README.md` seeds the
-  dir (so the `@source` target exists) + documents the convention. `yarn sites:sections <slug>` (pure
-  `config/sections-inventory.ts#formatNovelSections` + thin `cli/sections-list.ts`) lists them for the
-  HITL report — the directory IS the record, not agent memory. `sites/northwind` ships `CtaBand` as the
-  committed demonstration.
+  tree — this already covers **both** `components/sections/` and `components/blocks/` (core's `@source`
+  covers only core — verified: a class used solely in a site-local section, e.g. `max-w-2xl`, is
+  emitted only because of this), and `_template/components/{sections,blocks}/README.md` seed the dirs
+  (so the `@source` targets exist) + document the convention. `yarn sites:novel <slug>` (pure
+  `config/novel-inventory.ts#formatNovelComponents` + thin `cli/novel-list.ts`) lists site-local blocks
+  AND sections for the HITL report — the directory IS the record, not agent memory. `sites/northwind`
+  ships `CtaBand` as the committed site-local-section demonstration (no committed block example yet).
 - **Section shapes come from the Storybook MCP, not a bespoke CLI.** `get-documentation` (per section)
   returns everything the old catalog did, from three sources: (1) the **component description** — the
   JSDoc block **immediately above `const meta`** in each `*.stories.tsx` (react-docgen only attaches

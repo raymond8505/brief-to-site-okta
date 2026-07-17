@@ -37,10 +37,12 @@ deterministic theme stays orthogonal.
 
 Content order carries no constraint — a11y is out of scope here (the deliverable is full-page
 screenshots), so a section arranges its slots and blocks however reads best. What keeps output
-deterministic is the **closed set of block primitives** the agent composes from, the typed slot
-props, and the dev-only slot guard: a bounded vocabulary in place of free-form markup. Compose only
-from the published blocks; to extend the vocabulary, add a new block deliberately (with a story +
-tests), the same way you would a `ui/` primitive. Never drop raw JSX into a page.
+deterministic is the **bounded set of block primitives** the agent composes from, the typed slot
+props, and the dev-only slot guard: a bounded vocabulary in place of free-form markup. Compose from
+the published blocks first; when the vocabulary falls short, **extend it deliberately** — a new
+**site-local block** for one site (a new arrangement of core primitives; see below), or a promoted
+core block (with a story + tests), the same way you would a `ui/` primitive. Never drop raw JSX into a
+page.
 
 ## Building a new section
 
@@ -49,17 +51,27 @@ and replace the body. It is a minimal, green, story-documented compound section 
 starting point for all three rules. Export the new section from `components/sections/index.ts` (the
 `_template` itself is intentionally not exported).
 
-## Site-local sections
+## Site-local components
 
-Not every section belongs in core. When a single brief needs a layout no core section provides, the
-assembly agent authors a **site-local** section that lives in that site alone, at
-`sites/<slug>/components/sections/<name>/`, and imports it into the page by relative path. It follows
-**this same contract** — render through `Section`, compound `data-slot` slots filled only with core
-blocks, `assertAllowedChildren`, `MediaFrame` — but imports from the **public** package surface
-(`@brief-to-site/core/sections` / `/blocks` / `/lib/utils`), not core-internal `@core/*` paths, and
-ships **no story/test**. It never introduces new blocks/colour math/layout — only a new arrangement
-of the existing vocabulary. `yarn sites:sections <slug>` lists them for the HITL report; the operator
-decides whether any is worth **promoting** into core (copy it here, add a story + tests, export it).
+Not every component belongs in core. The assembly agent works an **escalation ladder**, checking the
+existing tier first but building new when nothing fits (an expected move, not a last resort):
+
+- **Site-local section** — when no core section provides the layout. An arrangement of core blocks at
+  `sites/<slug>/components/sections/<name>/`, following **this same contract** (render through
+  `Section`, compound `data-slot` slots filled with blocks, `assertAllowedChildren`, `MediaFrame`).
+- **Site-local block** — when a section needs a piece the block vocabulary can't express. An
+  arrangement of core **primitives** at `sites/<slug>/components/blocks/<name>/` (carries a
+  `data-slot`, CSS-only `cva` variants).
+- **New core primitive** — when a block needs a UI primitive core lacks. Added straight to core via
+  the shadcn MCP (registry-vetted), not site-local.
+
+Site-local components import from the **public** package surface (`@brief-to-site/core` / `/sections`
+/ `/blocks` / `/lib/utils`), not core-internal `@core/*` paths, are imported into pages by relative
+path, and ship **no story/test**. They never introduce **colour math or a new token/theme system** —
+those stay core-only (consume role tokens + `.wcag-contrast`, no JS twin). `yarn sites:novel <slug>`
+lists every site-local block and section for the HITL report; the operator decides whether any is
+worth **promoting** into core (copy it here, add a story + tests, export it). New primitives already
+live in core, so they surface as ordinary core changes.
 
 Live examples: **Sections/Hero** (split / centered / with-stats / quote-led compositions),
 **Sections/FeatureGrid** (`FeatureCard` blocks in a CSS-only `columns` grid, optional header slot),
