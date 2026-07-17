@@ -89,9 +89,7 @@ Work ON brief-to-site happens mostly in `packages/core`:
 
 ### Quality gate
 
-There is **no CI** — a husky **pre-push** hook is the enforcement layer, and `git push --no-verify`
-is forbidden. Run each check on its own (don't `&&`-chain — read every exit code):
-
+There is **no CI** — a husky **pre-push** hook is the enforcement layer right now.
 ```bash
 yarn test        # vitest
 yarn lint        # eslint
