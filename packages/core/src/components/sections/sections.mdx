@@ -4,45 +4,51 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Section suite
 
-The tool is an **assembly engine**: the agent composes SSR pages from these compound
-**sections**, applies the deterministic theme, and fills brief-grounded copy.
-This page is the contract every section follows — and the vocabulary the agent selects from via the
-Storybook MCP addon.
+The tool is an **assembly engine**: the agent composes SSR pages from these compound **sections**,
+fills each section's slots with **block primitives**, applies the deterministic theme, and writes
+brief-grounded copy. This page is the contract every section follows — and, together with the
+**`Blocks/*`** catalog, the vocabulary the agent selects from via the Storybook MCP addon.
 
 ## The contract
 
 1. **Render through `Section`.** The shell is a full-bleed `<section>` that provides the standard
-   centred container (`max-w-7xl`, default breakpoints, responsive gutters) and the one
-   variant axis shared by all sections: spacing **density** (`compact` / `comfortable` / `spacious`).
-   Because it is full-bleed, a section may carry its own background on the outer element while its
-   copy still lands on the shared column.
-2. **Layout variants are CVA + CSS-only.** A variant maps a **semantic name** to a class
-   string, and may only change *alignment*, *spacing*, or *child order* (via `order` /
-   `flex-direction`). It must **never** change DOM/source order or child structure. Variants use
-   theme CSS vars only and must hold across breakpoints. Give each meaningful variant its own story.
-3. **Images are paths with a section-owned placeholder.** Sections take an `imageSrc` path
-   prop and fall back to `placeholderDataUri(...)` when it is absent. The `<img>` uses
-   `object-fit: cover; object-position: center` so an operator overwrites art of any size without
-   resizing.
+   centred container (`max-w-7xl`, default breakpoints, responsive gutters) and the one variant axis
+   shared by all sections: spacing **density** (`compact` / `comfortable` / `spacious`). Because it is
+   full-bleed, a section may carry its own background on the outer element while its content still
+   lands on the shared column.
+2. **A section is a compound family, filled with blocks.** Like the `Card` family, a section is a
+   root plus **named slot subcomponents** (e.g. `Hero` + `HeroBody` / `HeroMedia` / `HeroAside`), each
+   carrying a `data-slot`. The agent fills those slots with **block primitives** from
+   `@brief-to-site/core/blocks` (`Eyebrow`, `Heading`, `Prose`, `CtaGroup`, `MediaFrame`, `StatRow`,
+   `Quote`, …) — never ad-hoc markup. **A "variant" is a composition**, not a flag: the same section
+   reads as *split*, *centered*, *with-stats*, or *quote-led* purely by which blocks fill which slots.
+   A section still owns any genuine geometric layout as a small **CSS-only CVA** (`align`, `mediaSide`,
+   `columns`, `formSide`); and layout may react to which slots are present via `has-[data-slot=…]`. A
+   dev-only `assertAllowedChildren` guard warns when a wrong component is composed into a slot.
+3. **Images go through the `MediaFrame` block.** No section renders a raw `<img>`. `MediaFrame` takes
+   a `src` path and falls back to the section-owned placeholder for its `spec` (`hero` / `feature` /
+   `logo`), in an `object-cover` box — so an operator overwrites art of any size without resizing.
 
-Colour: sections consume **role tokens** (`bg-background`, `text-foreground`, `text-muted-foreground`,
-`bg-muted`) — never hardcoded colours — so the deterministic theme stays orthogonal.
+Colour: sections and blocks consume **role tokens** (`bg-background`, `text-foreground`,
+`text-muted-foreground`, `bg-muted`, `--brand-secondary`) — never hardcoded colours — so the
+deterministic theme stays orthogonal.
 
-## Why CSS-only order (and not DOM order)
+## The bound is the block vocabulary, not DOM order
 
-Visual reordering via CSS decouples visual order from DOM/focus order — normally an a11y concern, but
-**moot here**: the deliverable is images and a11y is out of scope. This is flagged so
-structural (DOM-changing) variants are not reintroduced later. See **Sections/Hero → MediaStart**:
-the image moves to the visual left via `flex-row-reverse` while the DOM stays copy → media.
+Earlier sections forbade DOM/child reordering (an a11y concern). That rule is **retired** — a11y is
+out of scope here (the deliverable is full-page screenshots), so rearranging content is exactly the
+point. Determinism now comes from the **closed set of block primitives** the agent composes, plus the
+typed slot props and the dev guard — not from freezing source order. Add a new block deliberately
+(with a story + tests), like adding a `ui/` primitive; never drop raw JSX into a page.
 
 ## Building a new section
 
 Copy **`components/sections/_template/`** (see **Sections/_Template**), rename the files + symbols,
-and replace the body. It is a minimal, green, story-documented implementation of all three rules —
-the trustworthy starting point. Export the new section from `components/sections/index.ts` (the
+and replace the body. It is a minimal, green, story-documented compound section — the trustworthy
+starting point for all three rules. Export the new section from `components/sections/index.ts` (the
 `_template` itself is intentionally not exported).
 
-Live examples: **Sections/Hero** (variant vocabulary + placeholder/custom image),
-**Sections/FeatureGrid** (the image contract across a repeating content grid, CSS-only `columns`),
-**Sections/ContactBlock** (form primitives + a CSS-only side variant),
-**Sections/_Template** (the archetype).
+Live examples: **Sections/Hero** (split / centered / with-stats / quote-led compositions),
+**Sections/FeatureGrid** (`FeatureCard` blocks in a CSS-only `columns` grid, optional header slot),
+**Sections/ContactBlock** (a `ContactCopy` slot + a presentational `ContactForm`, CSS-only
+`formSide`), **Sections/_Template** (the archetype). Block vocabulary: **Blocks/***.

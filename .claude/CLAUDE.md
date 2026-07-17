@@ -85,12 +85,31 @@ shell out to platform commands and never branch on `process.platform`.
   concern → add it to `configSchemas` (the registry test guards the set). The CLI is typechecked by
   `tsc -p packages/core` but not run by vitest (it `process.exit`s), so run `yarn typecheck`
   separately and read its real exit.
+- **Sections are compound + block-composed (shadcn-style), NOT monolithic prop bags.** Each section is
+  a compound family — a root + named slot subcomponents (`Hero` + `HeroBody`/`HeroMedia`/`HeroAside`;
+  `FeatureGrid` + `FeatureGridHeader`; `ContactBlock` + `ContactCopy`/`ContactForm`), each carrying a
+  `data-slot`, exactly like the `Card` family. Slots are filled with **block primitives** from
+  `@brief-to-site/core/blocks` (`Eyebrow`, `Heading`, `Prose`, `CtaGroup`, `MediaFrame`, `StatRow`/
+  `Stat`, `Quote`, `FeatureCard`, `BulletList`, `LogoRow`). **A "variant" is a composition** (which
+  blocks in which slots — split / centered / with-stats / quote-led), not a cva toggle; a section
+  keeps only genuine geometric layout as a CSS-only cva (`align`, `mediaSide`, `columns`, `formSide`)
+  + the shared `density`. The **old CSS-only / no-DOM-reorder contract is retired** (a11y is out of
+  scope — the deliverable is screenshots); determinism now comes from the closed block vocabulary +
+  typed slot props + a dev-only `assertAllowedChildren` guard (`blocks/lib/assert-slot.ts`), which
+  warns (dev/Storybook only, reference-identity) on wrong-slot children. Children **cannot** be
+  strictly typed to a component set in React/TS — the guard is best-effort, the real bound is the
+  closed `@brief-to-site/core/blocks` import surface + review. `MediaFrame` is the **sole** render-time
+  consumer of `PLACEHOLDER_SPECS`; no section renders a raw `<img>`. The section contract doc is
+  `components/sections/sections.mdx`; the copy-me archetype is `components/sections/_template/`.
 - **Section shapes come from the Storybook MCP, not a bespoke CLI.** `get-documentation` (per section)
   returns everything the old catalog did, from three sources: (1) the **component description** — the
   JSDoc block **immediately above `const meta`** in each `*.stories.tsx` (react-docgen only attaches
   the leading comment adjacent to the default-export meta; a `const` between the comment and `meta`
-  drops it — verified empirically). Put the section's **purpose + CSS-only variant vocabulary +
-  defaults** there. (2) **copy-me usage + every variant value** — the per-variant **stories** (each
+  drops it — verified empirically). Put the section's **purpose + slot/composition vocabulary +
+  layout-axis defaults** there. For a compound section, `get-documentation` returns each variant
+  story's **full composed children JSX** as a paste-ready copy-me snippet (verified) — so the variant
+  stories ARE the composition presets. The same applies to the `Blocks/*` tree (each block has its own
+  autodocs entry). (2) **copy-me usage + every variant value** — the per-variant **stories** (each
   meaningful variant has its own story; the `Default` story is the type-checked copy-me snippet, which
   is why we don't hand-write a usage block — that would drift). (3) **content-prop docs** — the
   interface JSDoc. `tags: ["autodocs"]` generates the human Docs page and enriched variant `argTypes`

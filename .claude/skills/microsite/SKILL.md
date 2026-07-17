@@ -12,9 +12,10 @@ screenshots. **The deliverable is the images, not a live site** — the generate
 look good and render responsively.
 
 You are the **coding agent** in the pipeline. The tool is fundamentally an **assembly engine**: you
-select and arrange pre-built section components and write brief-grounded copy into them. You do
-**not** invent new sections, colour math, or layout mechanisms — those are owned by
-`packages/core` and its Storybook.
+compose pre-built **sections** — each a compound family whose named slots you fill with **block
+primitives** (`@brief-to-site/core/blocks`) — and write brief-grounded copy into them. You do **not**
+invent new sections, blocks, colour math, or layout mechanisms — those are owned by `packages/core`
+and its Storybook.
 
 ## When to use
 
@@ -27,7 +28,7 @@ in progress (author, assemble, theme, or capture). Each phase is a discrete, res
 Intake (brief + colour[s])
   → Scaffold        yarn sites:new <slug>
   → Author config   config/{meta,brand,pages,viewports}.json   → yarn sites:validate
-  → Assemble        write app/**/page.tsx from core sections (brief-grounded copy)
+  → Assemble        compose app/**/page.tsx from core sections + blocks (brief-grounded copy)
   → Theme + assets  yarn theme:build <slug>  ·  yarn placeholders:copy <slug>
   → Verify          yarn sites:dev <slug>  (or next build)  ·  test / lint / typecheck
   ── HITL CHECKPOINT ──  STOP. Operator swaps images / tweaks copy, then says the word.
@@ -129,25 +130,31 @@ documented props/variants) and the **shadcn MCP** (primitive docs). Before you a
 respond (e.g. Storybook MCP `list-all-documentation`). **If either is unavailable, abort and tell the
 operator — never assemble from memory or guess a section's props/variants.**
 
-**Section props/variants — retrieve them from the Storybook MCP, don't rediscover them.** Each section
-story carries `tags: ["autodocs"]`, so `list-all-documentation` → `get-documentation` returns each
-section's **props (with descriptions), CSS-only variant vocabulary (with defaults), and a copy-me
-usage snippet**. This is the authoritative source for **what props/variants exist** — use it instead
-of reading section source or spinning up a subagent to map the components.
+**Vocabulary — retrieve it from the Storybook MCP, don't rediscover it.** Every section and block
+story carries `tags: ["autodocs"]`, so `list-all-documentation` returns both the **`Sections/*`** and
+the **`Blocks/*`** trees, and `get-documentation` returns each entry's **props (with descriptions),
+layout axes (with defaults), and copy-me snippets**. For a compound section it returns each variant
+story's **full composed JSX** — a paste-ready composition. This is the authoritative source; use it
+instead of reading source or spinning up a subagent.
 
-Select sections **by brief** and arrange them into `app/**/page.tsx`:
+Compose sections **by brief** into `app/**/page.tsx`:
 
-- Get section props/variants from the **Storybook MCP** (`list-all-documentation` →
-  `get-documentation`); get primitive (Button, etc.) usage from the **shadcn MCP**. Never assume a
-  prop or variant that isn't documented there.
-- Sections import from `@brief-to-site/core/sections`; primitives from `@brief-to-site/core`.
-- Variants are **CSS-only and deterministic** (alignment / spacing / child-order) — never DOM order
-  or structure. `_template`'s section archetype is a copy-me reference, **not** importable.
+- Each section is a **compound family** (a root + named slot subcomponents, like `Card`). Fill the
+  slots with **block primitives** from `@brief-to-site/core/blocks` (`Eyebrow`, `Heading`, `Prose`,
+  `CtaGroup`, `MediaFrame`, `StatRow`/`Stat`, `Quote`, `FeatureCard`, `BulletList`, `LogoRow`).
+- **A "variant" is a composition** — pick a section's variant story (`Sections/Hero → WithStats`,
+  `→ QuoteLed`, …) and copy its JSX; rearranging content is allowed. The bound is the block library,
+  not a DOM-order rule. Get section slots + block props from the **Storybook MCP**
+  (`list-all-documentation` → `get-documentation`); get primitive (Button, etc.) usage from the
+  **shadcn MCP**. Never compose a component or prop that isn't documented there.
+- Sections import from `@brief-to-site/core/sections`; blocks from `@brief-to-site/core/blocks`;
+  primitives from `@brief-to-site/core`. `_template`'s section archetype is a copy-me reference,
+  **not** importable.
 
 Authoring rules (model on [`sites/northwind/app/page.tsx`](../../../sites/northwind/app/page.tsx)):
 
 - Write copy **inline in the JSX** (TS-enforced), grounded in `brief.md`, obeying the generation config.
-- Every `imageSrc` is a root-relative `/images/placeholders/<name>.svg`; every image needs `imageAlt`.
+- Every `MediaFrame` `src` is a root-relative `/images/placeholders/<name>.svg`; every one needs `alt`.
 - CTAs are links: `<Button render={<Link href="/contact" />}>…</Button>` (Base UI `render` slot).
 - Non-Home pages `export const metadata = { title: "… — <Site Name>" }`.
 - **Do not** add runtime `fs` reads — `app/layout.tsx` already static-imports config; the shell
@@ -203,10 +210,12 @@ artifact paths. `captures/` is gitignored — these are the deliverable, handed 
 
 ## Invariants (don't violate)
 
-- **Assembly only** — arrange existing sections; don't author new sections/colour math/layout here.
+- **Assembly only** — compose existing sections from existing blocks; don't author new
+  sections/blocks/colour math/layout here.
 - **Root-relative image paths** `/images/...` always.
 - **Copy is brief-grounded and guardrailed** — no invented facts, prices, stats, or claims.
-- **CSS-only variants** — never restructure DOM for a layout change.
+- **A variant is a composition** — fill section slots with blocks from `@brief-to-site/core/blocks`;
+  never drop raw markup into a page. Rearranging content is fine; the bound is the block library.
 - **No sticky/fixed elements** and no runtime `fs` in pages — the shell and static config handle it.
 - **OS-agnostic** — only ever use the `yarn <script>` entry points; never shell out to
   platform-specific commands.
