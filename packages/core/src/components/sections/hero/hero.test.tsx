@@ -1,67 +1,81 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { Hero } from "@core/components/sections/hero/hero";
+import { Heading } from "@core/components/blocks/heading/heading";
+import { MediaFrame } from "@core/components/blocks/media-frame/media-frame";
+import { Hero, HeroAside, HeroBody, HeroMedia } from "@core/components/sections/hero/hero";
 
 describe("Hero", () => {
-  it("renders the headline as an <h1> plus eyebrow, subcopy, and actions", () => {
-    render(
-      <Hero
-        eyebrow="New"
-        headline="Ship faster"
-        subcopy="From brief to site."
-        actions={<button>Get started</button>}
-        imageAlt="Product screenshot"
-      />,
+  it("renders the composed slots (body + media) under the hero layout row", () => {
+    const { container } = render(
+      <Hero>
+        <HeroBody>
+          <Heading level={1}>Ship faster</Heading>
+        </HeroBody>
+        <HeroMedia>
+          <MediaFrame alt="Product screenshot" />
+        </HeroMedia>
+      </Hero>,
     );
+    const row = container.querySelector("[data-slot=hero]");
+    expect(row).toBeInTheDocument();
+    expect(row?.querySelector("[data-slot=hero-body]")).toBeInTheDocument();
+    expect(row?.querySelector("[data-slot=hero-media]")).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1, name: "Ship faster" })).toBeInTheDocument();
-    expect(screen.getByText("New")).toBeInTheDocument();
-    expect(screen.getByText("From brief to site.")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Get started" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Product screenshot" })).toBeInTheDocument();
   });
 
-  it("omits optional copy when not supplied", () => {
-    render(<Hero headline="Just a headline" imageAlt="x" />);
-    expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
-  });
-
-  it("falls back to the section-owned placeholder when no imageSrc is given", () => {
-    render(<Hero headline="H" imageAlt="Hero" />);
-    expect(screen.getByRole("img", { name: "Hero" }).getAttribute("src")).toMatch(
-      /^data:image\/svg\+xml,/,
+  it("supports an aside slot in place of media (with-stats / quote-led compositions)", () => {
+    const { container } = render(
+      <Hero>
+        <HeroBody>
+          <Heading level={1}>Numbers</Heading>
+        </HeroBody>
+        <HeroAside>
+          <p>stats</p>
+        </HeroAside>
+      </Hero>,
     );
+    expect(container.querySelector("[data-slot=hero-aside]")).toBeInTheDocument();
+    expect(container.querySelector("[data-slot=hero-media]")).not.toBeInTheDocument();
   });
 
-  it("uses the supplied imageSrc with object-cover", () => {
-    render(<Hero headline="H" imageAlt="Hero" imageSrc="/images/hero.png" />);
-    const img = screen.getByRole("img", { name: "Hero" });
-    expect(img).toHaveAttribute("src", "/images/hero.png");
-    expect(img).toHaveClass("object-cover", "object-center");
-  });
-
-  it("keeps DOM order copy → media regardless of the media variant (no source reorder)", () => {
-    for (const media of ["inline-end", "inline-start"] as const) {
-      const { container, unmount } = render(<Hero headline="H" imageAlt="x" media={media} />);
-      const row = container.querySelector("[data-slot=hero]")!;
-      expect(row.children[0]).toHaveAttribute("data-slot", "hero-copy");
-      expect(row.children[1]).toHaveAttribute("data-slot", "hero-media");
-      unmount();
-    }
-  });
-
-  it("maps the media variant to a CSS-only flex-direction class", () => {
-    const { container } = render(<Hero headline="H" imageAlt="x" media="inline-start" />);
+  it("maps mediaSide to a CSS-only flex-direction class", () => {
+    const { container } = render(
+      <Hero mediaSide="start">
+        <HeroBody>x</HeroBody>
+      </Hero>,
+    );
     expect(container.querySelector("[data-slot=hero]")).toHaveClass("lg:flex-row-reverse");
   });
 
-  it("maps the align variant to text alignment", () => {
-    const { container } = render(<Hero headline="H" imageAlt="x" align="center" />);
+  it("maps align to text alignment", () => {
+    const { container } = render(
+      <Hero align="center">
+        <HeroBody>x</HeroBody>
+      </Hero>,
+    );
     expect(container.querySelector("[data-slot=hero]")).toHaveClass("text-center");
   });
 
   it("forwards density to the Section shell", () => {
-    const { container } = render(<Hero headline="H" imageAlt="x" density="compact" />);
+    const { container } = render(
+      <Hero density="compact">
+        <HeroBody>x</HeroBody>
+      </Hero>,
+    );
     expect(container.querySelector("[data-slot=section]")).toHaveClass("py-8");
+  });
+
+  it("warns in dev when a non-slot child is composed into the hero", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    render(
+      <Hero>
+        <div>not a slot</div>
+      </Hero>,
+    );
+    expect(warn).toHaveBeenCalledOnce();
+    expect(warn.mock.calls[0]?.[0]).toContain("Hero");
+    warn.mockRestore();
   });
 });

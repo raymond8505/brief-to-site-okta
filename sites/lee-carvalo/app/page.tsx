@@ -1,7 +1,8 @@
 import Link from "next/link";
 
 import { Button } from "@brief-to-site/core";
-import { FeatureGrid, Hero } from "@brief-to-site/core/sections";
+import { CtaGroup, Eyebrow, Heading, MediaFrame, Prose } from "@brief-to-site/core/blocks";
+import { FeatureGrid, Hero, HeroBody, HeroMedia } from "@brief-to-site/core/sections";
 
 /**
  * Home — announces the game and its Christmas release (brief.md), then three words on how it plays.
@@ -11,23 +12,34 @@ import { FeatureGrid, Hero } from "@brief-to-site/core/sections";
 export default function HomePage() {
   return (
     <>
-      <Hero
-        eyebrow="In stores this Christmas"
-        headline="Lee Carvalo's Putting Challenge"
-        subcopy="A computer game about the last, hardest part of the game: the putt. Read the green, pick your club, set your power, and hole it."
-        imageSrc="/images/placeholders/hero.svg"
-        imageAlt="Title screen of Lee Carvalo's Putting Challenge"
-        actions={
-          <>
+      <Hero>
+        <HeroBody>
+          <Eyebrow>In stores this Christmas</Eyebrow>
+          <Heading level={1} size="xl">
+            Lee Carvalo&apos;s Putting Challenge
+          </Heading>
+          <Prose lead>
+            A computer game about the last, hardest part of the game: the putt. Read the green, pick
+            your club, set your power, and hole it.
+          </Prose>
+          <CtaGroup>
             <Button size="lg" render={<Link href="/contact" />}>
               Find a store
             </Button>
             <Button size="lg" variant="outline" render={<Link href="/about" />}>
               How it plays
             </Button>
-          </>
-        }
-      />
+          </CtaGroup>
+        </HeroBody>
+        <HeroMedia>
+          <MediaFrame
+            src="/images/placeholders/hero.svg"
+            alt="Title screen of Lee Carvalo's Putting Challenge"
+            spec="hero"
+            rounded
+          />
+        </HeroMedia>
+      </Hero>
       <FeatureGrid
         eyebrow="On the green"
         heading="Three things, one putt"

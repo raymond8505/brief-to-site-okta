@@ -1,4 +1,5 @@
-import { FeatureGrid, Hero } from "@brief-to-site/core/sections";
+import { Eyebrow, Heading, MediaFrame, Prose } from "@brief-to-site/core/blocks";
+import { FeatureGrid, Hero, HeroBody, HeroMedia } from "@brief-to-site/core/sections";
 
 export const metadata = {
   title: "About — Lee Carvalo's Putting Challenge",
@@ -6,19 +7,31 @@ export const metadata = {
 
 /**
  * About — what the game is and what a round involves (brief.md). Gameplay details are placeholder
- * per the thin brief. The Hero's `media="inline-start"` exercises the CSS-only side-flip.
+ * per the thin brief. The Hero's `mediaSide="start"` exercises the CSS-only side-flip.
  */
 export default function AboutPage() {
   return (
     <>
-      <Hero
-        eyebrow="About the game"
-        headline="Just the putt."
-        subcopy="Most golf games make you drive, chip, and putt. This one keeps only the part that decides the hole — you against the green, one putt at a time."
-        media="inline-start"
-        imageSrc="/images/placeholders/hero.svg"
-        imageAlt="A player lining up a putt in the game"
-      />
+      <Hero mediaSide="start">
+        <HeroBody>
+          <Eyebrow>About the game</Eyebrow>
+          <Heading level={1} size="xl">
+            Just the putt.
+          </Heading>
+          <Prose lead>
+            Most golf games make you drive, chip, and putt. This one keeps only the part that decides
+            the hole — you against the green, one putt at a time.
+          </Prose>
+        </HeroBody>
+        <HeroMedia>
+          <MediaFrame
+            src="/images/placeholders/hero.svg"
+            alt="A player lining up a putt in the game"
+            spec="hero"
+            rounded
+          />
+        </HeroMedia>
+      </Hero>
       <FeatureGrid
         heading="What a round looks like"
         subcopy="A simple loop you can pick up in a minute."

@@ -1,4 +1,5 @@
-import { FeatureGrid, Hero } from "@brief-to-site/core/sections";
+import { Eyebrow, Heading, MediaFrame, Prose } from "@brief-to-site/core/blocks";
+import { FeatureGrid, Hero, HeroBody, HeroMedia } from "@brief-to-site/core/sections";
 
 export const metadata = {
   title: "About — Meridian Coffee Roasters",
@@ -6,20 +7,33 @@ export const metadata = {
 
 /**
  * About — the roastery's story (brief.md: why they roast small and weekly) and the four things that
- * stay constant. The Hero's `media="inline-start"` exercises the CSS-only side-flip; the FeatureGrid
+ * stay constant. The Hero's `mediaSide="start"` exercises the CSS-only side-flip; the FeatureGrid
  * uses the four-column variant at a spacious density.
  */
 export default function AboutPage() {
   return (
     <>
-      <Hero
-        eyebrow="About"
-        headline="We roast small, and we roast often."
-        subcopy="Meridian started as one roaster in the back of a café. It still works that way: small batches, roasted weekly, sold across the counter — because coffee is best when it hasn't waited around."
-        media="inline-start"
-        imageSrc="/images/placeholders/hero.svg"
-        imageAlt="The roaster at work in the back of the café"
-      />
+      <Hero mediaSide="start">
+        <HeroBody>
+          <Eyebrow>About</Eyebrow>
+          <Heading level={1} size="xl">
+            We roast small, and we roast often.
+          </Heading>
+          <Prose lead>
+            Meridian started as one roaster in the back of a café. It still works that way: small
+            batches, roasted weekly, sold across the counter — because coffee is best when it
+            hasn't waited around.
+          </Prose>
+        </HeroBody>
+        <HeroMedia>
+          <MediaFrame
+            src="/images/placeholders/hero.svg"
+            alt="The roaster at work in the back of the café"
+            spec="hero"
+            rounded
+          />
+        </HeroMedia>
+      </Hero>
       <FeatureGrid
         heading="What stays constant"
         subcopy="However much we grow, four things don't change."

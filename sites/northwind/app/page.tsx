@@ -1,7 +1,8 @@
 import Link from "next/link";
 
 import { Button } from "@brief-to-site/core";
-import { FeatureGrid, Hero } from "@brief-to-site/core/sections";
+import { CtaGroup, Eyebrow, Heading, MediaFrame, Prose } from "@brief-to-site/core/blocks";
+import { FeatureGrid, Hero, HeroBody, HeroMedia } from "@brief-to-site/core/sections";
 
 /**
  * Home — leads with the studio's value proposition (brief.md: "Design that ships."), then how an
@@ -11,23 +12,34 @@ import { FeatureGrid, Hero } from "@brief-to-site/core/sections";
 export default function HomePage() {
   return (
     <>
-      <Hero
-        eyebrow="Boutique design studio"
-        headline="Design that ships."
-        subcopy="Bring us a brief and get a finished site — fixed scope, fixed price, built by the senior people you actually talked to."
-        imageSrc="/images/placeholders/hero.svg"
-        imageAlt="Work-in-progress site design on a studio screen"
-        actions={
-          <>
+      <Hero>
+        <HeroBody>
+          <Eyebrow>Boutique design studio</Eyebrow>
+          <Heading level={1} size="xl">
+            Design that ships.
+          </Heading>
+          <Prose lead>
+            Bring us a brief and get a finished site — fixed scope, fixed price, built by the senior
+            people you actually talked to.
+          </Prose>
+          <CtaGroup>
             <Button size="lg" render={<Link href="/contact" />}>
               Start a project
             </Button>
             <Button size="lg" variant="outline" render={<Link href="/about" />}>
               Meet the studio
             </Button>
-          </>
-        }
-      />
+          </CtaGroup>
+        </HeroBody>
+        <HeroMedia>
+          <MediaFrame
+            src="/images/placeholders/hero.svg"
+            alt="Work-in-progress site design on a studio screen"
+            spec="hero"
+            rounded
+          />
+        </HeroMedia>
+      </Hero>
       <FeatureGrid
         eyebrow="How it works"
         heading="From brief to launch"

@@ -76,8 +76,14 @@ export {
   PLACEHOLDER_SPECS,
 } from "./components/sections/placeholder";
 export type { PlaceholderOptions, PlaceholderName } from "./components/sections/placeholder";
-export { Hero, heroVariants } from "./components/sections/hero/hero";
-export type { HeroProps, HeroCta } from "./components/sections/hero/hero";
+export {
+  Hero,
+  HeroBody,
+  HeroMedia,
+  HeroAside,
+  heroVariants,
+} from "./components/sections/hero/hero";
+export type { HeroProps } from "./components/sections/hero/hero";
 
 // Microsite shell. The page frame + manifest-driven nav generated pages render through.
 export { MicrositeShell } from "./components/shell/microsite-shell";

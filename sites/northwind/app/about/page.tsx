@@ -1,4 +1,5 @@
-import { FeatureGrid, Hero } from "@brief-to-site/core/sections";
+import { Eyebrow, Heading, MediaFrame, Prose } from "@brief-to-site/core/blocks";
+import { FeatureGrid, Hero, HeroBody, HeroMedia } from "@brief-to-site/core/sections";
 
 export const metadata = {
   title: "About — Northwind Studio",
@@ -6,19 +7,31 @@ export const metadata = {
 
 /**
  * About — the studio's story (brief.md: why it stays small, working directly with seniors) and its
- * working principles. The Hero's `media="inline-start"` exercises the CSS-only side-flip variant.
+ * working principles. The Hero's `mediaSide="start"` exercises the CSS-only side-flip variant.
  */
 export default function AboutPage() {
   return (
     <>
-      <Hero
-        eyebrow="About"
-        headline="The studio is the team."
-        subcopy="Northwind stays deliberately small: no account managers, no hand-offs. The senior designer you brief on day one is the one who ships your site."
-        media="inline-start"
-        imageSrc="/images/placeholders/hero.svg"
-        imageAlt="The Northwind team working around one table"
-      />
+      <Hero mediaSide="start">
+        <HeroBody>
+          <Eyebrow>About</Eyebrow>
+          <Heading level={1} size="xl">
+            The studio is the team.
+          </Heading>
+          <Prose lead>
+            Northwind stays deliberately small: no account managers, no hand-offs. The senior
+            designer you brief on day one is the one who ships your site.
+          </Prose>
+        </HeroBody>
+        <HeroMedia>
+          <MediaFrame
+            src="/images/placeholders/hero.svg"
+            alt="The Northwind team working around one table"
+            spec="hero"
+            rounded
+          />
+        </HeroMedia>
+      </Hero>
       <FeatureGrid
         heading="How we work"
         subcopy="Four principles that keep engagements fast and outcomes predictable."

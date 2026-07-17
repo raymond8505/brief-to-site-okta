@@ -1,7 +1,8 @@
 import Link from "next/link";
 
 import { Button } from "@brief-to-site/core";
-import { FeatureGrid, Hero } from "@brief-to-site/core/sections";
+import { CtaGroup, Eyebrow, Heading, Prose } from "@brief-to-site/core/blocks";
+import { FeatureGrid, Hero, HeroBody } from "@brief-to-site/core/sections";
 
 /**
  * Home — leads with the roast-in-house value proposition (brief.md: "Roasted where you drink it."),
@@ -11,24 +12,26 @@ import { FeatureGrid, Hero } from "@brief-to-site/core/sections";
 export default function HomePage() {
   return (
     <>
-      <Hero
-        align="center"
-        eyebrow="Neighbourhood roastery"
-        headline="Roasted where you drink it."
-        subcopy="We source green coffee from a short list of growers, roast it in small batches on-site, and pour it across the counter the same week."
-        imageSrc="/images/placeholders/hero.svg"
-        imageAlt="A drum roaster running behind the café counter"
-        actions={
-          <>
+      <Hero align="center">
+        <HeroBody>
+          <Eyebrow>Neighbourhood roastery</Eyebrow>
+          <Heading level={1} size="xl">
+            Roasted where you drink it.
+          </Heading>
+          <Prose lead>
+            We source green coffee from a short list of growers, roast it in small batches on-site,
+            and pour it across the counter the same week.
+          </Prose>
+          <CtaGroup align="center">
             <Button size="lg" render={<Link href="/contact" />}>
               Visit the café
             </Button>
             <Button size="lg" variant="outline" render={<Link href="/about" />}>
               Read our story
             </Button>
-          </>
-        }
-      />
+          </CtaGroup>
+        </HeroBody>
+      </Hero>
       <FeatureGrid
         eyebrow="Small batch, short chain"
         heading="From green bean to your cup"
