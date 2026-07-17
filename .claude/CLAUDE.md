@@ -69,6 +69,18 @@ shell out to platform commands and never branch on `process.platform`.
   FeatureGrid card top-accent) can use the `--brand-secondary`/`-tertiary` hsl token directly.
 - **Default brand seed = Tailwind blue-600** (`#2563eb` = hsl(221 83% 53%) = rgb(37 99 235)) in both
   `colors.css` and `sites/_template` — one canonical default.
+- **Border-radius is a per-site style token** (`brand.json` `radius`). Named presets live in
+  `styles/radius.ts` (`RADIUS_PRESETS` sharp/tight/subtle/rounded/playful → base rem; the `radius`
+  enum is built from its keys, mirroring `HARMONIES`↔`HUE_OFFSETS`). `theme:build` emits `--radius`
+  **only when non-default** (like explicit secondary/tertiary), so a default site's `theme.css` — incl.
+  `_template` — stays byte-identical and the drift test is untouched. `subtle` MUST equal globals.css's
+  `--radius: 0.625rem` default. **No component changes:** `--radius` is a plain `:root` var and the
+  `--radius-*` scale is `@theme inline calc(var(--radius) * k)`, so `rounded-*` utilities inline to
+  `calc(var(--radius)*k)` resolved per element — overriding `--radius` at `:root` in `theme.css`
+  rescales every corner (verified against a real `next build`: `.rounded-xl{border-radius:calc(var(--radius) * 1.4)}`).
+  Unlike the brand *seed*, `--radius` is a **direct-consumption** var, so it also cascades from any
+  scope (the `Tokens/Radius` story sets it per-swatch). `sites/lee-carvalo` uses `playful` as the
+  committed demonstration.
 
 ## Sites & tooling (`sites:new` + `theme:build`)
 
@@ -101,6 +113,21 @@ shell out to platform commands and never branch on `process.platform`.
   closed `@brief-to-site/core/blocks` import surface + review. `MediaFrame` is the **sole** render-time
   consumer of `PLACEHOLDER_SPECS`; no section renders a raw `<img>`. The section contract doc is
   `components/sections/sections.mdx`; the copy-me archetype is `components/sections/_template/`.
+- **Sections are no longer core-only — the agent may author *site-local* sections.** When no core
+  section fits a brief, the assembly agent authors one under `sites/<slug>/components/sections/<name>/`
+  (mirrors core's layout so promotion is a copy). Same contract, but it imports from the **public**
+  surface (`@brief-to-site/core/sections` / `/blocks` / `/lib/utils`), **not** core-internal `@core/*`
+  deep paths, is imported into pages by **relative path** (no site-local `@/*` alias — TS replaces the
+  whole `paths` object on override, which would force re-declaring `@core/*` per leaf), and ships **no
+  story/test** (sites run neither SB nor vitest) until promoted to core. Still **no new
+  blocks/colour math/layout** — only a new arrangement of the existing blocks. Two load-bearing wiring
+  pieces: `_template/app/globals.css` has `@source "../components"` so Tailwind scans the site's own
+  tree (core's `@source` covers only core — verified: a class used solely in a site-local section, e.g.
+  `max-w-2xl`, is emitted only because of this), and `_template/components/sections/README.md` seeds the
+  dir (so the `@source` target exists) + documents the convention. `yarn sites:sections <slug>` (pure
+  `config/sections-inventory.ts#formatNovelSections` + thin `cli/sections-list.ts`) lists them for the
+  HITL report — the directory IS the record, not agent memory. `sites/northwind` ships `CtaBand` as the
+  committed demonstration.
 - **Section shapes come from the Storybook MCP, not a bespoke CLI.** `get-documentation` (per section)
   returns everything the old catalog did, from three sources: (1) the **component description** — the
   JSDoc block **immediately above `const meta`** in each `*.stories.tsx` (react-docgen only attaches
