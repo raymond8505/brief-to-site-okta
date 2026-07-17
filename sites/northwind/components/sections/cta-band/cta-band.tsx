@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { Section } from "@brief-to-site/core/sections";
-import { assertAllowedChildren, CtaGroup, Eyebrow, Heading, Prose } from "@brief-to-site/core/blocks";
+import { assertAllowedChildren } from "@brief-to-site/core/blocks";
 import { cn } from "@brief-to-site/core/lib/utils";
 
 /**
