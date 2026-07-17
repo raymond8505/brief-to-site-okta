@@ -1,13 +1,18 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { TemplateSection } from "@core/components/sections/_template/template-section";
+import { Eyebrow, Heading, MediaFrame, Prose } from "@core/components/blocks";
+import {
+  TemplateSection,
+  TemplateSectionBody,
+  TemplateSectionMedia,
+} from "@core/components/sections/_template/template-section";
 
 /**
  * Section template — a copy-me reference, not a shipping section. It shows the smallest correct
- * implementation of the section contract: render through `Section`, one CSS-only CVA axis, an image
- * path prop with a placeholder fallback. Copy the folder to start a new section.
+ * compound section: render through `Section`, a root + named slot subcomponents composed from block
+ * primitives, one CSS-only CVA axis (`align`), and images via the `MediaFrame` block. Copy the folder
+ * to start a new section; compose its slots from `@brief-to-site/core/blocks`.
  */
-
 const meta = {
   title: "Sections/_Template",
   component: TemplateSection,
@@ -16,11 +21,22 @@ const meta = {
     align: { control: "inline-radio", options: ["start", "center"] },
     density: { control: "inline-radio", options: ["compact", "comfortable", "spacious"] },
   },
-  args: {
-    heading: "Section heading",
-    body: "Replace this with your section's copy. Keep variants CSS-only and deterministic.",
-    imageAlt: "Placeholder art",
-  },
+  args: { align: "start" },
+  render: (args) => (
+    <TemplateSection {...args}>
+      <TemplateSectionBody>
+        <Eyebrow>Section template</Eyebrow>
+        <Heading level={2}>Section heading</Heading>
+        <Prose>
+          Replace this with your section&apos;s copy, composed from block primitives. A variant is a
+          composition — which blocks fill which slots.
+        </Prose>
+      </TemplateSectionBody>
+      <TemplateSectionMedia>
+        <MediaFrame alt="Placeholder art" spec="hero" rounded />
+      </TemplateSectionMedia>
+    </TemplateSection>
+  ),
 } satisfies Meta<typeof TemplateSection>;
 
 export default meta;
