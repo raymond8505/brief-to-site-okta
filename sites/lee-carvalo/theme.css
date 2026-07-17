@@ -13,4 +13,7 @@
   /* Colour harmony (triadic) — colors.css derives secondary/tertiary. */
   --secondary-h-offset: var(--secondary-h--triadic);
   --tertiary-h-offset: var(--tertiary-h--triadic);
+
+  /* Corner-radius style signal (playful) — rescales every rounded-* corner. */
+  --radius: 1.5rem;
 }
