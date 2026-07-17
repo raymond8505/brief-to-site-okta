@@ -1,55 +1,58 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { FeatureGrid, type FeatureGridItem } from "@core/components/sections/feature-grid/feature-grid";
+import { Eyebrow, FeatureCard, Heading, Prose } from "@core/components/blocks";
+import {
+  FeatureGrid,
+  FeatureGridHeader,
+} from "@core/components/sections/feature-grid/feature-grid";
 
-const features: FeatureGridItem[] = [
-  { title: "Fast", description: "Ships in minutes.", imageAlt: "Fast" },
-  { title: "On-theme", description: "Deterministic colour.", imageAlt: "Theme" },
-  { title: "Responsive", description: "Every viewport.", imageAlt: "Responsive" },
+const cards = [
+  <FeatureCard key="1" title="Fast" description="Ships in minutes." imageAlt="Fast" />,
+  <FeatureCard key="2" title="On-theme" description="Deterministic colour." imageAlt="Theme" />,
+  <FeatureCard key="3" title="Responsive" description="Every viewport." imageAlt="Responsive" />,
 ];
 
 describe("FeatureGrid", () => {
-  it("renders an optional header and every feature's title and description", () => {
-    render(
-      <FeatureGrid
-        eyebrow="Why us"
-        heading="What you get"
-        subcopy="Three reasons."
-        features={features}
-      />,
+  it("renders an optional header above a grid of the card children", () => {
+    const { container } = render(
+      <FeatureGrid>
+        <FeatureGridHeader>
+          <Eyebrow>Why us</Eyebrow>
+          <Heading level={2}>What you get</Heading>
+          <Prose>Three reasons.</Prose>
+        </FeatureGridHeader>
+        {cards}
+      </FeatureGrid>,
     );
+    expect(container.querySelector("[data-slot=feature-grid-header]")).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 2, name: "What you get" })).toBeInTheDocument();
-    expect(screen.getByText("Why us")).toBeInTheDocument();
-    expect(screen.getByText("Three reasons.")).toBeInTheDocument();
-    for (const feature of features) {
-      expect(screen.getByText(feature.title)).toBeInTheDocument();
-      expect(screen.getByText(feature.description!)).toBeInTheDocument();
-    }
+    expect(container.querySelectorAll("[data-slot=feature-card]")).toHaveLength(3);
+    expect(screen.getByText("Fast")).toBeInTheDocument();
   });
 
-  it("omits the header block when no eyebrow/heading/subcopy are supplied", () => {
-    const { container } = render(<FeatureGrid features={features} />);
+  it("places the header outside the grid and the cards inside it", () => {
+    const { container } = render(
+      <FeatureGrid>
+        <FeatureGridHeader>
+          <Heading level={2}>H</Heading>
+        </FeatureGridHeader>
+        {cards}
+      </FeatureGrid>,
+    );
+    const grid = container.querySelector("[data-slot=feature-grid]")!;
+    expect(grid.querySelector("[data-slot=feature-grid-header]")).not.toBeInTheDocument();
+    expect(grid.querySelectorAll("[data-slot=feature-card]")).toHaveLength(3);
+  });
+
+  it("renders with no header when none is composed", () => {
+    const { container } = render(<FeatureGrid>{cards}</FeatureGrid>);
     expect(container.querySelector("[data-slot=feature-grid-header]")).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { level: 2 })).not.toBeInTheDocument();
   });
 
-  it("falls back to the section-owned placeholder when a feature has no imageSrc", () => {
-    render(<FeatureGrid features={[{ title: "T", imageAlt: "Art" }]} />);
-    expect(screen.getByRole("img", { name: "Art" }).getAttribute("src")).toMatch(
-      /^data:image\/svg\+xml,/,
-    );
-  });
-
-  it("uses a supplied imageSrc with object-cover", () => {
-    render(<FeatureGrid features={[{ title: "T", imageAlt: "Art", imageSrc: "/a.png" }]} />);
-    const img = screen.getByRole("img", { name: "Art" });
-    expect(img).toHaveAttribute("src", "/a.png");
-    expect(img).toHaveClass("object-cover", "object-center");
-  });
-
   it("maps the columns variant to CSS grid-template-columns classes", () => {
-    const { container } = render(<FeatureGrid features={features} columns="four" />);
+    const { container } = render(<FeatureGrid columns="four">{cards}</FeatureGrid>);
     expect(container.querySelector("[data-slot=feature-grid]")).toHaveClass(
       "sm:grid-cols-2",
       "lg:grid-cols-4",
@@ -57,7 +60,7 @@ describe("FeatureGrid", () => {
   });
 
   it("applies the default three-column variant", () => {
-    const { container } = render(<FeatureGrid features={features} />);
+    const { container } = render(<FeatureGrid>{cards}</FeatureGrid>);
     expect(container.querySelector("[data-slot=feature-grid]")).toHaveClass(
       "md:grid-cols-2",
       "lg:grid-cols-3",
@@ -65,7 +68,19 @@ describe("FeatureGrid", () => {
   });
 
   it("forwards density to the Section shell", () => {
-    const { container } = render(<FeatureGrid features={features} density="compact" />);
+    const { container } = render(<FeatureGrid density="compact">{cards}</FeatureGrid>);
     expect(container.querySelector("[data-slot=section]")).toHaveClass("py-8");
+  });
+
+  it("warns in dev when a non-slot child is composed into the grid", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    render(
+      <FeatureGrid>
+        <div>not a card</div>
+      </FeatureGrid>,
+    );
+    expect(warn).toHaveBeenCalledOnce();
+    expect(warn.mock.calls[0]?.[0]).toContain("FeatureGrid");
+    warn.mockRestore();
   });
 });

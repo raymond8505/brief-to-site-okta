@@ -1,8 +1,21 @@
 import Link from "next/link";
 
 import { Button } from "@brief-to-site/core";
-import { CtaGroup, Eyebrow, Heading, MediaFrame, Prose } from "@brief-to-site/core/blocks";
-import { FeatureGrid, Hero, HeroBody, HeroMedia } from "@brief-to-site/core/sections";
+import {
+  CtaGroup,
+  Eyebrow,
+  FeatureCard,
+  Heading,
+  MediaFrame,
+  Prose,
+} from "@brief-to-site/core/blocks";
+import {
+  FeatureGrid,
+  FeatureGridHeader,
+  Hero,
+  HeroBody,
+  HeroMedia,
+} from "@brief-to-site/core/sections";
 
 /**
  * Home — announces the game and its Christmas release (brief.md), then three words on how it plays.
@@ -40,35 +53,31 @@ export default function HomePage() {
           />
         </HeroMedia>
       </Hero>
-      <FeatureGrid
-        eyebrow="On the green"
-        heading="Three things, one putt"
-        subcopy="No caddie, no crowd — just you and the line to the cup."
-        columns="three"
-        features={[
-          {
-            title: "Read the green",
-            description:
-              "Study the slope and the distance before you commit. The break is the whole game.",
-            imageSrc: "/images/placeholders/feature.svg",
-            imageAlt: "A green with a putting line drawn to the cup",
-          },
-          {
-            title: "Choose your club",
-            description:
-              "Pick from the bag and line up your stance. The right choice makes the putt look easy.",
-            imageSrc: "/images/placeholders/feature.svg",
-            imageAlt: "Selecting a club from the bag",
-          },
-          {
-            title: "Set your power",
-            description:
-              "Ease off for a tap-in or wind up for the long ones — then watch it roll toward the hole.",
-            imageSrc: "/images/placeholders/feature.svg",
-            imageAlt: "A power meter set for a putt",
-          },
-        ]}
-      />
+      <FeatureGrid columns="three">
+        <FeatureGridHeader>
+          <Eyebrow>On the green</Eyebrow>
+          <Heading level={2}>Three things, one putt</Heading>
+          <Prose>No caddie, no crowd — just you and the line to the cup.</Prose>
+        </FeatureGridHeader>
+        <FeatureCard
+          title="Read the green"
+          description="Study the slope and the distance before you commit. The break is the whole game."
+          imageSrc="/images/placeholders/feature.svg"
+          imageAlt="A green with a putting line drawn to the cup"
+        />
+        <FeatureCard
+          title="Choose your club"
+          description="Pick from the bag and line up your stance. The right choice makes the putt look easy."
+          imageSrc="/images/placeholders/feature.svg"
+          imageAlt="Selecting a club from the bag"
+        />
+        <FeatureCard
+          title="Set your power"
+          description="Ease off for a tap-in or wind up for the long ones — then watch it roll toward the hole."
+          imageSrc="/images/placeholders/feature.svg"
+          imageAlt="A power meter set for a putt"
+        />
+      </FeatureGrid>
     </>
   );
 }

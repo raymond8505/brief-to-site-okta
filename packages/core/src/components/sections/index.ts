@@ -7,7 +7,7 @@ export { placeholderSvg, placeholderDataUri, PLACEHOLDER_SPECS } from "./placeho
 export type { PlaceholderOptions, PlaceholderName } from "./placeholder";
 export { Hero, HeroBody, HeroMedia, HeroAside, heroVariants } from "./hero/hero";
 export type { HeroProps } from "./hero/hero";
-export { FeatureGrid, featureGridVariants } from "./feature-grid/feature-grid";
-export type { FeatureGridProps, FeatureGridItem } from "./feature-grid/feature-grid";
+export { FeatureGrid, FeatureGridHeader, featureGridVariants } from "./feature-grid/feature-grid";
+export type { FeatureGridProps } from "./feature-grid/feature-grid";
 export { ContactBlock, contactBlockVariants } from "./contact-block/contact-block";
 export type { ContactBlockProps } from "./contact-block/contact-block";

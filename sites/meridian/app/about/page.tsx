@@ -1,5 +1,11 @@
-import { Eyebrow, Heading, MediaFrame, Prose } from "@brief-to-site/core/blocks";
-import { FeatureGrid, Hero, HeroBody, HeroMedia } from "@brief-to-site/core/sections";
+import { Eyebrow, FeatureCard, Heading, MediaFrame, Prose } from "@brief-to-site/core/blocks";
+import {
+  FeatureGrid,
+  FeatureGridHeader,
+  Hero,
+  HeroBody,
+  HeroMedia,
+} from "@brief-to-site/core/sections";
 
 export const metadata = {
   title: "About — Meridian Coffee Roasters",
@@ -34,42 +40,36 @@ export default function AboutPage() {
           />
         </HeroMedia>
       </Hero>
-      <FeatureGrid
-        heading="What stays constant"
-        subcopy="However much we grow, four things don't change."
-        columns="four"
-        density="spacious"
-        features={[
-          {
-            title: "The sourcing",
-            description:
-              "A short list of growers we buy from year after year, so the coffee is familiar and the relationships are real.",
-            imageSrc: "/images/placeholders/feature.svg",
-            imageAlt: "A grower's coffee cherries on the branch",
-          },
-          {
-            title: "The roast profiles",
-            description:
-              "Each coffee has a profile we've dialled in and stick to, so a bag tastes like the last one you loved.",
-            imageSrc: "/images/placeholders/feature.svg",
-            imageAlt: "A roast profile chart on the roaster's screen",
-          },
-          {
-            title: "The counter",
-            description:
-              "The people who roast are the people who serve — ask where a bean came from and you'll get a real answer.",
-            imageSrc: "/images/placeholders/feature.svg",
-            imageAlt: "A barista talking with a customer at the counter",
-          },
-          {
-            title: "Wholesale",
-            description:
-              "Nearby cafés and offices get the same weekly-roasted beans and the same direct line to the roaster.",
-            imageSrc: "/images/placeholders/feature.svg",
-            imageAlt: "Bagged wholesale beans ready for delivery",
-          },
-        ]}
-      />
+      <FeatureGrid columns="four" density="spacious">
+        <FeatureGridHeader>
+          <Heading level={2}>What stays constant</Heading>
+          <Prose>However much we grow, four things don't change.</Prose>
+        </FeatureGridHeader>
+        <FeatureCard
+          title="The sourcing"
+          description="A short list of growers we buy from year after year, so the coffee is familiar and the relationships are real."
+          imageSrc="/images/placeholders/feature.svg"
+          imageAlt="A grower's coffee cherries on the branch"
+        />
+        <FeatureCard
+          title="The roast profiles"
+          description="Each coffee has a profile we've dialled in and stick to, so a bag tastes like the last one you loved."
+          imageSrc="/images/placeholders/feature.svg"
+          imageAlt="A roast profile chart on the roaster's screen"
+        />
+        <FeatureCard
+          title="The counter"
+          description="The people who roast are the people who serve — ask where a bean came from and you'll get a real answer."
+          imageSrc="/images/placeholders/feature.svg"
+          imageAlt="A barista talking with a customer at the counter"
+        />
+        <FeatureCard
+          title="Wholesale"
+          description="Nearby cafés and offices get the same weekly-roasted beans and the same direct line to the roaster."
+          imageSrc="/images/placeholders/feature.svg"
+          imageAlt="Bagged wholesale beans ready for delivery"
+        />
+      </FeatureGrid>
     </>
   );
 }
