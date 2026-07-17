@@ -42,6 +42,30 @@ export { Label } from "./components/ui/label";
 export { Separator } from "./components/ui/separator";
 export { Textarea } from "./components/ui/textarea";
 
+// Block library. The bounded vocabulary the agent composes into section slots. Also available
+// via the "./blocks" subpath; Storybook (`Blocks/*`) is the live catalog.
+export { Heading, headingVariants } from "./components/blocks/heading/heading";
+export type { HeadingProps } from "./components/blocks/heading/heading";
+export { Eyebrow } from "./components/blocks/eyebrow/eyebrow";
+export type { EyebrowProps } from "./components/blocks/eyebrow/eyebrow";
+export { Prose, proseVariants } from "./components/blocks/prose/prose";
+export type { ProseProps } from "./components/blocks/prose/prose";
+export { CtaGroup, ctaGroupVariants } from "./components/blocks/cta-group/cta-group";
+export type { CtaGroupProps } from "./components/blocks/cta-group/cta-group";
+export { MediaFrame, mediaFrameVariants } from "./components/blocks/media-frame/media-frame";
+export type { MediaFrameProps } from "./components/blocks/media-frame/media-frame";
+export { FeatureCard } from "./components/blocks/feature-card/feature-card";
+export type { FeatureCardProps } from "./components/blocks/feature-card/feature-card";
+export { Stat, StatRow, statRowVariants } from "./components/blocks/stat/stat";
+export type { StatProps, StatRowProps } from "./components/blocks/stat/stat";
+export { Quote } from "./components/blocks/quote/quote";
+export type { QuoteProps } from "./components/blocks/quote/quote";
+export { BulletList, BulletItem } from "./components/blocks/bullet-list/bullet-list";
+export type { BulletListProps, BulletItemProps } from "./components/blocks/bullet-list/bullet-list";
+export { LogoRow } from "./components/blocks/logo-row/logo-row";
+export type { LogoRowProps, LogoRowLogo } from "./components/blocks/logo-row/logo-row";
+export { assertAllowedChildren } from "./components/blocks/lib/assert-slot";
+
 // Section suite. Compound components the agent assembles into SSR pages; each carries
 // CSS-only, deterministic CVA variants. Also available via the "./sections" subpath.
 export { Section, sectionVariants } from "./components/sections/section";

@@ -1,0 +1,29 @@
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+
+import { LogoRow } from "@core/components/blocks/logo-row/logo-row";
+
+/**
+ * LogoRow — a client/partner logo strip. Pass a `logos` array (`{ src?, alt }`); each renders through
+ * `MediaFrame` (the `logo` placeholder) at a fixed height, `object-contain`. A group block: use it in
+ * a slim social-proof section. Import from `@brief-to-site/core/blocks`.
+ */
+const meta = {
+  title: "Blocks/LogoRow",
+  component: LogoRow,
+  tags: ["autodocs"],
+  parameters: { layout: "padded" },
+  args: {
+    logos: [
+      { alt: "Acme" },
+      { alt: "Globex" },
+      { alt: "Initech" },
+      { alt: "Umbrella" },
+    ],
+  },
+} satisfies Meta<typeof LogoRow>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+/** Default: four placeholder logos. */
+export const Default: Story = {};
