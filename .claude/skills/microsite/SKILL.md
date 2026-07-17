@@ -143,8 +143,8 @@ Compose sections **by brief** into `app/**/page.tsx`:
   slots with **block primitives** from `@brief-to-site/core/blocks` (`Eyebrow`, `Heading`, `Prose`,
   `CtaGroup`, `MediaFrame`, `StatRow`/`Stat`, `Quote`, `FeatureCard`, `BulletList`, `LogoRow`).
 - **A "variant" is a composition** — pick a section's variant story (`Sections/Hero → WithStats`,
-  `→ QuoteLed`, …) and copy its JSX; rearranging content is allowed. The bound is the block library,
-  not a DOM-order rule. Get section slots + block props from the **Storybook MCP**
+  `→ QuoteLed`, …) and copy its JSX; arrange content however reads best, bounded by the block
+  library. Get section slots + block props from the **Storybook MCP**
   (`list-all-documentation` → `get-documentation`); get primitive (Button, etc.) usage from the
   **shadcn MCP**. Never compose a component or prop that isn't documented there.
 - Sections import from `@brief-to-site/core/sections`; blocks from `@brief-to-site/core/blocks`;

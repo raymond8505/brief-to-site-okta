@@ -20,8 +20,8 @@ brief-grounded copy. This page is the contract every section follows — and, to
    root plus **named slot subcomponents** (e.g. `Hero` + `HeroBody` / `HeroMedia` / `HeroAside`), each
    carrying a `data-slot`. The agent fills those slots with **block primitives** from
    `@brief-to-site/core/blocks` (`Eyebrow`, `Heading`, `Prose`, `CtaGroup`, `MediaFrame`, `StatRow`,
-   `Quote`, …) — never ad-hoc markup. **A "variant" is a composition**, not a flag: the same section
-   reads as *split*, *centered*, *with-stats*, or *quote-led* purely by which blocks fill which slots.
+   `Quote`, …) — never ad-hoc markup. **A "variant" is a composition**: the same section reads as
+   *split*, *centered*, *with-stats*, or *quote-led* purely by which blocks fill which slots.
    A section still owns any genuine geometric layout as a small **CSS-only CVA** (`align`, `mediaSide`,
    `columns`, `formSide`); and layout may react to which slots are present via `has-[data-slot=…]`. A
    dev-only `assertAllowedChildren` guard warns when a wrong component is composed into a slot.
@@ -33,13 +33,14 @@ Colour: sections and blocks consume **role tokens** (`bg-background`, `text-fore
 `text-muted-foreground`, `bg-muted`, `--brand-secondary`) — never hardcoded colours — so the
 deterministic theme stays orthogonal.
 
-## The bound is the block vocabulary, not DOM order
+## The bound is the block vocabulary
 
-Earlier sections forbade DOM/child reordering (an a11y concern). That rule is **retired** — a11y is
-out of scope here (the deliverable is full-page screenshots), so rearranging content is exactly the
-point. Determinism now comes from the **closed set of block primitives** the agent composes, plus the
-typed slot props and the dev guard — not from freezing source order. Add a new block deliberately
-(with a story + tests), like adding a `ui/` primitive; never drop raw JSX into a page.
+Content order carries no constraint — a11y is out of scope here (the deliverable is full-page
+screenshots), so a section arranges its slots and blocks however reads best. What keeps output
+deterministic is the **closed set of block primitives** the agent composes from, the typed slot
+props, and the dev-only slot guard: a bounded vocabulary in place of free-form markup. Compose only
+from the published blocks; to extend the vocabulary, add a new block deliberately (with a story +
+tests), the same way you would a `ui/` primitive. Never drop raw JSX into a page.
 
 ## Building a new section
 
