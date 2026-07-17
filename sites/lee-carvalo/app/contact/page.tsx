@@ -1,4 +1,5 @@
-import { ContactBlock } from "@brief-to-site/core/sections";
+import { Eyebrow, Heading, Prose } from "@brief-to-site/core/blocks";
+import { ContactBlock, ContactCopy, ContactForm } from "@brief-to-site/core/sections";
 
 export const metadata = {
   title: "Contact — Lee Carvalo's Putting Challenge",
@@ -11,12 +12,16 @@ export const metadata = {
  */
 export default function ContactPage() {
   return (
-    <ContactBlock
-      eyebrow="Get it this Christmas"
-      heading="Find it in stores"
-      subcopy="Want to know when it lands on shelves near you? Leave your details and we'll let you know where to pick up a copy."
-      submitLabel="Notify me"
-      density="spacious"
-    />
+    <ContactBlock density="spacious">
+      <ContactCopy>
+        <Eyebrow>Get it this Christmas</Eyebrow>
+        <Heading level={2}>Find it in stores</Heading>
+        <Prose lead>
+          Want to know when it lands on shelves near you? Leave your details and we&apos;ll let you
+          know where to pick up a copy.
+        </Prose>
+      </ContactCopy>
+      <ContactForm submitLabel="Notify me" />
+    </ContactBlock>
   );
 }

@@ -1,51 +1,67 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
-import { ContactBlock } from "@core/components/sections/contact-block/contact-block";
+import { Eyebrow, Heading, Prose } from "@core/components/blocks";
+import {
+  ContactBlock,
+  ContactCopy,
+  ContactForm,
+} from "@core/components/sections/contact-block/contact-block";
 
 describe("ContactBlock", () => {
-  it("renders the heading, optional copy, and the three labelled fields", () => {
+  it("renders the composed copy and the three labelled form fields", () => {
     render(
-      <ContactBlock eyebrow="Say hi" heading="Get in touch" subcopy="We reply within a day." />,
+      <ContactBlock>
+        <ContactCopy>
+          <Eyebrow>Say hi</Eyebrow>
+          <Heading level={2}>Get in touch</Heading>
+          <Prose>We reply within a day.</Prose>
+        </ContactCopy>
+        <ContactForm />
+      </ContactBlock>,
     );
     expect(screen.getByRole("heading", { level: 2, name: "Get in touch" })).toBeInTheDocument();
     expect(screen.getByText("Say hi")).toBeInTheDocument();
-    expect(screen.getByText("We reply within a day.")).toBeInTheDocument();
     expect(screen.getByLabelText("Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toHaveAttribute("type", "email");
     expect(screen.getByLabelText("Message").tagName).toBe("TEXTAREA");
   });
 
   it("renders a submit button with the default and a custom label", () => {
-    const { rerender } = render(<ContactBlock heading="H" />);
+    const { rerender } = render(<ContactForm />);
     expect(screen.getByRole("button", { name: "Send" })).toHaveAttribute("type", "submit");
-    rerender(<ContactBlock heading="H" submitLabel="Request a quote" />);
+    rerender(<ContactForm submitLabel="Request a quote" />);
     expect(screen.getByRole("button", { name: "Request a quote" })).toBeInTheDocument();
   });
 
-  it("omits the eyebrow and subcopy when not supplied", () => {
-    render(<ContactBlock heading="Just a heading" />);
-    expect(screen.getByRole("heading", { level: 2 })).toBeInTheDocument();
-    expect(screen.queryByText("Say hi")).not.toBeInTheDocument();
-  });
-
-  it("keeps DOM order copy → form regardless of the form variant (no source reorder)", () => {
-    for (const form of ["inline-end", "inline-start"] as const) {
-      const { container, unmount } = render(<ContactBlock heading="H" form={form} />);
-      const row = container.querySelector("[data-slot=contact-block]")!;
-      expect(row.children[0]).toHaveAttribute("data-slot", "contact-copy");
-      expect(row.children[1]).toHaveAttribute("data-slot", "contact-form");
-      unmount();
-    }
-  });
-
-  it("maps the form variant to a CSS-only flex-direction class", () => {
-    const { container } = render(<ContactBlock heading="H" form="inline-start" />);
+  it("maps formSide to a CSS-only flex-direction class", () => {
+    const { container } = render(
+      <ContactBlock formSide="start">
+        <ContactCopy>x</ContactCopy>
+        <ContactForm />
+      </ContactBlock>,
+    );
     expect(container.querySelector("[data-slot=contact-block]")).toHaveClass("lg:flex-row-reverse");
   });
 
   it("forwards density to the Section shell", () => {
-    const { container } = render(<ContactBlock heading="H" density="compact" />);
+    const { container } = render(
+      <ContactBlock density="compact">
+        <ContactForm />
+      </ContactBlock>,
+    );
     expect(container.querySelector("[data-slot=section]")).toHaveClass("py-8");
+  });
+
+  it("warns in dev when a non-slot child is composed into the section", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    render(
+      <ContactBlock>
+        <div>not a slot</div>
+      </ContactBlock>,
+    );
+    expect(warn).toHaveBeenCalledOnce();
+    expect(warn.mock.calls[0]?.[0]).toContain("ContactBlock");
+    warn.mockRestore();
   });
 });

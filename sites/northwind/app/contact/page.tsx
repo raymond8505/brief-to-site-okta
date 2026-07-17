@@ -1,4 +1,5 @@
-import { ContactBlock } from "@brief-to-site/core/sections";
+import { Eyebrow, Heading, Prose } from "@brief-to-site/core/blocks";
+import { ContactBlock, ContactCopy, ContactForm } from "@brief-to-site/core/sections";
 
 export const metadata = {
   title: "Contact — Northwind Studio",
@@ -10,12 +11,16 @@ export const metadata = {
  */
 export default function ContactPage() {
   return (
-    <ContactBlock
-      eyebrow="Contact"
-      heading="Start a project"
-      subcopy="Tell us what you're building and when it needs to be live. We'll reply within two business days with a scope and a price."
-      submitLabel="Send inquiry"
-      density="spacious"
-    />
+    <ContactBlock density="spacious">
+      <ContactCopy>
+        <Eyebrow>Contact</Eyebrow>
+        <Heading level={2}>Start a project</Heading>
+        <Prose lead>
+          Tell us what you&apos;re building and when it needs to be live. We&apos;ll reply within two
+          business days with a scope and a price.
+        </Prose>
+      </ContactCopy>
+      <ContactForm submitLabel="Send inquiry" />
+    </ContactBlock>
   );
 }
