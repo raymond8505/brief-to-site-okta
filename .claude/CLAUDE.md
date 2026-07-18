@@ -102,10 +102,19 @@ shell out to platform commands and never branch on `process.platform`.
   `FeatureGrid` + `FeatureGridHeader`; `ContactBlock` + `ContactCopy`/`ContactForm`), each carrying a
   `data-slot`, exactly like the `Card` family. Slots are filled with **block primitives** from
   `@brief-to-site/core/blocks` (`Eyebrow`, `Heading`, `Prose`, `CtaGroup`, `MediaFrame`, `StatRow`/
-  `Stat`, `Quote`, `FeatureCard`, `BulletList`, `LogoRow`). **A "variant" is a composition** (which
-  blocks in which slots — split / centered / with-stats / quote-led), not a cva toggle; a section
-  keeps only genuine geometric layout as a CSS-only cva (`align`, `mediaSide`, `columns`, `formSide`)
-  + the shared `density`. The **old CSS-only / no-DOM-reorder contract is retired** (a11y is out of
+  `Stat`, `Quote`, `FeatureCard`, `BulletList`, `LogoRow`, `Step`, `FaqItem`). **A "variant" is a
+  composition** (which blocks in which slots — split / centered / with-stats / quote-led), not a cva
+  toggle; a section keeps only genuine geometric layout as a CSS-only cva (`align`, `mediaSide`,
+  `columns`, `formSide`) + the shared `density`.
+  - **The core section suite covers the common marketing archetypes** so a page stacks 5–9 distinct
+    types, not 3: `Hero`, `FeatureGrid`, `Steps` (how-it-works, uses the `Step` block), `StatBand`
+    (by-the-numbers, wraps `StatRow`), `Testimonials` (grid of `Quote`), `LogoStrip` (wraps
+    `LogoRow`), `Faq` (static `FaqItem` Q/A — always open, no collapse: deliverable is screenshots),
+    `CtaBand` (closing CTA on `bg-muted`), `ContactBlock`. **`StatBand`/`Testimonials` render
+    placeholder-grade** proof (like placeholder images — the agent never invents real numbers/named
+    customers; `generation.json`). SKILL "Plan the build" sets the **depth expectation** (a full
+    narrative arc, not a stub). Pricing/tiers was deliberately **not** added (collides with the
+    no-invented-prices guardrail). The **old CSS-only / no-DOM-reorder contract is retired** (a11y is out of
   scope — the deliverable is screenshots); determinism now comes from the closed block vocabulary +
   typed slot props + a dev-only `assertAllowedChildren` guard (`blocks/lib/assert-slot.ts`), which
   warns (dev/Storybook only, reference-identity) on wrong-slot children. Children **cannot** be

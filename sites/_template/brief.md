@@ -10,6 +10,9 @@
 
 ## Pages
 
+<!-- Per-page intent + CTAs. Sketch each page's section arc — a strong home stacks many section
+     types (hook → value → proof → how-it-works → offer → FAQ → close), not just 3. -->
+
 ## Visual direction
 
 <!-- The creative steer: palette accents beyond the brand seed, typography intent, iconography

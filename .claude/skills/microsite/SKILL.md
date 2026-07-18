@@ -89,7 +89,7 @@ skeleton — see [`sites/_template/brief.md`](../../../sites/_template/brief.md)
 ## What is this?       ← the business, in a few sentences
 ## Audience            ← who the copy speaks to
 ## Key messages        ← the 2–4 points every page should land
-## Pages               ← per-page intent + CTAs
+## Pages               ← per-page intent + CTAs; sketch each page's section arc (hook→proof→…→close)
 ## Visual direction    ← the creative steer: palette accents, typography intent, iconography motifs
                           (which lucide icons / glyph feel), imagery mood, decorative motifs
 ## Notes               ← brand colour(s), anything operator-specific
@@ -180,6 +180,16 @@ block (which primitives + icons), or a new core primitive — plus the icons and
 the Visual direction calls for. **Save it to `sites/<slug>/design-notes.md`** (committed beside
 `brief.md` — it's the design record; not scaffolded, no test). This is where you design the site;
 assembly then executes the plan.
+
+**Build a full page, not a stub.** A strong marketing page stacks **many distinct section types** —
+aim for a narrative arc: **hook → value → proof → how-it-works → offer → FAQ → close** — typically
+**5–9 sections** on a home page, not 3. Use the **full core suite**, which covers the common
+archetypes: `Hero`, `FeatureGrid`, `Steps` (how-it-works), `StatBand` (by-the-numbers),
+`Testimonials`, `LogoStrip` (social proof), `Faq`, `CtaBand` (closing CTA), `ContactBlock`. When the
+arc needs a beat the suite doesn't cover, author a **site-local** section — but exhaust the core suite
+first; most beats already have a section. **`StatBand`/`Testimonials` are placeholder-grade** — stage
+qualitative stats/quotes the operator finalizes; never invent specific numbers or named customers
+(`generation.json`).
 
 Then compose the planned sections **by brief** into `app/**/page.tsx`:
 
