@@ -252,6 +252,18 @@ shell out to platform commands and never branch on `process.platform`.
   and Storybook rather than duplicating them; keep it that way (Code Over Instructions). The one hard
   rule it enforces that isn't code-checkable: **stop at the HITL checkpoint** and hand back to the
   operator before `capture:run` — never auto-capture.
+- **Assembly is creative, not template-filling — plan then compose.** The agent drafts a per-page
+  design (section order + how each is composed along the ladder) into a committed
+  `sites/<slug>/design-notes.md` before writing JSX, seeded by the brief's **`## Visual direction`**
+  section (added to the `_template/brief.md` skeleton + SKILL step 1). `design-notes.md` is
+  agent-authored per real site — **not** scaffolded and has no test (like `brief.md`'s content).
+- **Icons = `lucide-react` (a library), imported directly.** Declared in **`sites/_template`** deps
+  only (pinned `1.24.0` — `latest`/`^1.25.0` was npm-quarantined on 2026-07-17; bump when a later 1.x
+  clears quarantine), so scaffolds inherit it like `next`/`react`; **not** in `packages/core` (no core
+  component imports it yet). Import glyphs directly in pages + site-local components
+  (`import { ArrowRight } from "lucide-react"`); size/colour with Tailwind role-token utilities. It's
+  **exempt from the global icons-barrel rule** (that targets hand-authored inline SVG). **Promoting an
+  icon-using site-local block into core requires adding `lucide-react` to core's deps at that time.**
 - **`config/generation/generation.json` is SYSTEM-LEVEL** (repo root), not per-site: one
   house voice + guardrails for **every** site. It is **agent-read only** — there is **no runtime code
   path** that consumes it (copy is written by the agent at assemble time, not templated at build), so

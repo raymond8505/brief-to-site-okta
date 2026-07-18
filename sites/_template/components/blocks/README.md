@@ -22,9 +22,10 @@ can promote a good one by copying it in.
 A block is a small, presentational leaf (or a tiny compound family) built from **core primitives**:
 
 1. **Composed from primitives** — `Badge`, `Button`, `Card`, `Input`, `Label`, `Separator`,
-   `Textarea` from `@brief-to-site/core`, plus Tailwind utilities. A block may also compose existing
-   core blocks. **Do not** author a new primitive here — if you genuinely need one, add it to core via
-   the shadcn MCP (it's a standard registry component, reviewed as an ordinary core change).
+   `Textarea` from `@brief-to-site/core`, plus **lucide icons** (`import { ArrowRight } from
+   "lucide-react"`) and Tailwind utilities. A block may also compose existing core blocks. **Do not**
+   author a new primitive here — if you genuinely need one, add it to core via the shadcn MCP (it's a
+   standard registry component, reviewed as an ordinary core change).
 2. **Carries a `data-slot`** on its root, so sections can target it with `has-[data-slot=…]` and the
    dev-only `assertAllowedChildren` guard recognises it.
 3. **Genuine variants are a small CSS-only `cva`** (like `headingVariants`) — never a JS branch that
@@ -57,6 +58,7 @@ imports from the published subpaths:
 import { Badge, Button } from "@brief-to-site/core";        // primitives
 import { Eyebrow, Heading } from "@brief-to-site/core/blocks"; // existing blocks, if composing them
 import { cn } from "@brief-to-site/core/lib/utils";
+import { ArrowRight } from "lucide-react";                  // icons (direct library import)
 ```
 
 Then use the block from a page or a site-local section by **relative path**

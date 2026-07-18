@@ -33,6 +33,11 @@ Colour: sections and blocks consume **role tokens** (`bg-background`, `text-fore
 `text-muted-foreground`, `bg-muted`, `--brand-secondary`) — never hardcoded colours — so the
 deterministic theme stays orthogonal.
 
+Icons: **`lucide-react`** is the icon library — import glyphs directly
+(`import { ArrowRight } from "lucide-react"`) into blocks/site-local components for visual interest,
+sized and coloured with Tailwind role-token utilities. It's a library, not hand-authored SVG, so it's
+exempt from the icons-barrel rule.
+
 ## The bound is the block vocabulary
 
 Content order carries no constraint — a11y is out of scope here (the deliverable is full-page

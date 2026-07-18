@@ -43,6 +43,7 @@ the published subpaths, exactly like a page does:
 import { Section } from "@brief-to-site/core/sections";
 import { Eyebrow, Heading, Prose, MediaFrame, assertAllowedChildren } from "@brief-to-site/core/blocks";
 import { cn } from "@brief-to-site/core/lib/utils";
+import { ArrowRight } from "lucide-react"; // icons — direct library import, for visual interest
 ```
 
 Then import your section into a page by **relative path**

@@ -10,4 +10,10 @@
 
 ## Pages
 
+## Visual direction
+
+<!-- The creative steer: palette accents beyond the brand seed, typography intent, iconography
+     motifs (which lucide icons / glyph feel), imagery mood, decorative motifs. Drives the design
+     plan's composition + icon choices. (Radius + colour harmony come from config/brand.json.) -->
+
 ## Notes

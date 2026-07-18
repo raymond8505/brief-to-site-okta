@@ -11,12 +11,16 @@ microsite (Home / About / Contact by default), then captures full-page, multi-vi
 screenshots. **The deliverable is the images, not a live site** — the generated site only needs to
 look good and render responsively.
 
-You are the **coding agent** in the pipeline. The tool is fundamentally an **assembly engine**: you
-compose pre-built **sections** — each a compound family whose named slots you fill with **block
-primitives** (`@brief-to-site/core/blocks`) — and write brief-grounded copy into them.
+You are the **designer-developer** in the pipeline — not a template filler. The tool is an
+**assembly engine**, but your job is to build the *best site this brief deserves*: compose pre-built
+**sections** (compound families whose slots you fill with **block primitives** from
+`@brief-to-site/core/blocks`), reach for **lucide icons** and expressive Tailwind styling where they
+add interest, and write brief-grounded copy. Let the brief's **Visual direction** drive real creative
+choices.
 
-Work an **escalation ladder**, checking the existing vocabulary first but not straining to force-fit
-it. When nothing fits, building something new is a normal, encouraged move — not a last resort:
+For every section a page needs, ask **"what composes this?"** and work an **escalation ladder** —
+check the existing vocabulary first, but never strain to force-fit it. When nothing fits, building
+something new is expected and encouraged, not a last resort:
 
 1. **Compose an existing core section** if one fits in *any* documented composition (a "variant" is a
    composition, so one usually does). Check via the Storybook MCP.
@@ -28,9 +32,12 @@ it. When nothing fits, building something new is a normal, encouraged move — n
 Locality and QA: new **primitives** are standard shadcn-registry components, so they go straight to
 **core** and are reviewed as ordinary core changes. Bespoke **blocks and sections** start
 **site-local** (under `sites/<slug>/components/`, following the contract in step 5) and are promoted
-to core only if the operator decides so at the HITL checkpoint. The one thing you never reinvent is
-**colour/contrast math and the token/theme system** — those are core-owned, CSS-only, with
-deliberately no JS twin; consume role tokens and `.wcag-contrast`, never compute a colour in JS.
+to core only if the operator decides so at the HITL checkpoint. **Icons** are a library material —
+import from `lucide-react` **directly** in pages and site-local components (it's declared in the
+scaffold; exempt from the "icons live in a barrel" rule, which targets hand-authored SVG). The one
+thing you never reinvent is **colour/contrast math and the token/theme system** — those are
+core-owned, CSS-only, with deliberately no JS twin; consume role tokens and `.wcag-contrast`, never
+compute a colour in JS.
 
 ## When to use
 
@@ -40,10 +47,11 @@ in progress (author, assemble, theme, or capture). Each phase is a discrete, res
 ## The pipeline
 
 ```
-Intake (brief + colour[s])
+Intake (brief + colour[s] + visual direction)
   → Scaffold        yarn sites:new <slug>
   → Author config   config/{meta,brand,pages,viewports}.json   → yarn sites:validate
-  → Assemble        compose app/**/page.tsx (core section → site-local section → site-local block → core primitive)
+  → Plan the build  per page: section order + how each is composed (design-notes.md)
+  → Assemble        compose app/**/page.tsx (core section → site-local section → site-local block → core primitive + icons)
   → Theme + assets  yarn theme:build <slug>  ·  yarn placeholders:copy <slug>
   → Verify          yarn sites:dev <slug>  (or next build)  ·  test / lint / typecheck
   ── HITL CHECKPOINT ──  STOP. Operator swaps images / tweaks copy, then says the word.
@@ -78,12 +86,19 @@ skeleton — see [`sites/_template/brief.md`](../../../sites/_template/brief.md)
 
 ```markdown
 # Brief — <Site Name>
-## What is this?     ← the business, in a few sentences
-## Audience          ← who the copy speaks to
-## Key messages      ← the 2–4 points every page should land
-## Pages             ← per-page intent + CTAs
-## Notes             ← brand colour(s), imagery notes, anything operator-specific
+## What is this?       ← the business, in a few sentences
+## Audience            ← who the copy speaks to
+## Key messages        ← the 2–4 points every page should land
+## Pages               ← per-page intent + CTAs
+## Visual direction    ← the creative steer: palette accents, typography intent, iconography motifs
+                          (which lucide icons / glyph feel), imagery mood, decorative motifs
+## Notes               ← brand colour(s), anything operator-specific
 ```
+
+**Visual direction is the creativity seed.** Pull the operator for it if the brief is thin — it's
+what lets you compose expressively (which icons, which richer arrangements) instead of a plain
+block stack. Radius + colour harmony still come from `config/brand.json`; this section steers
+everything the tokens don't.
 
 `brief.md` is the **single source of copy grounding**: every page's copy must plausibly derive from
 what's written here (see [`sites/northwind/brief.md`](../../../sites/northwind/brief.md) for a
@@ -141,7 +156,7 @@ and apply it to **all** copy you write:
 
 This is the house style for every site; the brief supplies the *content*, this supplies the *rules*.
 
-## 5. Assemble the pages
+## 5. Plan the build, then assemble
 
 **Required tooling — STOP if missing.** This step needs the **Storybook MCP** (each section's
 documented props/variants) and the **shadcn MCP** (primitive docs). Before you assemble, confirm both
@@ -155,7 +170,18 @@ layout axes (with defaults), and copy-me snippets**. For a compound section it r
 story's **full composed JSX** — a paste-ready composition. This is the authoritative source; use it
 instead of reading source or spinning up a subagent.
 
-Compose sections **by brief** into `app/**/page.tsx`:
+### Plan the build first
+
+Before writing JSX, make the creative decisions explicitly. Working from the brief (its **Pages** and
+**Visual direction**) and the retrieved vocabulary, draft a short plan — **per page, the ordered list
+of sections, and for each section how it's composed**: the answer to *"what composes this?"* along the
+ladder — an existing core section (which variant), a site-local section (which blocks), a site-local
+block (which primitives + icons), or a new core primitive — plus the icons and any expressive styling
+the Visual direction calls for. **Save it to `sites/<slug>/design-notes.md`** (committed beside
+`brief.md` — it's the design record; not scaffolded, no test). This is where you design the site;
+assembly then executes the plan.
+
+Then compose the planned sections **by brief** into `app/**/page.tsx`:
 
 - Each section is a **compound family** (a root + named slot subcomponents, like `Card`). Fill the
   slots with **block primitives** from `@brief-to-site/core/blocks` (`Eyebrow`, `Heading`, `Prose`,
@@ -168,6 +194,10 @@ Compose sections **by brief** into `app/**/page.tsx`:
 - Sections import from `@brief-to-site/core/sections`; blocks from `@brief-to-site/core/blocks`;
   primitives from `@brief-to-site/core`. `_template`'s section archetype is a copy-me reference,
   **not** importable.
+- **Icons** come from `lucide-react` (`import { ArrowRight } from "lucide-react"`) — reach for them
+  to add visual interest: inside a `Button` (as children), a `FeatureCard`, or a site-local block.
+  Size/colour them with Tailwind (`className="size-5 text-muted-foreground"`); pick names the Visual
+  direction implies. They're a real library, so no Storybook/shadcn lookup is needed.
 
 When the vocabulary falls short, walk the escalation ladder (from the preamble) — building new is
 expected, not a failure. Check the existing tier first, then go one rung further:
@@ -272,10 +302,13 @@ artifact paths. `captures/` is gitignored — these are the deliverable, handed 
 
 ## Invariants (don't violate)
 
-- **Check existing first, then escalate** — compose a core section → author a site-local section
-  (from blocks) → author a site-local block (from primitives) → add a core primitive (shadcn MCP).
-  Building new is encouraged when nothing fits; don't force-fit. Site-local blocks/sections live under
+- **Plan, then check existing first, then escalate** — draft the per-page design (`design-notes.md`),
+  then per section: compose a core section → author a site-local section (from blocks) → author a
+  site-local block (from primitives + icons) → add a core primitive (shadcn MCP). Building new is
+  encouraged when nothing fits; don't force-fit. Site-local blocks/sections live under
   `sites/<slug>/components/` and are reported at HITL for promotion; new primitives go to core.
+- **Icons are a library** — `import from "lucide-react"` directly in pages and site-local components;
+  don't hand-author inline SVG or add them to an icons barrel.
 - **Colour/contrast math and the token/theme system stay core-only** — consume role tokens and
   `.wcag-contrast`; never compute a colour or luminance in JS.
 - **Root-relative image paths** `/images/...` always.
