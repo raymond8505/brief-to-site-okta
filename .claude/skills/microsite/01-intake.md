@@ -34,9 +34,8 @@ phase has a single source of copy grounding.
 ## Thin brief? Design more, don't defer more.
 
 `brief.md` is the **single source of copy grounding** — every page's copy must plausibly derive from
-what's written here (see [`sites/northwind/brief.md`](../../../sites/northwind/brief.md) for a worked
-example). But a thin brief is **not** a reason to leave the site tentative or to hand open questions
-back to the operator.
+what's written here. But a thin brief is **not** a reason to leave the site tentative or to hand open
+questions back to the operator.
 
 Per the invention posture in [`conventions.md`](conventions.md): **fill confidently** with plausible
 copy that follows from what the brief *does* say, and **record the assumptions you made in

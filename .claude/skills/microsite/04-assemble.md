@@ -3,7 +3,10 @@
 Goal: execute the `design-notes.md` plan — compose each planned section into `app/**/page.tsx`,
 walking the escalation ladder and authoring site-local pieces where the plan calls for them.
 
-Model on [`sites/northwind/app/page.tsx`](../../../sites/northwind/app/page.tsx).
+There is **no example page to model on** — compose fresh from your plan (see "No template — compose
+into the shell" in [`conventions.md`](conventions.md)). Get *mechanical* patterns — imports, block
+props, `Button render={<Link/>}` — from the **MCP copy-me snippets** and the public API below, never
+by imitating another site's design.
 
 ## Compose the planned sections
 
@@ -17,8 +20,8 @@ Model on [`sites/northwind/app/page.tsx`](../../../sites/northwind/app/page.tsx)
   `get-documentation`); get primitive (Button, etc.) usage from the **shadcn MCP**. Never compose a
   component or prop that isn't documented there.
 - Sections import from `@brief-to-site/core/sections`; blocks from `@brief-to-site/core/blocks`;
-  primitives from `@brief-to-site/core`. `_template`'s section archetype is a copy-me reference,
-  **not** importable.
+  primitives from `@brief-to-site/core`. (Core's section `_template/` archetype is a structural
+  **contract** for authoring a site-local section — not a design to mirror and not importable.)
 - **Icons** come from `lucide-react` (`import { ArrowRight } from "lucide-react"`) — reach for them to
   add visual interest: inside a `Button` (as children), a `FeatureCard`, or a site-local block.
   Size/colour them with Tailwind (`className="size-5 text-muted-foreground"`); pick names the Visual

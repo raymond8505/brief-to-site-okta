@@ -9,9 +9,12 @@ yarn sites:new <slug>      # slug: ^[a-z0-9]+(?:-[a-z0-9]+)*$  (no leading under
 yarn install               # the new workspace pulls in next/react
 ```
 
-This copies the committed `sites/_template` app (a real, buildable Next.js app) into `sites/<slug>/`
-and sets the package + meta name. It ships a placeholder Home page you will replace, plus
-`config/*.json`, `theme.css`, and `next.config.ts` already wired to core.
+This copies the committed **shell scaffold** (`sites/_template` — build wiring only, *not* a design
+template) into `sites/<slug>/` and sets the package + meta name. You get core's `MicrositeShell`
+(nav / header / footer), `config/*.json`, `theme.css`, and `next.config.ts` already wired to core,
+plus an **empty home stub** you delete. There is **no example page or reference site to mirror** — you
+author every page fresh from your plan (see "No template — compose into the shell" in
+[`conventions.md`](conventions.md)).
 
 ## Author the four config files
 

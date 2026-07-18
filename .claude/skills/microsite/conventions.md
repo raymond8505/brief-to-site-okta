@@ -47,6 +47,26 @@ It is agent-read only (no runtime code path consumes it).
 
 ---
 
+## No template, no example to mirror — compose into the shell
+
+**Content is governed; design is free.** `generation.json` constrains *what you say* (the guardrails
+above). Nothing constrains *how the site looks* — there is **no template site and no example page to
+imitate**, by design. A fixed example is an anchor the agent over-prioritizes and mirrors, which
+flattens every site toward the same shape. Don't look for one; there isn't one.
+
+`sites:new` gives you a **buildable shell**, not a template: core's `MicrositeShell` renders the
+nav / header / footer, plus the build wiring (config, layout, theme) and an **empty home stub** you
+delete. That's all. **A site is a collection of sections composed inside that shell to satisfy the
+brief** — core sections **reused**, and site-local sections/blocks **created as needed** (the
+escalation ladder). Author *every* page — home included — fresh from your `design-notes.md` plan.
+
+Your inputs are the **brief** (what's required), the **core section/block vocabulary** + the
+**Storybook/shadcn MCP copy-me snippets** (how a component is used — the source for *mechanical*
+patterns like imports and `Button render={<Link/>}`), and your own design judgement. Never reach for
+"how did the last site do it" — design what *this* brief deserves.
+
+---
+
 ## The escalation ladder (compose first, then build)
 
 For every section a page needs, ask **"what composes this?"** Check the existing tier first, then go

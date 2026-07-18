@@ -174,11 +174,16 @@ shell out to platform commands and never branch on `process.platform`.
   (fs-free, unit-tested); the CLI is a thin wrapper. `loadBrandConfig` validates just brand.json so a
   theme can rebuild mid-edit.
 - **`sites:new <slug>` copies the real `sites/_template` workspace**, it does NOT emit files from
-  template strings. `_template` is a committed, installed, buildable Next.js app (leading `_` = "not a
-  real site") — maintain the scaffold there (bump deps, edit the layout) the same way you'd maintain a
-  site, and `next build` it in place to check the scaffold still works. `config/scaffold.ts#scaffoldSite`
-  copies it (skipping `node_modules`/`.next`) and makes structured edits (package name, meta name/desc);
-  no `{{tokens}}`. `theme.css` is copied as-is (correct for the default brand); the operator re-runs
+  template strings. `_template` is the **shell/wiring scaffold, NOT a design template** — a committed,
+  installed, buildable Next.js app (leading `_` = "not a real site") holding core's `MicrositeShell`
+  mount, build config, `theme.css`, and configs. Its `app/page.tsx` is a deliberate **design-free home
+  stub** (no example sections): a site is a collection of sections composed inside the shell to satisfy
+  the brief, and the agent authors every page fresh — there is **no example page or reference site to
+  mirror** (see the microsite skill's `conventions.md`, "No template — compose into the shell"). Don't
+  reintroduce an example section into the stub; it re-anchors the agent's design. Maintain the scaffold
+  there (bump deps, edit the layout) the same way you'd maintain a site, and `next build` it in place to
+  check the shell still works. `config/scaffold.ts#scaffoldSite` copies it (skipping `node_modules`/
+  `.next`) and makes structured edits (package name, meta name/desc); no `{{tokens}}`. `theme.css` is copied as-is (correct for the default brand); the operator re-runs
   `theme:build` after editing brand.json. A drift test asserts `_template/theme.css === buildThemeCss(brand)`
   and `viewports.json === DEFAULT_VIEWPORTS`. Scaffold changes are tested by generating a site from
   `_template` into a temp dir (scaffold.test.ts). `_template` IS committed (it's the tool); the
@@ -273,6 +278,14 @@ shell out to platform commands and never branch on `process.platform`.
   `sites/<slug>/design-notes.md` before writing JSX, seeded by the brief's **`## Visual direction`**
   section (added to the `_template/brief.md` skeleton + SKILL step 1). `design-notes.md` is
   agent-authored per real site — **not** scaffolded and has no test (like `brief.md`'s content).
+  - **No template, no example to mirror — content is governed, design is free.** Deliberately there is
+    **no example page or reference site** the agent is pointed at: a fixed example is an anchor the
+    agent over-prioritizes and clones, flattening every site toward one shape (the old `_template`
+    Hero page + a "model on `sites/northwind/app/page.tsx`" reference did exactly this). The skill now
+    frames the scaffold as a **shell** to compose sections into; *mechanical* patterns (imports,
+    `Button render={<Link/>}`) come from the **MCP copy-me snippets**, not another site. `generation.json`
+    still governs **content**; **design is unconstrained**. The committed example sites remain as
+    pipeline/regression demonstrations but are **not** cited to the agent as models.
 - **Icons = `lucide-react` (a library), imported directly.** Declared in **`sites/_template`** deps
   only (pinned `1.24.0` — `latest`/`^1.25.0` was npm-quarantined on 2026-07-17; bump when a later 1.x
   clears quarantine), so scaffolds inherit it like `next`/`react`; **not** in `packages/core` (no core
