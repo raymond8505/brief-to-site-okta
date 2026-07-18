@@ -256,11 +256,18 @@ shell out to platform commands and never branch on `process.platform`.
 
 ## Skill + generation config (`microsite`)
 
-- **`.claude/skills/microsite/SKILL.md` is the pipeline entry point** — the agent-facing work-script
-  for intake → author → assemble → HITL → capture. It **points at** the `yarn` scripts, Zod schemas,
-  and Storybook rather than duplicating them; keep it that way (Code Over Instructions). The one hard
-  rule it enforces that isn't code-checkable: **stop at the HITL checkpoint** and hand back to the
-  operator before `capture:run` — never auto-capture.
+- **The `microsite` skill is phase-split, not one file** (`.claude/skills/microsite/`): a thin
+  `SKILL.md` entry (framing + prerequisites + a phase table) links six phase files
+  (`01-intake.md` … `06-handoff-and-capture.md`), and a shared `conventions.md` holds the
+  cross-cutting rules. Discipline (in SKILL.md): **"open the phase file when you reach that phase; do
+  not preload them all"** — just-in-time loading keeps the quality-critical assembly/invention rules
+  salient at the moment they're used (the old monolith diluted them across 330 lines). The files
+  **point at** the `yarn` scripts, Zod schemas, and Storybook rather than duplicating them; keep it
+  that way (Code Over Instructions). The **completeness & invention posture** lives in
+  `conventions.md` — the agent ships a complete, confident site and the operator does last-mile QA;
+  invent framing/copy freely, never invent checkable specifics (prices/stats/dates/named customers).
+  The one hard rule that isn't code-checkable: **stop at the HITL checkpoint** (phase 6) and hand back
+  before `capture:run` — never auto-capture.
 - **Assembly is creative, not template-filling — plan then compose.** The agent drafts a per-page
   design (section order + how each is composed along the ladder) into a committed
   `sites/<slug>/design-notes.md` before writing JSX, seeded by the brief's **`## Visual direction`**
