@@ -482,6 +482,7 @@ __metadata:
   resolution: "@brief-to-site/site-alf-pogs@workspace:sites/alf-pogs"
   dependencies:
     "@brief-to-site/core": "workspace:*"
+    lucide-react: "npm:1.24.0"
     next: "npm:16.2.6"
     react: "npm:19.2.4"
     react-dom: "npm:19.2.4"
@@ -531,18 +532,6 @@ __metadata:
   dependencies:
     "@brief-to-site/core": "workspace:*"
     lucide-react: "npm:1.24.0"
-    next: "npm:16.2.6"
-    react: "npm:19.2.4"
-    react-dom: "npm:19.2.4"
-    typescript: "npm:^5"
-  languageName: unknown
-  linkType: soft
-
-"@brief-to-site/site-vault-of-melmac@workspace:sites/vault-of-melmac":
-  version: 0.0.0-use.local
-  resolution: "@brief-to-site/site-vault-of-melmac@workspace:sites/vault-of-melmac"
-  dependencies:
-    "@brief-to-site/core": "workspace:*"
     next: "npm:16.2.6"
     react: "npm:19.2.4"
     react-dom: "npm:19.2.4"
