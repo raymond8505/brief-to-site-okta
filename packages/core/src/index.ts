@@ -64,6 +64,10 @@ export { BulletList, BulletItem } from "./components/blocks/bullet-list/bullet-l
 export type { BulletListProps, BulletItemProps } from "./components/blocks/bullet-list/bullet-list";
 export { LogoRow } from "./components/blocks/logo-row/logo-row";
 export type { LogoRowProps, LogoRowLogo } from "./components/blocks/logo-row/logo-row";
+export { Step } from "./components/blocks/step/step";
+export type { StepProps } from "./components/blocks/step/step";
+export { FaqItem } from "./components/blocks/faq-item/faq-item";
+export type { FaqItemProps } from "./components/blocks/faq-item/faq-item";
 export { assertAllowedChildren } from "./components/blocks/lib/assert-slot";
 
 // Section suite. Compound components the agent assembles into SSR pages; each carries
