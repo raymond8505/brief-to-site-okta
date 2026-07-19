@@ -6,19 +6,19 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { brandSchema } from "./brand.schema";
 import { pagesSchema } from "./pages.schema";
 import { DEFAULT_VIEWPORTS, viewportsSchema } from "./viewports.schema";
-import { isValidSlug, scaffoldSite, TEMPLATE_DIR } from "./scaffold";
+import { isValidSlug, scaffoldSite, SHELL_DIR } from "./scaffold";
 import { buildThemeCss } from "./theme";
 
 const readJson = (path: string): Record<string, unknown> =>
   JSON.parse(readFileSync(path, "utf8")) as Record<string, unknown>;
 
 describe("isValidSlug", () => {
-  it("accepts lowercase-hyphen slugs and rejects others (incl. the _template dir)", () => {
+  it("accepts lowercase-hyphen slugs and rejects others (incl. the _shell dir)", () => {
     expect(isValidSlug("acme-widgets")).toBe(true);
     expect(isValidSlug("acme")).toBe(true);
     expect(isValidSlug("Acme")).toBe(false);
     expect(isValidSlug("acme_widgets")).toBe(false);
-    expect(isValidSlug("_template")).toBe(false);
+    expect(isValidSlug("_shell")).toBe(false);
     expect(isValidSlug("-acme")).toBe(false);
     expect(isValidSlug("acme/widgets")).toBe(false);
     expect(isValidSlug("")).toBe(false);
@@ -27,26 +27,26 @@ describe("isValidSlug", () => {
 
 // The scaffold source is a real workspace, so its own config must stay valid and in sync with the
 // tooling that will consume it. These guard against the template silently drifting.
-describe("sites/_template fixture", () => {
+describe("sites/_shell fixture", () => {
   it("ships config that passes the same schemas sites:validate uses", () => {
-    expect(brandSchema.safeParse(readJson(join(TEMPLATE_DIR, "config/brand.json"))).success).toBe(
+    expect(brandSchema.safeParse(readJson(join(SHELL_DIR, "config/brand.json"))).success).toBe(
       true,
     );
-    expect(pagesSchema.safeParse(readJson(join(TEMPLATE_DIR, "config/pages.json"))).success).toBe(
+    expect(pagesSchema.safeParse(readJson(join(SHELL_DIR, "config/pages.json"))).success).toBe(
       true,
     );
     expect(
-      viewportsSchema.safeParse(readJson(join(TEMPLATE_DIR, "config/viewports.json"))).success,
+      viewportsSchema.safeParse(readJson(join(SHELL_DIR, "config/viewports.json"))).success,
     ).toBe(true);
   });
 
   it("viewports.json equals DEFAULT_VIEWPORTS", () => {
-    expect(readJson(join(TEMPLATE_DIR, "config/viewports.json"))).toEqual(DEFAULT_VIEWPORTS);
+    expect(readJson(join(SHELL_DIR, "config/viewports.json"))).toEqual(DEFAULT_VIEWPORTS);
   });
 
   it("committed theme.css matches buildThemeCss(brand) — no drift", () => {
-    const brand = brandSchema.parse(readJson(join(TEMPLATE_DIR, "config/brand.json")));
-    expect(readFileSync(join(TEMPLATE_DIR, "theme.css"), "utf8")).toBe(buildThemeCss(brand));
+    const brand = brandSchema.parse(readJson(join(SHELL_DIR, "config/brand.json")));
+    expect(readFileSync(join(SHELL_DIR, "theme.css"), "utf8")).toBe(buildThemeCss(brand));
   });
 });
 

@@ -9,7 +9,7 @@ yarn sites:new <slug>      # slug: ^[a-z0-9]+(?:-[a-z0-9]+)*$  (no leading under
 yarn install               # the new workspace pulls in next/react
 ```
 
-This copies the committed **shell scaffold** (`sites/_template` — build wiring only, *not* a design
+This copies the committed **shell scaffold** (`sites/_shell` — build wiring only, *not* a design
 template) into `sites/<slug>/` and sets the package + meta name. You get core's `MicrositeShell`
 (nav / header / footer), `config/*.json`, `theme.css`, and `next.config.ts` already wired to core,
 plus an **empty home stub** you delete. There is **no example page or reference site to mirror** — you

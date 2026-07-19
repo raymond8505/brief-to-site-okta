@@ -3,8 +3,8 @@ import { join, relative, resolve, sep } from "node:path";
 
 /**
  * `scaffoldSite` — the core of `sites:new`. A new site is a **copy of the real
- * `sites/_template` workspace** (an installed, buildable Next.js app) with a few structured edits,
- * not a bundle of template strings. So the scaffold is maintained the same way sites are — its
+ * `sites/_shell` workspace** (an installed, buildable Next.js app) with a few structured edits,
+ * not a bundle of template strings. So the shell scaffold is maintained the same way sites are — its
  * dependencies live in a real `package.json`, it can be built in place, and scaffold changes are
  * tested by generating a site from it (see scaffold.test.ts).
  *
@@ -14,10 +14,10 @@ import { join, relative, resolve, sep } from "node:path";
  */
 
 /**
- * The template workspace. Resolved from the repo root — both the `sites:new` CLI (a root yarn
+ * The shell scaffold workspace. Resolved from the repo root — both the `sites:new` CLI (a root yarn
  * script) and vitest run with the repo root as cwd.
  */
-export const TEMPLATE_DIR = resolve(process.cwd(), "sites", "_template");
+export const SHELL_DIR = resolve(process.cwd(), "sites", "_shell");
 
 /** url-safe directory slug: lowercase letters, digits and hyphens (also a valid npm package part). */
 export const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -68,12 +68,12 @@ export function listSiteFiles(siteDir: string): string[] {
 }
 
 /**
- * Copy `sites/_template` to `<sitesDir>/<slug>` and apply the slug-derived edits. Assumes the target
+ * Copy `sites/_shell` to `<sitesDir>/<slug>` and apply the slug-derived edits. Assumes the target
  * does not exist (the CLI refuses otherwise). Returns the created dir + its file list.
  */
 export function scaffoldSite(slug: string, sitesDir: string): { siteDir: string; files: string[] } {
   const siteDir = join(sitesDir, slug);
-  cpSync(TEMPLATE_DIR, siteDir, { recursive: true, filter: (src) => keepInScaffold(src) });
+  cpSync(SHELL_DIR, siteDir, { recursive: true, filter: (src) => keepInScaffold(src) });
 
   const name = titleCase(slug);
   editJson(join(siteDir, "package.json"), (pkg) => {

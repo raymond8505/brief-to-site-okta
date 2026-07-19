@@ -526,9 +526,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@brief-to-site/site-template@workspace:sites/_template":
+"@brief-to-site/site-shell@workspace:sites/_shell":
   version: 0.0.0-use.local
-  resolution: "@brief-to-site/site-template@workspace:sites/_template"
+  resolution: "@brief-to-site/site-shell@workspace:sites/_shell"
   dependencies:
     "@brief-to-site/core": "workspace:*"
     lucide-react: "npm:1.24.0"

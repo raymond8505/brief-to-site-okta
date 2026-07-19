@@ -68,24 +68,24 @@ shell out to platform commands and never branch on `process.platform`.
   derived secondary/tertiary are HSL-only, no RGB); *saturated with no text* (a decorative rule, the
   FeatureGrid card top-accent) can use the `--brand-secondary`/`-tertiary` hsl token directly.
 - **Default brand seed = Tailwind blue-600** (`#2563eb` = hsl(221 83% 53%) = rgb(37 99 235)) in both
-  `colors.css` and `sites/_template` — one canonical default.
+  `colors.css` and `sites/_shell` — one canonical default.
 - **Border-radius is a per-site style token** (`brand.json` `radius`). Named presets live in
   `styles/radius.ts` (`RADIUS_PRESETS` sharp/tight/subtle/rounded/playful → base rem; the `radius`
   enum is built from its keys, mirroring `HARMONIES`↔`HUE_OFFSETS`). `theme:build` emits `--radius`
   **only when non-default** (like explicit secondary/tertiary), so a default site's `theme.css` — incl.
-  `_template` — stays byte-identical and the drift test is untouched. `subtle` MUST equal globals.css's
+  `_shell` — stays byte-identical and the drift test is untouched. `subtle` MUST equal globals.css's
   `--radius: 0.625rem` default. **No component changes:** `--radius` is a plain `:root` var and the
   `--radius-*` scale is `@theme inline calc(var(--radius) * k)`, so `rounded-*` utilities inline to
   `calc(var(--radius)*k)` resolved per element — overriding `--radius` at `:root` in `theme.css`
   rescales every corner (verified against a real `next build`: `.rounded-xl{border-radius:calc(var(--radius) * 1.4)}`).
   Unlike the brand *seed*, `--radius` is a **direct-consumption** var, so it also cascades from any
-  scope (the `Tokens/Radius` story sets it per-swatch). `sites/lee-carvalo` uses `playful` as the
-  committed demonstration.
+  scope (the `Tokens/Radius` story sets it per-swatch). A site opts into a non-default corner feel by
+  setting `brand.json` `radius` to a preset like `playful`.
 
 ## Sites & tooling (`sites:new` + `theme:build`)
 
 - **Site dependency split.** `next`/`react`/`react-dom` live in **each site** +
-  `_template` (the site's own `next` bin must be on its workspace PATH, and sites must be
+  `_shell` (the site's own `next` bin must be on its workspace PATH, and sites must be
   self-buildable); devDeps (`@types/*`, `typescript`) live **only at root**. Do **not** hoist `next`
   too — Yarn only exposes a dep's bin to a workspace that declares it, so it breaks
   `yarn workspace @brief-to-site/site-<slug> build`. There is already no per-site `node_modules`
@@ -137,14 +137,13 @@ shell out to platform commands and never branch on `process.platform`.
   `@core/*` per leaf), and ship **no story/test** (sites run neither SB nor vitest) until promoted. The
   one hard bound that never goes site-local: **colour/contrast math + the token/theme system stay
   core-only** (CSS-only, no JS twin — consume role tokens + `.wcag-contrast`). Two load-bearing wiring
-  pieces: `_template/app/globals.css` has `@source "../components"` so Tailwind scans the site's own
+  pieces: `_shell/app/globals.css` has `@source "../components"` so Tailwind scans the site's own
   tree — this already covers **both** `components/sections/` and `components/blocks/` (core's `@source`
   covers only core — verified: a class used solely in a site-local section, e.g. `max-w-2xl`, is
-  emitted only because of this), and `_template/components/{sections,blocks}/README.md` seed the dirs
+  emitted only because of this), and `_shell/components/{sections,blocks}/README.md` seed the dirs
   (so the `@source` targets exist) + document the convention. `yarn sites:novel <slug>` (pure
   `config/novel-inventory.ts#formatNovelComponents` + thin `cli/novel-list.ts`) lists site-local blocks
-  AND sections for the HITL report — the directory IS the record, not agent memory. `sites/northwind`
-  ships `CtaBand` as the committed site-local-section demonstration (no committed block example yet).
+  AND sections for the HITL report — the directory IS the record, not agent memory.
 - **Section shapes come from the Storybook MCP, not a bespoke CLI.** `get-documentation` (per section)
   returns everything the old catalog did, from three sources: (1) the **component description** — the
   JSDoc block **immediately above `const meta`** in each `*.stories.tsx` (react-docgen only attaches
@@ -173,8 +172,8 @@ shell out to platform commands and never branch on `process.platform`.
   It does **no** luminance/contrast math. The pure builder is `config/theme.ts#buildThemeCss`
   (fs-free, unit-tested); the CLI is a thin wrapper. `loadBrandConfig` validates just brand.json so a
   theme can rebuild mid-edit.
-- **`sites:new <slug>` copies the real `sites/_template` workspace**, it does NOT emit files from
-  template strings. `_template` is the **shell/wiring scaffold, NOT a design template** — a committed,
+- **`sites:new <slug>` copies the real `sites/_shell` workspace**, it does NOT emit files from
+  template strings. `_shell` is the **shell/wiring scaffold, NOT a design template** — a committed,
   installed, buildable Next.js app (leading `_` = "not a real site") holding core's `MicrositeShell`
   mount, build config, `theme.css`, and configs. Its `app/page.tsx` is a deliberate **design-free home
   stub** (no example sections): a site is a collection of sections composed inside the shell to satisfy
@@ -184,18 +183,18 @@ shell out to platform commands and never branch on `process.platform`.
   there (bump deps, edit the layout) the same way you'd maintain a site, and `next build` it in place to
   check the shell still works. `config/scaffold.ts#scaffoldSite` copies it (skipping `node_modules`/
   `.next`) and makes structured edits (package name, meta name/desc); no `{{tokens}}`. `theme.css` is copied as-is (correct for the default brand); the operator re-runs
-  `theme:build` after editing brand.json. A drift test asserts `_template/theme.css === buildThemeCss(brand)`
+  `theme:build` after editing brand.json. A drift test asserts `_shell/theme.css === buildThemeCss(brand)`
   and `viewports.json === DEFAULT_VIEWPORTS`. Scaffold changes are tested by generating a site from
-  `_template` into a temp dir (scaffold.test.ts). `_template` IS committed (it's the tool); the
+  `_shell` into a temp dir (scaffold.test.ts). `_shell` IS committed (it's the tool); the
   **example sites** assembled end-to-end are separate.
-  - Future `sites/*` iteration (e.g. capture) must **skip the `_template` dir** (and `isValidSlug`
-    already rejects the `_` prefix, so `sites:new _template` can't collide).
+  - Future `sites/*` iteration (e.g. capture) must **skip the `_shell` dir** (and `isValidSlug`
+    already rejects the `_` prefix, so `sites:new _shell` can't collide).
 - **Core is consumed as raw source** (no build step), so two things are load-bearing:
   - **Core internals use the `@core/*` alias, not `@/*`.** A bare `@/*` resolves to the *site* root
     from a consuming app (Turbopack + tsc both read the site's tsconfig paths), so it breaks there.
     `@core/*` → core's `src/*` is declared in every resolver: core's tsconfig, `.storybook/main.ts`,
     `vitest.config.ts`, **and the shared `tsconfig.site.json`** (repo root) that every site extends
-    (`sites/_template` + scaffolds inherit it, rather than declaring it per-site).
+    (`sites/_shell` + scaffolds inherit it, rather than declaring it per-site).
     Turbopack resolves the inherited `@core` path for core's transpiled files — verified via
     `next build`; no `turbopack.resolveAlias` fallback needed. Never use `@/*` in a core file a site
     imports.
@@ -276,17 +275,17 @@ shell out to platform commands and never branch on `process.platform`.
 - **Assembly is creative, not template-filling — plan then compose.** The agent drafts a per-page
   design (section order + how each is composed along the ladder) into a committed
   `sites/<slug>/design-notes.md` before writing JSX, seeded by the brief's **`## Visual direction`**
-  section (added to the `_template/brief.md` skeleton + SKILL step 1). `design-notes.md` is
+  section (added to the `_shell/brief.md` skeleton + SKILL step 1). `design-notes.md` is
   agent-authored per real site — **not** scaffolded and has no test (like `brief.md`'s content).
   - **No template, no example to mirror — content is governed, design is free.** Deliberately there is
     **no example page or reference site** the agent is pointed at: a fixed example is an anchor the
-    agent over-prioritizes and clones, flattening every site toward one shape (the old `_template`
-    Hero page + a "model on `sites/northwind/app/page.tsx`" reference did exactly this). The skill now
+    agent over-prioritizes and clones, flattening every site toward one shape (the old scaffold's
+    Hero page + a "model on an example site" reference did exactly this). The skill now
     frames the scaffold as a **shell** to compose sections into; *mechanical* patterns (imports,
     `Button render={<Link/>}`) come from the **MCP copy-me snippets**, not another site. `generation.json`
     still governs **content**; **design is unconstrained**. The committed example sites remain as
     pipeline/regression demonstrations but are **not** cited to the agent as models.
-- **Icons = `lucide-react` (a library), imported directly.** Declared in **`sites/_template`** deps
+- **Icons = `lucide-react` (a library), imported directly.** Declared in **`sites/_shell`** deps
   only (pinned `1.24.0` — `latest`/`^1.25.0` was npm-quarantined on 2026-07-17; bump when a later 1.x
   clears quarantine), so scaffolds inherit it like `next`/`react`; **not** in `packages/core` (no core
   component imports it yet). Import glyphs directly in pages + site-local components
@@ -300,15 +299,16 @@ shell out to platform commands and never branch on `process.platform`.
   (`packages/core/src/config/generation.schema.ts`); the studio-specific
   `packages/core/src/config/examples/generation.json` is a separate **loader fixture**, not this
   config — don't conflate them.
-- **Three committed example sites.** `sites/northwind` (complementary), `sites/meridian` (analogous),
-  and `sites/lee-carvalo` (triadic) prove the pipeline across all three harmonies + a spread of
-  variants. (They used to be drift-guarded by `example-site.test.ts`, since removed — no automated
-  check now asserts the committed sites stay in sync with the tooling that generates them.)
+- **Committed example sites exist** as pipeline/regression demonstrations across the colour harmonies
+  + a spread of variants — but they are **not** cited to the agent as design models (each site is
+  authored fresh; see "No template, no example to mirror" above). They used to be drift-guarded by
+  `example-site.test.ts`, since removed — no automated check now asserts the committed sites stay in
+  sync with the tooling that generates them.
 - **Build/verify one site with `yarn workspace @brief-to-site/site-<slug> build`** (there is no
   `sites:build` script); `yarn sites:dev <slug>` for dev, `yarn capture:run <slug> --run <name>` for a
-  named throwaway capture. Heads-up inconsistency: `northwind/config/viewports.json` has only 2
-  viewports (375/1280) while `_template` (and meridian/lee-carvalo) ship the default 4 — so northwind
-  captures 6 images, the others 12.
+  named throwaway capture. Heads-up: a site's `viewports.json` may ship fewer than the default 4
+  viewports (some ship 2 → 375/1280), which changes the capture count (2 viewports × 3 pages = 6
+  images vs 12 at the default 4).
 
 ## Quality gate (husky pre-push)
 
@@ -323,14 +323,14 @@ shell out to platform commands and never branch on `process.platform`.
 - **`yarn typecheck` is full-repo via STANDARD tooling, not custom code**: root script =
   `tsc -p tsconfig.scripts.json && yarn workspaces foreach -A -p --exclude brief-to-site run typecheck`,
   with a `typecheck` script in **every** workspace — core (`tsc -p .`) and each site incl.
-  `_template` (`next typegen && tsc -p .`). A ~275-line custom runner (`config/typecheck.ts` +
+  `_shell` (`next typegen && tsc -p .`). A ~275-line custom runner (`config/typecheck.ts` +
   `typecheck-all` CLI + `sitePreflight`) was built first and replaced in review — survey existing
   tools before writing a runner. Key semantics (probed empirically on Yarn 4.17, July 2026):
   foreach **exit codes propagate** (old berry#977-era bugs are fixed); **`-p` runs ALL workspaces**
   and reports every failure (sequential mode stops at the first); `--exclude brief-to-site` prevents
   the root script recursing into itself; workspaces **without the script are silently skipped** —
   the `workspace-scripts.test.ts` drift guard asserts every workspace defines `typecheck`
-  (`_template` carrying it is what covers future scaffolded sites). `typecheck:core` remains the
+  (`_shell` carrying it is what covers future scaffolded sites). `typecheck:core` remains the
   fast core-only inner loop.
 - **`next typegen` (Next 15.5+) solves the generated-files problem** — sites' `typecheck` runs it
   before tsc, so a fresh clone/scaffold (no `next-env.d.ts`/`.next/types`) and a stale

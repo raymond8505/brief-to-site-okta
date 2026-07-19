@@ -46,7 +46,7 @@ the existing tier first, then go one rung further.
 ### Authoring a site-local section (no core section fits)
 
 - Put it at `sites/<slug>/components/sections/<kebab-name>/<kebab-name>.tsx`, one folder per section.
-  See [`sites/_template/components/sections/README.md`](../../../sites/_template/components/sections/README.md).
+  See [`sites/_shell/components/sections/README.md`](../../../sites/_shell/components/sections/README.md).
 - Copy the **contract** from core's archetype
   [`packages/core/src/components/sections/_template/`](../../../packages/core/src/components/sections/_template/template-section.tsx):
   render through `Section`, a compound family of `data-slot` subcomponents filled with blocks,
@@ -61,7 +61,7 @@ the existing tier first, then go one rung further.
 ### Authoring a site-local block (a section needs a piece the block vocabulary can't express)
 
 - Put it at `sites/<slug>/components/blocks/<kebab-name>/<kebab-name>.tsx`. See
-  [`sites/_template/components/blocks/README.md`](../../../sites/_template/components/blocks/README.md).
+  [`sites/_shell/components/blocks/README.md`](../../../sites/_shell/components/blocks/README.md).
 - Build it from **core primitives** (`Badge`, `Button`, `Card`, `Input`, `Label`, `Separator`,
   `Textarea` from `@brief-to-site/core`) + Tailwind; carry a `data-slot`; keep genuine variants as a
   CSS-only `cva`. Copy-me references: `blocks/eyebrow/eyebrow.tsx` (primitive wrapper),

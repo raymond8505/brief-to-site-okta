@@ -13,7 +13,7 @@ phase has a single source of copy grounding.
      abort without them — surface a blocked assembly here, before the scaffold/config investment.
 
 2. **Write the brief** into `sites/<slug>/brief.md` using the **convention** (the scaffold ships this
-   skeleton — see [`sites/_template/brief.md`](../../../sites/_template/brief.md)):
+   skeleton — see [`sites/_shell/brief.md`](../../../sites/_shell/brief.md)):
 
    ```markdown
    # Brief — <Site Name>
