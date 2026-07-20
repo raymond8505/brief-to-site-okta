@@ -26,8 +26,10 @@ brief-grounded copy. This page is the contract every section follows — and, to
    `columns`, `formSide`); and layout may react to which slots are present via `has-[data-slot=…]`. A
    dev-only `assertAllowedChildren` guard warns when a wrong component is composed into a slot.
 3. **Images go through the `MediaFrame` block.** No section renders a raw `<img>`. `MediaFrame` takes
-   a `src` path and falls back to the section-owned placeholder for its `spec` (`hero` / `feature` /
-   `logo`), in an `object-cover` box — so an operator overwrites art of any size without resizing.
+   a `src` path (the root-relative `/images/<name>.png` a placeholder manifest entry generated) in an
+   `object-cover` box — so an operator overwrites art of any size without resizing. When `src` is
+   omitted it falls back to an inline placeholder sized from its `aspect` (see **Guides/Placeholder
+   Sourcing** for the manifest + Unsplash workflow).
 
 Colour: sections and blocks consume **role tokens** (`bg-background`, `text-foreground`,
 `text-muted-foreground`, `bg-muted`, `--brand-secondary`) — never hardcoded colours — so the

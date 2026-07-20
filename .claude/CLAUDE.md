@@ -239,8 +239,11 @@ shell out to platform commands and never branch on `process.platform`.
   named `logo` → `/images/logo.png`. The inline SVG (`sections/placeholder.ts` `placeholderSvg`/
   `placeholderDataUri`) is now **only** the Storybook/dev/jsdom render fallback — a separate concern
   from the on-disk raster.
-- **`placeholders:source <slug>` auto-fills real stock photos from the manifest** (optional, opt-in).
-  Root `scripts/placeholder-source.ts` (network + fs, OUT of core like the other scripts) reads the
+- **`placeholders:source <slug>` auto-fills real stock photos from the manifest** — **operator-run,
+  NOT part of the generation pipeline** (the microsite skill phases don't invoke it; operator uses it
+  at their discretion). Documented in the Storybook **Guides/Placeholder Sourcing** page
+  (`config/placeholder-sourcing.mdx`). Root `scripts/placeholder-source.ts` (network + fs, OUT of core
+  like the other scripts) reads the
   manifest and per entry: Unsplash `search/photos` by `query ?? description` (optional manifest
   `query` field — keywords beat prose), takes the top match, fetches an exact-`aspect` cropped PNG
   (`urls.raw` + `&w&h&fit=crop&fm=png` — free image CDN, preserves `ixid`), and **overwrites**

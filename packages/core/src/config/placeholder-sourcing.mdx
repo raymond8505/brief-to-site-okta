@@ -1,0 +1,101 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guides/Placeholder Sourcing" />
+
+# Placeholder sourcing (Unsplash)
+
+`yarn placeholders:source <slug>` turns a site's placeholder **descriptions** into real stock photos
+from [Unsplash](https://unsplash.com), so you don't hand-search every image slot.
+
+This is an **operator tool, used at your discretion** — it is deliberately **not** part of the
+generation pipeline. The pipeline stops at the text placeholders (`placeholders:build`, which bakes
+each description into a neutral box as centred text). Run `placeholders:source` yourself whenever you
+want to pre-fill real candidate imagery before the last-mile swap.
+
+## What it does
+
+For every entry in the site's `config/placeholders.json`, it:
+
+1. Searches Unsplash for the entry's **`query`** (falling back to its **`description`**), using the
+   orientation implied by the entry's `aspect` (`square` → squarish, everything else → landscape),
+   with `content_filter=high`.
+2. Takes the **top** relevant match and fetches it cropped to the exact `aspect` box.
+3. **Overwrites `public/images/<name>.png` in place** — so the manifest and every page `src` stay
+   unchanged. It's a drop-in over the text placeholder.
+4. Records attribution to **`public/images/credits.json`**.
+
+A bad pick is cheap to fix: re-run it, or hand-swap that one file. `yarn placeholders:build <slug>`
+regenerates the text version if you want to start over.
+
+## Prerequisites
+
+- A free Unsplash **Access Key** — register an app at
+  [unsplash.com/developers](https://unsplash.com/developers) (only the Access Key is needed, no
+  secret).
+- Put it in the repo-root `.env` (see `.env.example`), or the ambient environment:
+
+  ```bash
+  UNSPLASH_ACCESS_KEY=your_access_key
+  ```
+
+  Without it the command exits with a clear message. It is the **only** key the project uses, and
+  nothing else in the pipeline needs it.
+
+## Usage
+
+```bash
+yarn placeholders:source <slug>          # e.g. yarn placeholders:source northwind
+```
+
+It sources every entry sequentially, logs a `Photo by … on Unsplash` line per image and the remaining
+hourly rate-limit, and skips (leaving the existing placeholder) any entry with no result.
+
+## The optional `query` field
+
+Descriptions are written for a human to read; Unsplash search prefers short keywords. Add an optional
+`query` to any manifest entry to steer the search — it falls back to `description` when absent and has
+**no effect on the text placeholder**:
+
+```json
+{
+  "name": "hero-studio-screen",
+  "aspect": "video",
+  "description": "A boutique design studio mid-build: a designer at a large screen…",
+  "query": "design studio workspace laptop"
+}
+```
+
+Retrieve the full manifest shape any time with `yarn config:schema placeholders`.
+
+## Attribution — required by the Unsplash API
+
+The Unsplash **License** needs no attribution, but the **API Guidelines** do (this split is the trap).
+The tool honours both API obligations for you:
+
+- It pings each used photo's `download_location` (the mandatory download-tracking call).
+- It writes **`public/images/credits.json`** mapping each image `name` to its photographer, the
+  photographer's profile, the photo page, and the "on Unsplash" link (all UTM-tagged).
+
+> **If a sourced photo ships in a published site, you must surface its attribution** (photographer +
+> link, "on Unsplash" link) — `credits.json` is your record.
+
+## Rate limits
+
+A new Unsplash app is in **demo mode: 50 requests/hour** (each slot costs 2 — search + download
+trigger; the image bytes are free). That's ample for a typical site; a very large site or repeated
+runs can exhaust it, and the tool fails clearly on a rate-limit response. Production mode
+(5,000/hour) needs Unsplash's approval.
+
+## For the committed example sites
+
+Sourcing over `northwind` / `meridian` / `lee-carvalo` is a **local demo** — don't commit real
+Unsplash imagery (or `credits.json`) over their lightweight committed text placeholders. Preview
+locally, then `git checkout sites/<slug>/public/images` (or re-run `placeholders:build`) to restore.
+
+## How it's built
+
+The deterministic pieces — orientation mapping, the search + cropped-image URL builders (which
+preserve Unsplash's `ixid`), and attribution formatting — live in `packages/core/src/config/unsplash.ts`
+and are unit-tested. The network `fetch` + file writes live in the root `scripts/placeholder-source.ts`,
+kept out of `packages/core` for the same reason as the capture driver (core is consumed as raw source
+by every site). No new dependency — just `fetch` + `node:fs`.
