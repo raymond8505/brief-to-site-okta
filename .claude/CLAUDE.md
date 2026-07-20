@@ -114,9 +114,11 @@ shell out to platform commands and never branch on `process.platform`.
   (`blocks/lib/assert-slot.ts`), which warns (dev/Storybook only, reference-identity) on wrong-slot
   children. Children **cannot** be strictly typed to a component set in React/TS — the guard is
   best-effort, the real bound is the closed `@brief-to-site/core/blocks` import surface + review.
-  `MediaFrame` is the **sole** render-time consumer of `PLACEHOLDER_SPECS`; no section renders a raw
-  `<img>`. The section contract doc is `components/sections/sections.mdx`; the copy-me archetype is
-  `components/sections/_template/`.
+  `MediaFrame` is the **sole** render-time image element; no section renders a raw `<img>`. In a real
+  site its `src` is an explicit `/images/<name>.png` (from the placeholder manifest); when `src` is
+  omitted (Storybook/dev/jsdom) it falls back to an inline SVG data-URI sized from `aspect` via
+  `ASPECT_DIMENSIONS`. The section contract doc is `components/sections/sections.mdx`; the copy-me
+  archetype is `components/sections/_template/`.
 - **Sites & core follow an escalation ladder — the agent may author *site-local* components.** The
   agent checks the existing tier first, then goes one rung further when nothing fits: compose a core
   **section** → author a site-local **section** (arrangement of core blocks, under
@@ -216,15 +218,27 @@ shell out to platform commands and never branch on `process.platform`.
 - **Next 16 `next build` uses Turbopack by default**; a `webpack` config errors unless a `turbopack`
   key is also present. Force the old bundler with `next build --webpack` when needed.
 - **Site image paths must be root-relative** (`/images/...`). Sections and the shell render
-  `imageSrc`/`logoSrc` **verbatim** into `<img src>`, so a relative `images/...` resolves against
-  nested routes (`/about/images/...` → 404). `placeholderPublicPath()` returns the canonical URL;
-  the drift test asserts every referenced path exists under `public/`. (Core's
-  `config/examples/site/config/meta.json` still shows the relative form — it's a schema fixture,
-  don't copy its `logoSrc` into a real site.)
-- **`PLACEHOLDER_SPECS` (sections/placeholder.ts) is the single source of placeholder dims/labels**;
-  keys double as the `placeholders:copy` file basenames. Never hardcode placeholder dimensions in a
-  section or CLI — add/edit the spec. `placeholderSvg` is the one markup generator behind both the
-  inline data-URI fallback and the files on disk (byte-identical, drift-tested).
+  `imageSrc`/`logoSrc`/`src` **verbatim** into `<img src>`, so a relative `images/...` resolves
+  against nested routes (`/about/images/...` → 404). `placeholderImagePath(name)` returns the
+  canonical `/images/<name>.png` URL. (Core's `config/examples/site/config/meta.json` still shows the
+  relative form — it's a schema fixture, don't copy its `logoSrc` into a real site.)
+- **Placeholders are purpose-built, per-placement RASTER images from a per-site manifest** — not a
+  fixed core set. The agent authors `config/placeholders.json` (`{ name, aspect, description }[]`,
+  validated by `placeholders.schema.ts#placeholdersSchema`, in the `config:schema` registry); the
+  `description` is a couple of sentences on the ideal content, **drawn into** the PNG as centered text
+  so the operator can source real art. `yarn placeholders:build <slug>` → root
+  `scripts/placeholder-gen.ts` draws one flat `public/images/<name>.png` per entry via
+  **`@napi-rs/canvas`** (a root devDependency — Skia, prebuilt platform binaries, 0 system deps; kept
+  OUT of core for the same reason as `playwright`, and its deterministic pieces — schema,
+  `ASPECT_DIMENSIONS`, `placeholderImagePath`, `wrapText` — live in core). Text renders via a
+  **bundled OFL font** (`scripts/assets/fonts/Inter-SemiBold.ttf`) registered with
+  `GlobalFonts.registerFromPath`, so output doesn't depend on host fonts. **`ASPECT_DIMENSIONS`**
+  (`placeholders.schema.ts`) is the single source of box sizes (the manifest's `aspect` picks one) —
+  never hardcode dimensions. PNGs are **committed** (operator overwrites in place), no byte-identical
+  drift test (like capture, the draw step isn't unit-tested). The **logo is a special case**: always
+  named `logo` → `/images/logo.png`. The inline SVG (`sections/placeholder.ts` `placeholderSvg`/
+  `placeholderDataUri`) is now **only** the Storybook/dev/jsdom render fallback — a separate concern
+  from the on-disk raster.
 - **Spawn `next` OS-agnostically via `process.execPath`, never the `yarn` wrapper** (see the
   OS-agnostic rule above). `config/dev.ts#devSpawnSpec` runs the current Node binary against `next`'s
   CLI (located with `resolveNextBin` → Node module resolution), so there is no `yarn.cmd`/`shell:

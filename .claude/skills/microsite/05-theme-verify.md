@@ -5,12 +5,16 @@ Goal: emit the site's theme + placeholder assets, then confirm it builds and ren
 ## Theme + placeholder assets
 
 ```bash
-yarn theme:build <slug>        # brand.json → theme.css (hex → HSL + RGB seed; harmony offsets)
-yarn placeholders:copy <slug>  # writes public/images/placeholders/{hero,feature,logo}.svg
+yarn theme:build <slug>         # brand.json → theme.css (hex → HSL + RGB seed; harmony offsets)
+yarn placeholders:build <slug>  # draws public/images/<name>.png from config/placeholders.json
 ```
 
-Both are deterministic and idempotent. Re-run `theme:build` after any `brand.json` edit.
-`PLACEHOLDER_SPECS` (core) is the single source of placeholder dimensions — never hardcode sizes.
+Re-run `theme:build` after any `brand.json` edit. `placeholders:build` reads the per-site
+`config/placeholders.json` manifest you authored in phase 4 and draws one PNG per entry into
+`public/images/`, baking each entry's `description` into the image as centered text (the operator's
+cue for sourcing real art). Re-run it after editing the manifest. `ASPECT_DIMENSIONS` (core) is the
+single source of placeholder box sizes — the manifest's `aspect` picks one; never hardcode pixel
+dimensions.
 
 ## Verify the build
 
@@ -34,7 +38,7 @@ no tests`). It's a rare (~1/17) init race, not a real failure — just re-run. S
 
 ## Done condition
 
-- `theme.css` + placeholder SVGs written; every page renders styled in dev.
+- `theme.css` written; placeholder PNGs drawn under `public/images/`; every page renders styled in dev.
 - `yarn test`, `yarn lint`, `yarn typecheck` each pass on their own exit code.
 
 → Proceed to [06-handoff-and-capture.md](06-handoff-and-capture.md).

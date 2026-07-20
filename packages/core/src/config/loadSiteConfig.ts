@@ -38,10 +38,10 @@ export type LoadResult =
   | { ok: true; config: SiteConfig }
   | { ok: false; issues: ConfigIssue[] };
 
-type ParseResult<T> = { ok: true; value: T } | { ok: false; issues: ConfigIssue[] };
+export type ParseResult<T> = { ok: true; value: T } | { ok: false; issues: ConfigIssue[] };
 
 /** Read + JSON-parse + schema-validate one file, mapping every failure mode to `ConfigIssue`s. */
-function parseJsonFile<T>(fullPath: string, schema: ZodType<T>): ParseResult<T> {
+export function parseJsonFile<T>(fullPath: string, schema: ZodType<T>): ParseResult<T> {
   const file = basename(fullPath);
   let raw: string;
   try {

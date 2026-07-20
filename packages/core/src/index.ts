@@ -74,12 +74,8 @@ export { assertAllowedChildren } from "./components/blocks/lib/assert-slot";
 // CSS-only, deterministic CVA variants. Also available via the "./sections" subpath.
 export { Section, sectionVariants } from "./components/sections/section";
 export type { SectionProps } from "./components/sections/section";
-export {
-  placeholderSvg,
-  placeholderDataUri,
-  PLACEHOLDER_SPECS,
-} from "./components/sections/placeholder";
-export type { PlaceholderOptions, PlaceholderName } from "./components/sections/placeholder";
+export { placeholderSvg, placeholderDataUri } from "./components/sections/placeholder";
+export type { PlaceholderOptions } from "./components/sections/placeholder";
 export {
   Hero,
   HeroBody,
@@ -104,6 +100,17 @@ export { brandSchema } from "./config/brand.schema";
 export type { BrandConfig } from "./config/brand.schema";
 export { pageSchema, pagesSchema } from "./config/pages.schema";
 export type { PageConfig, PagesConfig } from "./config/pages.schema";
+export {
+  placeholderEntrySchema,
+  placeholdersSchema,
+  placeholderImagePath,
+  ASPECT_DIMENSIONS,
+} from "./config/placeholders.schema";
+export type {
+  AspectKey,
+  PlaceholderEntry,
+  PlaceholdersConfig,
+} from "./config/placeholders.schema";
 export { viewportSchema, viewportsSchema, DEFAULT_VIEWPORTS } from "./config/viewports.schema";
 export type { Viewport, ViewportsConfig } from "./config/viewports.schema";
 export { generationSchema } from "./config/generation.schema";

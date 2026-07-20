@@ -6,8 +6,8 @@ import { FeatureGrid, FeatureGridHeader, Hero, HeroBody } from "@brief-to-site/c
 
 /**
  * Home — leads with the roast-in-house value proposition (brief.md: "Roasted where you drink it."),
- * then the three things that follow from it. Uses the centered Hero variant; images are the copied
- * placeholders under public/images/placeholders/, which the operator overwrites during HITL.
+ * then the three things that follow from it. Uses the centered Hero variant; images are purpose-built
+ * placeholders under public/images/ (from config/placeholders.json), which the operator overwrites during HITL.
  */
 export default function HomePage() {
   return (
@@ -44,19 +44,19 @@ export default function HomePage() {
         <FeatureCard
           title="Sourced short"
           description="We buy from a handful of growers we know, not a broker's catalogue — so we can tell you where every bag came from."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/feature-sourced-short.png"
           imageAlt="Green coffee beans in an open sack"
         />
         <FeatureCard
           title="Roasted weekly"
           description="Beans are roasted in small batches through the week and dated, so what you take home is days old, not months."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/feature-roasted-weekly.png"
           imageAlt="Freshly roasted beans cooling in the tray"
         />
         <FeatureCard
           title="Served fresh"
           description="The same coffee we bag for the shelf is the coffee we pull at the bar — roasted in the room you drink it in."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/feature-served-fresh.png"
           imageAlt="A pour-over being made at the café bar"
         />
       </FeatureGrid>

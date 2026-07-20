@@ -33,8 +33,8 @@ serializes them (`z.toJSONSchema`). Rules the schema can't express:
   elegant/serious/editorial; rounded/playful read friendly/casual). Omit it for the balanced default.
   It rescales every corner site-wide via `theme:build`.
 - **Image paths are root-relative** `/images/...` — a relative `images/...` 404s under nested routes
-  like `/about`. `logoSrc` and section images point at `/images/placeholders/<name>.svg` (written in
-  phase 5).
+  like `/about`. `logoSrc` and section images point at `/images/<name>.png`, generated in phase 5 from
+  the `config/placeholders.json` manifest you build up during assembly (phase 4).
 - Adding a page is **config-only**: add a `pages.json` entry and write its `app/<slug>/page.tsx`.
 
 ## Validate until clean

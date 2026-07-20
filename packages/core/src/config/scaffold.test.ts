@@ -5,6 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { brandSchema } from "./brand.schema";
 import { pagesSchema } from "./pages.schema";
+import { placeholdersSchema } from "./placeholders.schema";
 import { DEFAULT_VIEWPORTS, viewportsSchema } from "./viewports.schema";
 import { isValidSlug, scaffoldSite, SHELL_DIR } from "./scaffold";
 import { buildThemeCss } from "./theme";
@@ -37,6 +38,9 @@ describe("sites/_shell fixture", () => {
     );
     expect(
       viewportsSchema.safeParse(readJson(join(SHELL_DIR, "config/viewports.json"))).success,
+    ).toBe(true);
+    expect(
+      placeholdersSchema.safeParse(readJson(join(SHELL_DIR, "config/placeholders.json"))).success,
     ).toBe(true);
   });
 
@@ -72,6 +76,7 @@ describe("scaffoldSite", () => {
       "config/brand.json",
       "config/meta.json",
       "config/pages.json",
+      "config/placeholders.json",
       "config/viewports.json",
       "theme.css",
       "brief.md",

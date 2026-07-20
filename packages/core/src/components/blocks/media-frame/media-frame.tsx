@@ -2,11 +2,8 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@core/lib/utils";
-import {
-  PLACEHOLDER_SPECS,
-  placeholderDataUri,
-  type PlaceholderName,
-} from "@core/components/sections/placeholder";
+import { placeholderDataUri } from "@core/components/sections/placeholder";
+import { ASPECT_DIMENSIONS } from "@core/config/placeholders.schema";
 
 export const mediaFrameVariants = cva("w-full bg-muted object-cover object-center", {
   variants: {
@@ -30,33 +27,23 @@ export const mediaFrameVariants = cva("w-full bg-muted object-cover object-cente
 export interface MediaFrameProps
   extends Omit<React.ComponentProps<"img">, "src" | "alt">,
     VariantProps<typeof mediaFrameVariants> {
-  /** Image path (root-relative `/images/...`). Omit to fall back to the placeholder for `spec`. */
+  /** Image path (root-relative `/images/<name>.png`). Omit to fall back to the inline dev placeholder. */
   src?: string;
   /** Alt text — required so the image box is always described. */
   alt: string;
-  /** Which placeholder spec fills the box when `src` is omitted. Default `hero`. */
-  spec?: PlaceholderName;
 }
 
 /**
- * MediaFrame — the one image block. Renders an `<img>` in a fixed-aspect, `object-cover` box, falling
- * back to the section-owned placeholder (`placeholderDataUri`) for its `spec` when `src` is omitted —
- * so Storybook, a Next.js site, and jsdom tests all flow through the identical element. This is the
- * sole render-time consumer of the placeholder registry; no section renders a raw `<img>`.
+ * MediaFrame — the one image block. Renders an `<img>` in a fixed-aspect, `object-cover` box. In a
+ * real site `src` is always the root-relative `/images/<name>.png` a manifest entry generated; when
+ * `src` is omitted (Storybook/dev/jsdom, where no file exists) it falls back to an inline SVG
+ * data-URI sized from `aspect` and captioned with `alt`. No section renders a raw `<img>`.
  */
-export function MediaFrame({
-  src,
-  alt,
-  spec = "hero",
-  aspect,
-  rounded,
-  className,
-  ...props
-}: MediaFrameProps) {
+export function MediaFrame({ src, alt, aspect, rounded, className, ...props }: MediaFrameProps) {
   return (
     <img
       data-slot="media-frame"
-      src={src ?? placeholderDataUri(PLACEHOLDER_SPECS[spec])}
+      src={src ?? placeholderDataUri({ ...ASPECT_DIMENSIONS[aspect ?? "video"], label: alt })}
       alt={alt}
       className={cn(mediaFrameVariants({ aspect, rounded }), className)}
       {...props}

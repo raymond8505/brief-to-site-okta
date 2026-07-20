@@ -9,7 +9,7 @@ export interface FeatureCardProps extends Omit<React.ComponentProps<typeof Card>
   title: string;
   /** Supporting description under the title. */
   description?: string;
-  /** Image path; omit to fall back to the `feature` placeholder. */
+  /** Image path (root-relative `/images/<name>.png`); omit to fall back to the inline dev placeholder. */
   imageSrc?: string;
   /** Alt text for the card image. Required so the box is always described. */
   imageAlt: string;
@@ -34,7 +34,7 @@ export function FeatureCard({
       className={cn("border-t-4 [border-top-color:var(--brand-secondary)]", className)}
       {...props}
     >
-      <MediaFrame src={imageSrc} alt={imageAlt} spec="feature" aspect="photo" />
+      <MediaFrame src={imageSrc} alt={imageAlt} aspect="photo" />
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>

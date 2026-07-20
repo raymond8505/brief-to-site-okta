@@ -39,7 +39,7 @@ const meta = {
           </Prose>
         </HeroBody>
         <HeroMedia>
-          <MediaFrame alt="A sample of studio work" spec="hero" rounded />
+          <MediaFrame alt="A sample of studio work" rounded />
         </HeroMedia>
       </Hero>
     ),

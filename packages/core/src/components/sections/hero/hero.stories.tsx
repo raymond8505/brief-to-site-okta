@@ -70,7 +70,7 @@ const meta = {
         </CtaGroup>
       </HeroBody>
       <HeroMedia>
-        <MediaFrame alt="Studio work preview" spec="hero" rounded />
+        <MediaFrame alt="Studio work preview" rounded />
       </HeroMedia>
     </Hero>
   ),

@@ -1,0 +1,47 @@
+[
+  {
+    "name": "feature-sourced-short",
+    "aspect": "photo",
+    "description": "An open burlap sack of green (unroasted) coffee beans on a roastery floor, a hand scooping through them. Speaks to a short, known supply chain from named growers."
+  },
+  {
+    "name": "feature-roasted-weekly",
+    "aspect": "photo",
+    "description": "Freshly roasted coffee beans cooling in the roaster's tray, warm brown and glossy, a dated bag nearby. Small-batch, roasted-this-week freshness."
+  },
+  {
+    "name": "feature-served-fresh",
+    "aspect": "photo",
+    "description": "A barista making a careful pour-over at the café bar, steam rising, the same beans bagged on the shelf behind. Roasted in the room you drink it in."
+  },
+  {
+    "name": "about-roaster-at-work",
+    "aspect": "video",
+    "description": "The roaster at work in the back of a neighbourhood café, tending a small drum roaster, warm light and bags of green coffee around them. Hands-on, one-roaster-in-the-back character."
+  },
+  {
+    "name": "about-the-sourcing",
+    "aspect": "photo",
+    "description": "Ripe red coffee cherries on the branch at a grower's farm, close and vivid. Represents a short list of trusted growers and real relationships."
+  },
+  {
+    "name": "about-roast-profiles",
+    "aspect": "photo",
+    "description": "A roast profile curve on the roaster's control screen beside the drum roaster, a craftsperson dialling in a consistent roast. Consistency batch to batch."
+  },
+  {
+    "name": "about-the-counter",
+    "aspect": "photo",
+    "description": "A barista chatting warmly with a customer across the café counter, whole-bean bags on display. The people who roast are the people who serve."
+  },
+  {
+    "name": "about-wholesale",
+    "aspect": "photo",
+    "description": "Sealed, dated whole-bean wholesale bags stacked and ready for delivery to nearby cafés and offices. The weekly-roasted beans, packed for wholesale."
+  },
+  {
+    "name": "logo",
+    "aspect": "logo",
+    "description": "Meridian Coffee Roasters wordmark logo, on a transparent or white background."
+  }
+]

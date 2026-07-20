@@ -33,9 +33,8 @@ export default function AboutPage() {
         </HeroBody>
         <HeroMedia>
           <MediaFrame
-            src="/images/placeholders/hero.svg"
+            src="/images/about-roaster-at-work.png"
             alt="The roaster at work in the back of the café"
-            spec="hero"
             rounded
           />
         </HeroMedia>
@@ -48,25 +47,25 @@ export default function AboutPage() {
         <FeatureCard
           title="The sourcing"
           description="A short list of growers we buy from year after year, so the coffee is familiar and the relationships are real."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/about-the-sourcing.png"
           imageAlt="A grower's coffee cherries on the branch"
         />
         <FeatureCard
           title="The roast profiles"
           description="Each coffee has a profile we've dialled in and stick to, so a bag tastes like the last one you loved."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/about-roast-profiles.png"
           imageAlt="A roast profile chart on the roaster's screen"
         />
         <FeatureCard
           title="The counter"
           description="The people who roast are the people who serve — ask where a bean came from and you'll get a real answer."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/about-the-counter.png"
           imageAlt="A barista talking with a customer at the counter"
         />
         <FeatureCard
           title="Wholesale"
           description="Nearby cafés and offices get the same weekly-roasted beans and the same direct line to the roaster."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/about-wholesale.png"
           imageAlt="Bagged wholesale beans ready for delivery"
         />
       </FeatureGrid>

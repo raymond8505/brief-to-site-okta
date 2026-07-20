@@ -21,8 +21,9 @@ import { CtaBand, CtaBandBody } from "../components/sections/cta-band/cta-band";
 
 /**
  * Home — leads with the studio's value proposition (brief.md: "Design that ships."), then how an
- * engagement runs as three features. Assembled from core sections; images are the copied
- * placeholders under public/images/placeholders/, which the operator overwrites during HITL.
+ * engagement runs as three features. Assembled from core sections; images are purpose-built
+ * placeholders under public/images/ (from config/placeholders.json), which the operator overwrites
+ * during HITL.
  */
 export default function HomePage() {
   return (
@@ -48,9 +49,8 @@ export default function HomePage() {
         </HeroBody>
         <HeroMedia>
           <MediaFrame
-            src="/images/placeholders/hero.svg"
+            src="/images/hero-studio-screen.png"
             alt="Work-in-progress site design on a studio screen"
-            spec="hero"
             rounded
           />
         </HeroMedia>
@@ -64,19 +64,19 @@ export default function HomePage() {
         <FeatureCard
           title="Brief"
           description="You tell us what the site has to do and who it's for. We agree the scope and the price before any pixels move."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/feature-brief-review.png"
           imageAlt="A written brief being reviewed"
         />
         <FeatureCard
           title="Design"
           description="Senior designers work directly with you — the people in the room are the people doing the work."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/feature-design-exploration.png"
           imageAlt="Design exploration in progress"
         />
         <FeatureCard
           title="Launch"
           description="Every engagement ends with something live. We build, verify, and ship — then hand you the keys."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/feature-launch-live.png"
           imageAlt="A finished site going live"
         />
       </FeatureGrid>

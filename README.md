@@ -18,7 +18,7 @@ The whole pipeline is driven by the **`microsite` skill**
 ([`.claude/skills/microsite/SKILL.md`](./.claude/skills/microsite/SKILL.md)): the coding agent
 takes a client **brief + brand colour** and runs **intake → author → assemble → HITL → capture**.
 Each step is a discrete `yarn` script (`sites:new`, `sites:validate`, `theme:build`,
-`placeholders:copy`, `sites:dev`, `capture:run`), non-interactive except the one intentional
+`placeholders:build`, `sites:dev`, `capture:run`), non-interactive except the one intentional
 **HITL pause** before capture.
 
 - **`brief.md`** in each site is the intake contract and the single source of copy grounding —

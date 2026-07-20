@@ -31,9 +31,8 @@ export default function AboutPage() {
         </HeroBody>
         <HeroMedia>
           <MediaFrame
-            src="/images/placeholders/hero.svg"
+            src="/images/about-team-table.png"
             alt="The Northwind team working around one table"
-            spec="hero"
             rounded
           />
         </HeroMedia>
@@ -46,25 +45,25 @@ export default function AboutPage() {
         <FeatureCard
           title="Fixed scope, fixed price"
           description="A brief goes in, a finished site comes out. The scope and the price are agreed before work starts — and they hold."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/about-scope-agreement.png"
           imageAlt="A signed one-page scope agreement"
         />
         <FeatureCard
           title="Senior people only"
           description="There is no junior bench to hand your project to. Everyone at Northwind has shipped sites for a decade or more."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/about-senior-review.png"
           imageAlt="Senior designers reviewing work together"
         />
         <FeatureCard
           title="A direct line"
           description="You talk to the people doing the work — decisions get made in the conversation, not relayed through a process."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/about-direct-conversation.png"
           imageAlt="A client and designer talking directly"
         />
         <FeatureCard
           title="Ship something live"
           description="Every engagement ends with a site on the internet, not a deck of recommendations."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/about-launched-site.png"
           imageAlt="A newly launched site on screen"
         />
       </FeatureGrid>
