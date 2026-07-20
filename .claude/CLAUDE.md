@@ -314,13 +314,21 @@ shell out to platform commands and never branch on `process.platform`.
 
 - **`git push --no-verify` is forbidden** (also a global rule). No CI by design: this local
   hook IS the enforcement layer.
+- **The push gate is CORE-ONLY.** `.husky/pre-push` runs `yarn typecheck:core` (`tsc -p packages/core`),
+  `yarn lint:core` (`eslint packages/core`), then `yarn test` (vitest — already core-only; its glob is
+  `packages/*/src/**` and sites have no tests). **Sites are excluded from the hook by design** — a site
+  type/lint error will NOT block a push. Validate sites manually: `yarn workspace @brief-to-site/site-<slug>
+  build`, or the full-repo `yarn typecheck` / `yarn lint` (both still exist for local runs). The gate also
+  drops the root `scripts/` typecheck (that's `tsc -p tsconfig.scripts.json`, part of full-repo
+  `yarn typecheck`, not `typecheck:core`).
 - **Husky activates via `postinstall`, NOT `prepare`** — Yarn Berry never runs `prepare`
   (yarnpkg/berry#2967). Fresh clones get the hook on first `yarn install` (no install-state yet →
   scripts run); repo is private so no pinst dance. But Berry **skips `postinstall` when the dep tree
   is unchanged** — verified: after `git config --unset core.hooksPath`, a plain `yarn install` does
   NOT restore it. Manual re-activation: `yarn husky`. Hook files are v9 format: plain sh, no
   shebang/`husky.sh` sourcing (v8-isms, removed in v10).
-- **`yarn typecheck` is full-repo via STANDARD tooling, not custom code**: root script =
+- **`yarn typecheck` is full-repo via STANDARD tooling, not custom code** (run manually — it is NOT
+  the push gate; the hook runs `typecheck:core` only, see the core-only bullet above): root script =
   `tsc -p tsconfig.scripts.json && yarn workspaces foreach -A -p --exclude brief-to-site run typecheck`,
   with a `typecheck` script in **every** workspace — core (`tsc -p .`) and each site incl.
   `_shell` (`next typegen && tsc -p .`). A ~275-line custom runner (`config/typecheck.ts` +
