@@ -6,24 +6,20 @@ capture the screenshots.
 ## HITL checkpoint — STOP
 
 **Do not capture yet.** This is the **one intentional pause** in the pipeline — the single human rule
-the code can't enforce. Hand control back to the operator.
+the code can't enforce. Hand a **complete** site back (not a set of open questions) and wait.
 
-The site you hand over is **complete**, not a set of open questions. Frame the handoff as **last-mile
-QA**, e.g.:
+Post a short, **point-form** handoff:
 
-> "Site's generated and complete — review it at `yarn sites:dev <slug>`. Last-mile QA is yours: swap
-> any placeholder images (overwrite the files under `public/images/placeholders/`), replace the staged
-> stats/quotes with real figures, and tweak copy/layout to taste. Say the word and I'll capture."
-
-Then, framed as **decisions you made, not questions for the operator**:
-
-- Run `yarn sites:novel <slug>` and include its output. For **each** site-local block and section
-  listed, note its purpose, what existing tier fell short (no core section fit / block vocabulary
-  couldn't express it), and that it's a candidate to promote into core (the operator decides). If the
-  list is empty, say so.
-- Call out any **primitives** you added to core via the shadcn MCP — those are core changes to review.
-- Give a **brief summary of the design-notes assumptions** you made (especially for a thin brief) —
-  *"here's what I decided; change it if you disagree,"* not *"here are open questions."*
+- **Review:** `yarn sites:dev <slug>` — walk every page.
+- **Last-mile QA (operator's):** swap placeholder images (overwrite `public/images/placeholders/`),
+  replace any staged stats/quotes with real figures, tweak copy/layout to taste.
+- **Site-local components:** run `yarn sites:novel <slug>` and include its output — for each block/
+  section, its purpose, what tier fell short, and that it's a promote-to-core candidate (operator
+  decides). Say so if the list is empty.
+- **Core primitives** added via the shadcn MCP, if any — those are core changes to review.
+- **Assumptions:** one line each on the design-notes decisions you made (especially for a thin brief),
+  framed as *"here's what I decided; change it if you disagree."*
+- **When you're ready, tell me and I'll run → `yarn capture:run <slug>`.**
 
 Only proceed on the operator's explicit go.
 
@@ -33,9 +29,11 @@ Only proceed on the operator's explicit go.
 yarn capture:run <slug> [--run <name>] [--port <n>]   # default port 3210
 ```
 
-Spawns the site's dev server, drives Chromium motion-free, and writes full-page JPEGs to
-`sites/<slug>/captures/<run>-<ts>/<page>_<width>.jpg` (one per page × viewport). Report the artifact
-paths. `captures/` is gitignored — these are the deliverable, handed to the operator.
+Drives Chromium motion-free and writes full-page JPEGs to
+`sites/<slug>/captures/<run>-<ts>/<page>_<width>.jpg` (one per page × viewport). **If a dev server is
+already running** — e.g. the operator left `yarn sites:dev <slug>` up (port 3000) — capture **reuses
+that instance** rather than spawning its own; it only starts (and later stops) a server when none is
+found. Report the artifact paths. `captures/` is gitignored — these are the deliverable.
 
 ## Done condition
 

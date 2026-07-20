@@ -1,12 +1,12 @@
 # Site-local blocks
 
-Blocks are the bounded vocabulary you fill section slots with — `Eyebrow`, `Heading`, `Prose`,
-`CtaGroup`, `MediaFrame`, `StatRow`/`Stat`, `Quote`, `FeatureCard`, `BulletList`, `LogoRow` — all
-pre-authored in `packages/core` and imported from `@brief-to-site/core/blocks`. Reach for those
-first. But when a section needs a piece the block vocabulary can't express, **author a site-local
-block** here — a new arrangement of core **primitives**, living in this site only until an operator
-promotes it. This is an expected move, not a last resort. (See also the sibling
-[`../sections/README.md`](../sections/README.md) — same idea one level up.)
+Blocks are the bounded vocabulary you fill section slots with — pre-authored in `packages/core` and
+imported from `@brief-to-site/core/blocks`. **See the current list (and each block's props) in
+Storybook via the Storybook MCP** (`list-all-documentation` → the `Blocks/*` tree) — not a list here,
+which would drift. Reach for those first. But when a section needs a piece the block vocabulary can't
+express, **author a site-local block** here — a new arrangement of core **primitives**, living in this
+site only until an operator promotes it. This is an expected move, not a last resort. (See also the
+sibling [`../sections/README.md`](../sections/README.md) — same idea one level up.)
 
 ## Where they go
 
@@ -21,11 +21,11 @@ can promote a good one by copying it in.
 
 A block is a small, presentational leaf (or a tiny compound family) built from **core primitives**:
 
-1. **Composed from primitives** — `Badge`, `Button`, `Card`, `Input`, `Label`, `Separator`,
-   `Textarea` from `@brief-to-site/core`, plus **lucide icons** (`import { ArrowRight } from
-   "lucide-react"`) and Tailwind utilities. A block may also compose existing core blocks. **Do not**
-   author a new primitive here — if you genuinely need one, add it to core via the shadcn MCP (it's a
-   standard registry component, reviewed as an ordinary core change).
+1. **Composed from primitives** imported from `@brief-to-site/core` — discover which primitives exist
+   (and their props) via the **shadcn MCP**, not a list here — plus **lucide icons** (`import {
+   ArrowRight } from "lucide-react"`) and Tailwind utilities. A block may also compose existing core
+   blocks. **Do not** author a new primitive here — if you genuinely need one, add it to core via the
+   shadcn MCP (it's a standard registry component, reviewed as an ordinary core change).
 2. **Carries a `data-slot`** on its root, so sections can target it with `has-[data-slot=…]` and the
    dev-only `assertAllowedChildren` guard recognises it.
 3. **Genuine variants are a small CSS-only `cva`** (like `headingVariants`) — never a JS branch that
@@ -39,14 +39,17 @@ Copy-me references (existing core blocks): a simple primitive wrapper is
 
 Consume **role tokens** (`bg-background`, `text-foreground`, `text-muted-foreground`, `bg-muted`,
 `border`, `--brand-secondary`/`--brand-tertiary`) — never hardcoded colours. A saturated **brand
-fill that carries text** uses the `.wcag-contrast` utility seeded with the brand RGB, exactly like
-the `Badge` `brand` variant:
+fill that carries text** pairs the `.wcag-contrast` utility with the `brand-rgb` class — which feeds
+it the brand RGB seed — exactly like the `Badge` `brand` variant:
 
 ```tsx
-className="wcag-contrast [--r:var(--brand-r)] [--g:var(--brand-g)] [--b:var(--brand-b)]"
+className="wcag-contrast brand-rgb"
 ```
 
-**Never** compute a luminance or pick a text colour in JS — the colour/contrast math is a core-owned,
+Both are authored classes on one element. **Never** hand-write inline arbitrary-property classes that
+set the `--r`/`--g`/`--b` channels through `var()` (Tailwind v4's oxide scanner corrupts those
+candidates when a scanned file has multi-byte characters before them — see `contrast-math.css`), and
+**never** compute a luminance or pick a text colour in JS — the colour/contrast math is a core-owned,
 CSS-only system with deliberately no JS twin.
 
 ## Imports — use the public package surface

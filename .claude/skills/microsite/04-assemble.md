@@ -11,9 +11,9 @@ by imitating another site's design.
 ## Compose the planned sections
 
 - Each section is a **compound family** (a root + named slot subcomponents, like `Card`). Fill the
-  slots with **block primitives** from `@brief-to-site/core/blocks` (`Eyebrow`, `Heading`, `Prose`,
-  `CtaGroup`, `MediaFrame`, `StatRow`/`Stat`, `Quote`, `FeatureCard`, `BulletList`, `LogoRow`, `Step`,
-  `FaqItem`).
+  slots with **blocks** from `@brief-to-site/core/blocks` — discover the available blocks and their
+  props from the **Storybook MCP** (`list-all-documentation` → `get-documentation`), never from a
+  list here.
 - **A "variant" is a composition** — pick a section's variant story (`Sections/Hero → WithStats`,
   `→ QuoteLed`, …) and copy its JSX; arrange content however reads best, bounded by the block library.
   Get section slots + block props from the **Storybook MCP** (`list-all-documentation` →
@@ -62,10 +62,10 @@ the existing tier first, then go one rung further.
 
 - Put it at `sites/<slug>/components/blocks/<kebab-name>/<kebab-name>.tsx`. See
   [`sites/_shell/components/blocks/README.md`](../../../sites/_shell/components/blocks/README.md).
-- Build it from **core primitives** (`Badge`, `Button`, `Card`, `Input`, `Label`, `Separator`,
-  `Textarea` from `@brief-to-site/core`) + Tailwind; carry a `data-slot`; keep genuine variants as a
-  CSS-only `cva`. Copy-me references: `blocks/eyebrow/eyebrow.tsx` (primitive wrapper),
-  `blocks/heading/heading.tsx` (cva variants). Import from the **public** surface only.
+- Build it from **core primitives** (imported from `@brief-to-site/core`) + Tailwind — discover which
+  primitives exist and their props via the **shadcn MCP**, not a list here. Carry a `data-slot`; keep
+  genuine variants as a CSS-only `cva`. Copy-me references: `blocks/eyebrow/eyebrow.tsx` (primitive
+  wrapper), `blocks/heading/heading.tsx` (cva variants). Import from the **public** surface only.
 - **Colour stays on the token/CSS system** — role tokens + `.wcag-contrast` seeded with the brand RGB
   (like the `Badge` `brand` variant); never a JS luminance/colour pick. No new colour math.
 - No story/test until promoted; **report it at the HITL checkpoint** (phase 6).

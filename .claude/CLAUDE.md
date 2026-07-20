@@ -70,17 +70,18 @@ shell out to platform commands and never branch on `process.platform`.
 - **Default brand seed = Tailwind blue-600** (`#2563eb` = hsl(221 83% 53%) = rgb(37 99 235)) in both
   `colors.css` and `sites/_shell` — one canonical default.
 - **Border-radius is a per-site style token** (`brand.json` `radius`). Named presets live in
-  `styles/radius.ts` (`RADIUS_PRESETS` sharp/tight/subtle/rounded/playful → base rem; the `radius`
-  enum is built from its keys, mirroring `HARMONIES`↔`HUE_OFFSETS`). `theme:build` emits `--radius`
+  `styles/radius.ts` (`RADIUS_PRESETS` → base rem; the `radius` enum is built from its keys, mirroring
+  `HARMONIES`↔`HUE_OFFSETS`) — `RADIUS_PRESETS` is the single source, don't re-list the names here.
+  `theme:build` emits `--radius`
   **only when non-default** (like explicit secondary/tertiary), so a default site's `theme.css` — incl.
-  `_shell` — stays byte-identical and the drift test is untouched. `subtle` MUST equal globals.css's
-  `--radius: 0.625rem` default. **No component changes:** `--radius` is a plain `:root` var and the
+  `_shell` — stays byte-identical and the drift test is untouched. The **default preset** MUST equal
+  globals.css's `--radius: 0.625rem` default. **No component changes:** `--radius` is a plain `:root` var and the
   `--radius-*` scale is `@theme inline calc(var(--radius) * k)`, so `rounded-*` utilities inline to
   `calc(var(--radius)*k)` resolved per element — overriding `--radius` at `:root` in `theme.css`
   rescales every corner (verified against a real `next build`: `.rounded-xl{border-radius:calc(var(--radius) * 1.4)}`).
   Unlike the brand *seed*, `--radius` is a **direct-consumption** var, so it also cascades from any
   scope (the `Tokens/Radius` story sets it per-swatch). A site opts into a non-default corner feel by
-  setting `brand.json` `radius` to a preset like `playful`.
+  setting `brand.json` `radius` to a non-default `RADIUS_PRESETS` key.
 
 ## Sites & tooling (`sites:new` + `theme:build`)
 
@@ -98,30 +99,19 @@ shell out to platform commands and never branch on `process.platform`.
   `tsc -p packages/core` but not run by vitest (it `process.exit`s), so run `yarn typecheck`
   separately and read its real exit.
 - **Sections are compound + block-composed (shadcn-style), NOT monolithic prop bags.** Each section is
-  a compound family — a root + named slot subcomponents (`Hero` + `HeroBody`/`HeroMedia`/`HeroAside`;
-  `FeatureGrid` + `FeatureGridHeader`; `ContactBlock` + `ContactCopy`/`ContactForm`), each carrying a
-  `data-slot`, exactly like the `Card` family. Slots are filled with **block primitives** from
-  `@brief-to-site/core/blocks` (`Eyebrow`, `Heading`, `Prose`, `CtaGroup`, `MediaFrame`, `StatRow`/
-  `Stat`, `Quote`, `FeatureCard`, `BulletList`, `LogoRow`, `Step`, `FaqItem`). **A "variant" is a
-  composition** (which blocks in which slots — split / centered / with-stats / quote-led), not a cva
-  toggle; a section keeps only genuine geometric layout as a CSS-only cva (`align`, `mediaSide`,
-  `columns`, `formSide`) + the shared `density`.
-  - **The core section suite covers the common marketing archetypes** so a page stacks 5–9 distinct
-    types, not 3: `Hero`, `FeatureGrid`, `Steps` (how-it-works, uses the `Step` block), `StatBand`
-    (by-the-numbers, wraps `StatRow`), `Testimonials` (grid of `Quote`), `LogoStrip` (wraps
-    `LogoRow`), `Faq` (static `FaqItem` Q/A — always open, no collapse: deliverable is screenshots),
-    `CtaBand` (closing CTA on `bg-muted`), `ContactBlock`. **`StatBand`/`Testimonials` render
-    placeholder-grade** proof (like placeholder images — the agent never invents real numbers/named
-    customers; `generation.json`). SKILL "Plan the build" sets the **depth expectation** (a full
-    narrative arc, not a stub). Pricing/tiers was deliberately **not** added (collides with the
-    no-invented-prices guardrail). The **old CSS-only / no-DOM-reorder contract is retired** (a11y is out of
-  scope — the deliverable is screenshots); determinism now comes from the closed block vocabulary +
-  typed slot props + a dev-only `assertAllowedChildren` guard (`blocks/lib/assert-slot.ts`), which
-  warns (dev/Storybook only, reference-identity) on wrong-slot children. Children **cannot** be
-  strictly typed to a component set in React/TS — the guard is best-effort, the real bound is the
-  closed `@brief-to-site/core/blocks` import surface + review. `MediaFrame` is the **sole** render-time
-  consumer of `PLACEHOLDER_SPECS`; no section renders a raw `<img>`. The section contract doc is
-  `components/sections/sections.mdx`; the copy-me archetype is `components/sections/_template/`.
+  a compound family — a root + named slot subcomponents (like `Hero` + `HeroBody`/`HeroMedia`, exactly
+  like the `Card` family), each carrying a `data-slot`. Slots are filled with **blocks** from
+  `@brief-to-site/core/blocks`. **A "variant" is a composition** (which blocks in which slots), not a
+  cva toggle; a section keeps only genuine geometric layout as a CSS-only cva + the shared `density`.
+  The available sections/blocks and their props are **discovered from the Storybook MCP** — this file
+  doesn't enumerate them (it would drift from the live registry). Determinism comes from the closed
+  block vocabulary + typed slot props + a dev-only `assertAllowedChildren` guard
+  (`blocks/lib/assert-slot.ts`), which warns (dev/Storybook only, reference-identity) on wrong-slot
+  children. Children **cannot** be strictly typed to a component set in React/TS — the guard is
+  best-effort, the real bound is the closed `@brief-to-site/core/blocks` import surface + review.
+  `MediaFrame` is the **sole** render-time consumer of `PLACEHOLDER_SPECS`; no section renders a raw
+  `<img>`. The section contract doc is `components/sections/sections.mdx`; the copy-me archetype is
+  `components/sections/_template/`.
 - **Sites & core follow an escalation ladder — the agent may author *site-local* components.** The
   agent checks the existing tier first, then goes one rung further when nothing fits: compose a core
   **section** → author a site-local **section** (arrangement of core blocks, under
@@ -246,11 +236,17 @@ shell out to platform commands and never branch on `process.platform`.
 - **`playwright` is a root devDependency (core lib, `chromium.launch()`), not `@playwright/test`** —
   capture is a script, not a test suite. The Chromium **binary is a separate one-time install**:
   `yarn playwright install chromium` (not committed; document it for any fresh clone).
+- **Capture reuses an already-running dev server, else spawns its own.** Before spawning, the driver
+  probes `serverProbePorts(args.port)` (`config/capture.ts`) — the requested port, then the `sites:dev`
+  default `3000` if different — and if one responds it captures against that instance (e.g. the
+  operator left `yarn sites:dev <slug>` up). It only spawns `next dev` when none is found, and the
+  `finally` teardown (`child.kill()`) fires **only for a server it started** — a reused one is the
+  operator's and is left running.
 - **Server readiness is polled with `fetch`, not stdout.** `devSpawnSpec` uses `stdio: "inherit"`,
   so the driver can't parse next's "Ready" line — it polls `http://localhost:<port>/` until 200.
-  `next dev -p <port>` on a busy port fails rather than serving there, so the default port is an
-  uncommon `3210`; `--port` overrides. Teardown is a pure Node `child.kill()` in a `finally` (`next`
-  is the direct child — see the OS-agnostic rule), so the server dies even on capture error.
+  `next dev -p <port>` on a busy port fails rather than serving there, so the **spawn** default port is
+  an uncommon `3210`; `--port` overrides. `next` is the direct child (see the OS-agnostic rule), so a
+  plain `child.kill()` frees the port even on capture error.
 - **`next dev`'s own dev-tools overlay must be hidden or it taints the capture.** Next renders its
   indicator/error toasts into a `<nextjs-portal>` (shadow DOM); `HIDE_DEV_OVERLAY_CSS` hides the host
   element, injected alongside `MOTION_FREE_CSS` per page. Found empirically — the "N Issues" badge
@@ -260,38 +256,21 @@ shell out to platform commands and never branch on `process.platform`.
 
 ## Skill + generation config (`microsite`)
 
-- **The `microsite` skill is phase-split, not one file** (`.claude/skills/microsite/`): a thin
-  `SKILL.md` entry (framing + prerequisites + a phase table) links six phase files
-  (`01-intake.md` … `06-handoff-and-capture.md`), and a shared `conventions.md` holds the
-  cross-cutting rules. Discipline (in SKILL.md): **"open the phase file when you reach that phase; do
-  not preload them all"** — just-in-time loading keeps the quality-critical assembly/invention rules
-  salient at the moment they're used (the old monolith diluted them across 330 lines). The files
-  **point at** the `yarn` scripts, Zod schemas, and Storybook rather than duplicating them; keep it
-  that way (Code Over Instructions). The **completeness & invention posture** lives in
-  `conventions.md` — the agent ships a complete, confident site and the operator does last-mile QA;
-  invent framing/copy freely, never invent checkable specifics (prices/stats/dates/named customers).
-  The one hard rule that isn't code-checkable: **stop at the HITL checkpoint** (phase 6) and hand back
-  before `capture:run` — never auto-capture.
-- **Assembly is creative, not template-filling — plan then compose.** The agent drafts a per-page
-  design (section order + how each is composed along the ladder) into a committed
-  `sites/<slug>/design-notes.md` before writing JSX, seeded by the brief's **`## Visual direction`**
-  section (added to the `_shell/brief.md` skeleton + SKILL step 1). `design-notes.md` is
-  agent-authored per real site — **not** scaffolded and has no test (like `brief.md`'s content).
-  - **No template, no example to mirror — content is governed, design is free.** Deliberately there is
-    **no example page or reference site** the agent is pointed at: a fixed example is an anchor the
-    agent over-prioritizes and clones, flattening every site toward one shape (the old scaffold's
-    Hero page + a "model on an example site" reference did exactly this). The skill now
-    frames the scaffold as a **shell** to compose sections into; *mechanical* patterns (imports,
-    `Button render={<Link/>}`) come from the **MCP copy-me snippets**, not another site. `generation.json`
-    still governs **content**; **design is unconstrained**. The committed example sites remain as
-    pipeline/regression demonstrations but are **not** cited to the agent as models.
-- **Icons = `lucide-react` (a library), imported directly.** Declared in **`sites/_shell`** deps
-  only (pinned `1.24.0` — `latest`/`^1.25.0` was npm-quarantined on 2026-07-17; bump when a later 1.x
-  clears quarantine), so scaffolds inherit it like `next`/`react`; **not** in `packages/core` (no core
-  component imports it yet). Import glyphs directly in pages + site-local components
-  (`import { ArrowRight } from "lucide-react"`); size/colour with Tailwind role-token utilities. It's
-  **exempt from the global icons-barrel rule** (that targets hand-authored inline SVG). **Promoting an
-  icon-using site-local block into core requires adding `lucide-react` to core's deps at that time.**
+- **The `microsite` skill is phase-split** (`.claude/skills/microsite/`): a thin `SKILL.md` entry
+  links six phase files (`01-intake.md` … `06-handoff-and-capture.md`) + a shared `conventions.md`.
+  Discipline: **"open the phase file when you reach it; don't preload."** It is the work-script for the
+  *generating* agent — its rules (invention posture, escalation ladder, no-template framing) live
+  there and in `conventions.md`, **not** duplicated here (Code Over Instructions). The one rule that
+  isn't code-checkable: **stop at the HITL checkpoint** (phase 6) and hand back before `capture:run` —
+  never auto-capture. The scaffold is a **shell** to compose sections into; there is no example page
+  or reference site the agent mirrors.
+- **`design-notes.md`** is agent-authored per real site (not scaffolded, no test — like `brief.md`'s
+  content); it records the per-page section plan + any thin-brief assumptions.
+- **Icons = `lucide-react` (a library), imported directly.** Declared in **`sites/_shell`** deps only
+  (pinned — a later range was npm-quarantined; bump when a later 1.x clears), so scaffolds inherit it
+  like `next`/`react`; **not** in `packages/core` (no core component imports it yet). **Exempt from the
+  icons-barrel rule** (that targets hand-authored inline SVG). Promoting an icon-using site-local block
+  into core means adding `lucide-react` to core's deps at that time.
 - **`config/generation/generation.json` is SYSTEM-LEVEL** (repo root), not per-site: one
   house voice + guardrails for **every** site. It is **agent-read only** — there is **no runtime code
   path** that consumes it (copy is written by the agent at assemble time, not templated at build), so
@@ -299,11 +278,9 @@ shell out to platform commands and never branch on `process.platform`.
   (`packages/core/src/config/generation.schema.ts`); the studio-specific
   `packages/core/src/config/examples/generation.json` is a separate **loader fixture**, not this
   config — don't conflate them.
-- **Committed example sites exist** as pipeline/regression demonstrations across the colour harmonies
-  + a spread of variants — but they are **not** cited to the agent as design models (each site is
-  authored fresh; see "No template, no example to mirror" above). They used to be drift-guarded by
-  `example-site.test.ts`, since removed — no automated check now asserts the committed sites stay in
-  sync with the tooling that generates them.
+- **Committed example sites** exist as pipeline/regression demos; they are **not** cited to the agent
+  as design models (each site is authored fresh). No automated check asserts they stay in sync with
+  the tooling.
 - **Build/verify one site with `yarn workspace @brief-to-site/site-<slug> build`** (there is no
   `sites:build` script); `yarn sites:dev <slug>` for dev, `yarn capture:run <slug> --run <name>` for a
   named throwaway capture. Heads-up: a site's `viewports.json` may ship fewer than the default 4
