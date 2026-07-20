@@ -38,7 +38,9 @@ by imitating another site's design.
   art). Set the component's `src`/`imageSrc`/`logoSrc` to the root-relative `/images/<name>.png`;
   every image needs `alt`. The PNGs are drawn in phase 5 by `placeholders:build`. Retrieve the
   manifest shape with `yarn config:schema placeholders`. The **logo is a special case** — always name
-  it `logo` (aspect `logo`), so `meta.logoSrc` is `/images/logo.png`.
+  it `logo` (aspect `logo`), so `meta.logoSrc` is `/images/logo.png`. Optionally add a short-keyword
+  **`query`** to an entry to steer the optional `placeholders:source` Unsplash step (keywords beat
+  prose there); it falls back to `description` and doesn't affect the text placeholder.
 - CTAs are links: `<Button render={<Link href="/contact" />}>…</Button>` (Base UI `render` slot).
 - Non-Home pages `export const metadata = { title: "… — <Site Name>" }`.
 - **Do not** add runtime `fs` reads — `app/layout.tsx` already static-imports config; the shell

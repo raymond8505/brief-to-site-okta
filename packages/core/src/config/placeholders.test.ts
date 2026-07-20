@@ -42,6 +42,18 @@ describe("placeholdersSchema", () => {
     expect(placeholdersSchema.safeParse([]).success).toBe(true);
   });
 
+  it("accepts an optional query and rejects an empty one", () => {
+    const withQuery = placeholdersSchema.parse([
+      { name: "hero", aspect: "video", description: "a hero shot", query: "studio workspace" },
+    ]);
+    expect(withQuery[0]?.query).toBe("studio workspace");
+    expect(
+      placeholdersSchema.safeParse([
+        { name: "hero", aspect: "video", description: "a hero shot", query: "" },
+      ]).success,
+    ).toBe(false);
+  });
+
   it("rejects a non-url-safe name", () => {
     for (const name of ["Hero Image", "hero_image", "-hero", "hero.png", ""]) {
       expect(

@@ -16,6 +16,19 @@ cue for sourcing real art). Re-run it after editing the manifest. `ASPECT_DIMENS
 single source of placeholder box sizes — the manifest's `aspect` picks one; never hardcode pixel
 dimensions.
 
+**Optional — auto-fill real stock photos:**
+
+```bash
+yarn placeholders:source <slug>  # Unsplash: search each entry, overwrite public/images/<name>.png
+```
+
+Needs `UNSPLASH_ACCESS_KEY` (free app at unsplash.com/developers, in `.env`). For each entry it
+searches Unsplash by the entry's `query` (falling back to `description`), takes the top match, crops
+it to the `aspect`, and **overwrites the text placeholder in place** — so page refs are unchanged. It
+records attribution to `public/images/credits.json`. A bad pick is fixed by re-running or hand-swapping;
+`yarn placeholders:build <slug>` restores the text version. **Attribution must ship if a sourced photo
+goes live** — surface the `credits.json` entry wherever the image is displayed.
+
 ## Verify the build
 
 ```bash

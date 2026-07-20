@@ -67,6 +67,11 @@ export const placeholderEntrySchema = z.object({
   aspect: z.enum(ASPECT_NAMES),
   /** A couple of sentences describing the ideal content; baked into the image as centered text. */
   description: z.string().min(1, "description is required (it is drawn into the image as centered text)"),
+  /**
+   * Optional short-keyword search query for `placeholders:source` (Unsplash favors keywords over
+   * prose). Falls back to `description` when omitted. Does not affect the text placeholder.
+   */
+  query: z.string().min(1).optional(),
 });
 
 export type PlaceholderEntry = z.infer<typeof placeholderEntrySchema>;

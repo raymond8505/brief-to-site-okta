@@ -239,6 +239,19 @@ shell out to platform commands and never branch on `process.platform`.
   named `logo` → `/images/logo.png`. The inline SVG (`sections/placeholder.ts` `placeholderSvg`/
   `placeholderDataUri`) is now **only** the Storybook/dev/jsdom render fallback — a separate concern
   from the on-disk raster.
+- **`placeholders:source <slug>` auto-fills real stock photos from the manifest** (optional, opt-in).
+  Root `scripts/placeholder-source.ts` (network + fs, OUT of core like the other scripts) reads the
+  manifest and per entry: Unsplash `search/photos` by `query ?? description` (optional manifest
+  `query` field — keywords beat prose), takes the top match, fetches an exact-`aspect` cropped PNG
+  (`urls.raw` + `&w&h&fit=crop&fm=png` — free image CDN, preserves `ixid`), and **overwrites**
+  `public/images/<name>.png` in place (refs unchanged). Deterministic pieces (orientation map, URL +
+  attribution builders) live in core `config/unsplash.ts`; the `fetch` stays in the script, like
+  capture. Needs `UNSPLASH_ACCESS_KEY` (the project's **first env var**; documented in `.env.example`,
+  read via `process.loadEnvFile`). **Two non-optional Unsplash API-Guideline obligations are
+  honoured:** the per-photo `links.download_location` ping and attribution — recorded to
+  `public/images/credits.json` (photographer + UTM'd links). The License needs neither; the API does.
+  `placeholders:build` restores the text version. For the committed example sites, sourcing is a
+  **local** demo — don't commit real Unsplash imagery (or `credits.json`) over the lightweight text PNGs.
 - **Spawn `next` OS-agnostically via `process.execPath`, never the `yarn` wrapper** (see the
   OS-agnostic rule above). `config/dev.ts#devSpawnSpec` runs the current Node binary against `next`'s
   CLI (located with `resolveNextBin` → Node module resolution), so there is no `yarn.cmd`/`shell:
