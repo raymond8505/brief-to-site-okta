@@ -22,7 +22,7 @@ export function Step({ index, title, description, className, ...props }: StepPro
     <div data-slot="step" className={cn("flex flex-col gap-3", className)} {...props}>
       <span
         aria-hidden
-        className="wcag-contrast [--r:var(--brand-r)] [--g:var(--brand-g)] [--b:var(--brand-b)] flex size-10 items-center justify-center rounded-full font-heading text-lg font-bold"
+        className="wcag-contrast brand-rgb flex size-10 items-center justify-center rounded-full font-heading text-lg font-bold"
       >
         {index}
       </span>

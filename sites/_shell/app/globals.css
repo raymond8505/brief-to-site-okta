@@ -4,7 +4,11 @@
 @import "@brief-to-site/core/styles/globals.css";
 @import "../theme.css";
 
-/* Scan this site's own components (site-local sections live in ../components/sections/). Core's
+/* Scan this site's own components (site-local sections/blocks live under ../components/). Core's
    @source covers core's tree, not the site's; without this, classes used only in a site-local
-   section wouldn't be emitted. Resolved relative to this file, so it points at sites/<slug>/components. */
-@source "../components";
+   component wouldn't be emitted. Resolved relative to this file → sites/<slug>/components.
+   Globbed to code files ONLY (not the bare dir): the seeded README.md docs must never be scanned.
+   Tailwind v4's oxide scanner corrupts arbitrary-property candidates (a `wcag-contrast` brand-fill
+   example) when a scanned file has multi-byte chars before them; keeping markdown out of the scan
+   makes that class of failure structurally impossible. Do not widen back to "../components". */
+@source "../components/**/*.{ts,tsx}";

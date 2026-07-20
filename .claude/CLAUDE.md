@@ -49,7 +49,12 @@ shell out to platform commands and never branch on `process.platform`.
   (`--brand-r/g/b`, defaulted in colors.css and emitted per-site by `theme:build` via `hexToRgb` —
   no luminance math). `--primary-foreground` is left at core's near-white default; a saturated
   brand fill that carries text uses `.wcag-contrast` instead — see the **`Badge` `brand` variant**
-  (`wcag-contrast [--r:var(--brand-r)] …`), which the section eyebrows use.
+  (`wcag-contrast brand-rgb`), which the section eyebrows use. **`.brand-rgb`** (contrast-math.css)
+  is the authored bridge class feeding `--r/--g/--b` from `--brand-r/g/b`; it replaced the inline
+  `[--r:var(--brand-r)] …` arbitrary-property classes, which Tailwind v4's **oxide scanner corrupts**
+  (byte-vs-char offset bug) when a scanned file has multi-byte chars before the candidate → garbage
+  CSS / "Parsing CSS source code failed". Authored classes aren't scanned as candidates, so never
+  use inline `[--r:…]`/`[--g:…]`/`[--b:…]` arbitrary props for the brand RGB again.
 - **Branded by default, contrast-safe.** `globals.css` `:root` no longer maps *only*
   `--primary`/`--ring` to brand. The surface roles (`--background`/`--secondary`/`--muted`/`--accent`/
   `--border`/`--input`) point at the **light** brand tints (`--brand-surface` l96 / `--brand-muted`
@@ -127,11 +132,15 @@ shell out to platform commands and never branch on `process.platform`.
   `@core/*` per leaf), and ship **no story/test** (sites run neither SB nor vitest) until promoted. The
   one hard bound that never goes site-local: **colour/contrast math + the token/theme system stay
   core-only** (CSS-only, no JS twin — consume role tokens + `.wcag-contrast`). Two load-bearing wiring
-  pieces: `_shell/app/globals.css` has `@source "../components"` so Tailwind scans the site's own
-  tree — this already covers **both** `components/sections/` and `components/blocks/` (core's `@source`
-  covers only core — verified: a class used solely in a site-local section, e.g. `max-w-2xl`, is
-  emitted only because of this), and `_shell/components/{sections,blocks}/README.md` seed the dirs
-  (so the `@source` targets exist) + document the convention. `yarn sites:novel <slug>` (pure
+  pieces: `_shell/app/globals.css` has `@source "../components/**/*.{ts,tsx}"` so Tailwind scans the
+  site's own tree — this covers **both** `components/sections/` and `components/blocks/` (core's
+  `@source` covers only core — verified: a class used solely in a site-local section, e.g.
+  `max-w-2xl`, is emitted only because of this), and `_shell/components/{sections,blocks}/README.md`
+  seed the dirs + document the convention. The `**/*.{ts,tsx}` glob (not the bare `../components`
+  dir) is deliberate: it keeps the seeded **README.md out of the scan** — Tailwind v4's oxide scanner
+  corrupts arbitrary-property candidates (the old `wcag-contrast` brand-fill example) when a scanned
+  file has multi-byte chars before them, so a scanned README triggered "garbage in the CSS" build
+  failures. Do **not** widen it back to `"../components"`. (See the colour-system `.brand-rgb` note.) `yarn sites:novel <slug>` (pure
   `config/novel-inventory.ts#formatNovelComponents` + thin `cli/novel-list.ts`) lists site-local blocks
   AND sections for the HITL report — the directory IS the record, not agent memory.
 - **Section shapes come from the Storybook MCP, not a bespoke CLI.** `get-documentation` (per section)
