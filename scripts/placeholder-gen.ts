@@ -32,10 +32,9 @@ import { resolveSiteDir } from "../packages/core/src/config/loadSiteConfig";
 const FONT_PATH = join(process.cwd(), "scripts", "assets", "fonts", "Inter-SemiBold.ttf");
 const FONT_ALIAS = "PlaceholderSans";
 
-/** Neutral placeholder palette — a light slate fill with darker slate text + border. */
+/** Neutral placeholder palette — a light slate fill with darker slate text. */
 const BG_FILL = "#e2e8f0";
 const TEXT_FILL = "#475569";
-const BORDER_FILL = "#94a3b8";
 
 /** Draw one manifest entry to a PNG buffer: neutral box + centered, word-wrapped description. */
 function drawPlaceholder(entry: PlaceholderEntry): Buffer {
@@ -43,13 +42,8 @@ function drawPlaceholder(entry: PlaceholderEntry): Buffer {
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext("2d");
 
-  // Background + a thin inset border so the box reads as a placeholder frame.
   ctx.fillStyle = BG_FILL;
   ctx.fillRect(0, 0, width, height);
-  const inset = Math.max(2, Math.round(Math.min(width, height) / 100));
-  ctx.strokeStyle = BORDER_FILL;
-  ctx.lineWidth = inset;
-  ctx.strokeRect(inset, inset, width - inset * 2, height - inset * 2);
 
   // Font size scales with the box width; wrap the description to a roughly constant column count so
   // every placeholder reads the same regardless of dimensions. Column estimate uses Inter's ~0.52
