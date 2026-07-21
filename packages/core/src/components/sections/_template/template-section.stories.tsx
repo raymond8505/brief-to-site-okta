@@ -33,7 +33,7 @@ const meta = {
         </Prose>
       </TemplateSectionBody>
       <TemplateSectionMedia>
-        <MediaFrame alt="Placeholder art" spec="hero" rounded />
+        <MediaFrame alt="Placeholder art" rounded />
       </TemplateSectionMedia>
     </TemplateSection>
   ),

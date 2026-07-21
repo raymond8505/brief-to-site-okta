@@ -19,8 +19,8 @@ import {
 
 /**
  * Home — announces the game and its Christmas release (brief.md), then three words on how it plays.
- * Gameplay specifics are placeholder per the thin brief; images are the copied placeholders under
- * public/images/placeholders/, which the operator overwrites during HITL.
+ * Gameplay specifics are placeholder per the thin brief; images are purpose-built placeholders under
+ * public/images/ (from config/placeholders.json), which the operator overwrites during HITL.
  */
 export default function HomePage() {
   return (
@@ -46,9 +46,8 @@ export default function HomePage() {
         </HeroBody>
         <HeroMedia>
           <MediaFrame
-            src="/images/placeholders/hero.svg"
+            src="/images/hero-title-screen.png"
             alt="Title screen of Lee Carvalo's Putting Challenge"
-            spec="hero"
             rounded
           />
         </HeroMedia>
@@ -62,19 +61,19 @@ export default function HomePage() {
         <FeatureCard
           title="Read the green"
           description="Study the slope and the distance before you commit. The break is the whole game."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/feature-read-the-green.png"
           imageAlt="A green with a putting line drawn to the cup"
         />
         <FeatureCard
           title="Choose your club"
           description="Pick from the bag and line up your stance. The right choice makes the putt look easy."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/feature-choose-club.png"
           imageAlt="Selecting a club from the bag"
         />
         <FeatureCard
           title="Set your power"
           description="Ease off for a tap-in or wind up for the long ones — then watch it roll toward the hole."
-          imageSrc="/images/placeholders/feature.svg"
+          imageSrc="/images/feature-set-power.png"
           imageAlt="A power meter set for a putt"
         />
       </FeatureGrid>

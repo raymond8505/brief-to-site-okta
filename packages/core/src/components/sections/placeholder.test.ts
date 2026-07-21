@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { PLACEHOLDER_SPECS, placeholderDataUri, placeholderSvg } from "./placeholder";
+import { placeholderDataUri, placeholderSvg } from "./placeholder";
 
 /** Decode the SVG markup back out of the data URI for assertions. */
 function decode(uri: string): string {
@@ -48,15 +48,5 @@ describe("placeholderSvg", () => {
     expect(placeholderDataUri(options)).toBe(
       `data:image/svg+xml,${encodeURIComponent(placeholderSvg(options))}`,
     );
-  });
-});
-
-describe("PLACEHOLDER_SPECS", () => {
-  it("every spec has positive dimensions and a label", () => {
-    for (const spec of Object.values(PLACEHOLDER_SPECS)) {
-      expect(spec.width).toBeGreaterThan(0);
-      expect(spec.height).toBeGreaterThan(0);
-      expect(spec.label.length).toBeGreaterThan(0);
-    }
   });
 });

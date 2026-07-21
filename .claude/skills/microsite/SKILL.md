@@ -36,8 +36,8 @@ Intake (brief + colour[s] + visual direction)
   → Scaffold        yarn sites:new <slug>
   → Author config   config/{meta,brand,pages,viewports}.json   → yarn sites:validate
   → Plan the build  per page: section order + how each is composed (design-notes.md)
-  → Assemble        compose app/**/page.tsx along the escalation ladder + icons
-  → Theme + assets  yarn theme:build <slug>  ·  yarn placeholders:copy <slug>
+  → Assemble        compose app/**/page.tsx + author config/placeholders.json per image
+  → Theme + assets  yarn theme:build <slug>  ·  yarn placeholders:build <slug>
   → Verify          yarn sites:dev <slug>  ·  test / lint / typecheck
   ── HITL CHECKPOINT ──  STOP. Operator does last-mile QA, then says the word.
   → Capture         yarn capture:run <slug>
@@ -54,7 +54,7 @@ Goal → steps → Done-condition unit and hands off to the next.
 | 2 — Scaffold | [02-scaffold.md](02-scaffold.md) | `sites:new`, author the four config files, validate |
 | 3 — Plan | [03-plan.md](03-plan.md) | MCP gate; retrieve vocabulary; draft `design-notes.md` (full arc, 5–9 sections) |
 | 4 — Assemble | [04-assemble.md](04-assemble.md) | Compose pages from sections/blocks/primitives + icons |
-| 5 — Theme & verify | [05-theme-verify.md](05-theme-verify.md) | `theme:build`, `placeholders:copy`, dev, test/lint/typecheck |
+| 5 — Theme & verify | [05-theme-verify.md](05-theme-verify.md) | `theme:build`, `placeholders:build`, dev, test/lint/typecheck |
 | 6 — Handoff & capture | [06-handoff-and-capture.md](06-handoff-and-capture.md) | **HITL STOP** → last-mile QA → `capture:run` on the operator's go |
 
 [`conventions.md`](conventions.md) applies across **all** phases — the completeness/invention posture,

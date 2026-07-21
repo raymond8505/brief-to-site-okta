@@ -31,7 +31,16 @@ by imitating another site's design.
 
 - Write copy **inline in the JSX** (TS-enforced), grounded in `brief.md`, obeying the generation
   config and the invention posture ([`conventions.md`](conventions.md)) — complete, confident copy.
-- Every `MediaFrame` `src` is a root-relative `/images/placeholders/<name>.svg`; every one needs `alt`.
+- **Placeholder images are purpose-built per placement.** For each `MediaFrame`/`FeatureCard` image
+  (and the `logoSrc`), add an entry to `config/placeholders.json` — a content-descriptive `name`, an
+  `aspect` (`video`/`photo`/`square`/`wide`/`logo`/`auto`, matching the box), and a **couple-sentence
+  `description` of the ideal content** (baked into the generated image so the operator can source real
+  art). Set the component's `src`/`imageSrc` to the root-relative `/images/<name>.png`;
+  every image needs `alt`. The PNGs are drawn in phase 5 by `placeholders:build`. Retrieve the
+  manifest shape with `yarn config:schema placeholders`. The **logo is NOT a manifest entry** — it's a
+  customer-provided asset. The scaffold already ships a standard `logo.png` placeholder (reads "logo")
+  and sets `meta.logoSrc` to `/images/logo.png`; leave both as-is and **don't** add a `logo` entry or
+  invent logo art.
 - CTAs are links: `<Button render={<Link href="/contact" />}>…</Button>` (Base UI `render` slot).
 - Non-Home pages `export const metadata = { title: "… — <Site Name>" }`.
 - **Do not** add runtime `fs` reads — `app/layout.tsx` already static-imports config; the shell

@@ -2,7 +2,8 @@ import * as React from "react";
 import Link from "next/link";
 
 import { cn } from "@core/lib/utils";
-import { PLACEHOLDER_SPECS, placeholderDataUri } from "@core/components/sections/placeholder";
+import { placeholderDataUri } from "@core/components/sections/placeholder";
+import { ASPECT_DIMENSIONS } from "@core/config/placeholders.schema";
 import { SiteNav } from "@core/components/shell/site-nav";
 import type { MetaConfig } from "@core/config/meta.schema";
 import type { PageConfig } from "@core/config/pages.schema";
@@ -36,7 +37,7 @@ export function MicrositeShell({
   children,
 }: MicrositeShellProps) {
   const logoSrc =
-    meta.logoSrc ?? placeholderDataUri({ ...PLACEHOLDER_SPECS.logo, label: meta.name });
+    meta.logoSrc ?? placeholderDataUri({ ...ASPECT_DIMENSIONS.logo, label: meta.name });
 
   return (
     <div

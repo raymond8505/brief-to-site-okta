@@ -113,12 +113,13 @@ describe("generationSchema", () => {
 // never documents config shapes by hand (drift risk). Guard that it covers every concern and that
 // each serializes cleanly.
 describe("configSchemas registry", () => {
-  it("covers the five config concerns", () => {
+  it("covers the six config concerns", () => {
     expect(Object.keys(configSchemas).sort()).toEqual([
       "brand",
       "generation",
       "meta",
       "pages",
+      "placeholders",
       "viewports",
     ]);
   });

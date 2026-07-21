@@ -11,8 +11,9 @@ the code can't enforce. Hand a **complete** site back (not a set of open questio
 Post a short, **point-form** handoff:
 
 - **Review:** `yarn sites:dev <slug>` — walk every page.
-- **Last-mile QA (operator's):** swap placeholder images (overwrite `public/images/placeholders/`),
-  replace any staged stats/quotes with real figures, tweak copy/layout to taste.
+- **Last-mile QA (operator's):** swap placeholder images (overwrite the PNGs in `public/images/` —
+  each bakes in a description of the ideal content to source), replace any staged stats/quotes with
+  real figures, tweak copy/layout to taste.
 - **Site-local components:** run `yarn sites:novel <slug>` and include its output — for each block/
   section, its purpose, what tier fell short, and that it's a promote-to-core candidate (operator
   decides). Say so if the list is empty.

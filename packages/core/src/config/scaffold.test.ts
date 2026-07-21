@@ -5,6 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { brandSchema } from "./brand.schema";
 import { pagesSchema } from "./pages.schema";
+import { placeholdersSchema } from "./placeholders.schema";
 import { DEFAULT_VIEWPORTS, viewportsSchema } from "./viewports.schema";
 import { isValidSlug, scaffoldSite, SHELL_DIR } from "./scaffold";
 import { buildThemeCss } from "./theme";
@@ -37,6 +38,9 @@ describe("sites/_shell fixture", () => {
     );
     expect(
       viewportsSchema.safeParse(readJson(join(SHELL_DIR, "config/viewports.json"))).success,
+    ).toBe(true);
+    expect(
+      placeholdersSchema.safeParse(readJson(join(SHELL_DIR, "config/placeholders.json"))).success,
     ).toBe(true);
   });
 
@@ -72,12 +76,14 @@ describe("scaffoldSite", () => {
       "config/brand.json",
       "config/meta.json",
       "config/pages.json",
+      "config/placeholders.json",
       "config/viewports.json",
       "theme.css",
       "brief.md",
       "components/sections/README.md",
       "components/blocks/README.md",
       "public/images/.gitkeep",
+      "public/images/logo.png",
     ];
     for (const file of expected) expect(existsSync(join(siteDir, file))).toBe(true);
   });
@@ -90,6 +96,9 @@ describe("scaffoldSite", () => {
     const meta = readJson(join(siteDir, "config/meta.json"));
     expect(meta.name).toBe("Acme Widgets");
     expect(meta.description).toContain("Acme Widgets");
+    // The logo is a standard copied placeholder (public/images/logo.png), not a manifest entry —
+    // so the scaffold carries meta.logoSrc verbatim, pointing at the shipped asset.
+    expect(meta.logoSrc).toBe("/images/logo.png");
   });
 
   it("carries a theme.css consistent with the copied brand.json", () => {

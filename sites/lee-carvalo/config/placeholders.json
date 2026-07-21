@@ -1,0 +1,42 @@
+[
+  {
+    "name": "hero-title-screen",
+    "aspect": "video",
+    "description": "The title screen of a retro-styled putting video game: a clean putting green under a bright sky, a golf ball resting near the cup, and the game's logo treatment. Confident, inviting, holiday-release energy."
+  },
+  {
+    "name": "feature-read-the-green",
+    "aspect": "photo",
+    "description": "An overhead view of a putting green with a curved putting line drawn from the ball to the cup, showing the slope and break. Focused and strategic."
+  },
+  {
+    "name": "feature-choose-club",
+    "aspect": "photo",
+    "description": "A golfer selecting a putter from the bag and lining up their stance over the ball, clubs visible in the bag beside them. Deliberate and calm."
+  },
+  {
+    "name": "feature-set-power",
+    "aspect": "photo",
+    "description": "A game-style power meter set mid-swing beside a ball on the green, the ball beginning to roll toward the hole. A sense of controlled momentum."
+  },
+  {
+    "name": "about-lining-up-putt",
+    "aspect": "video",
+    "description": "A player crouched behind the ball on the green, lining up a putt with the cup in the distance. Just the golfer and the line to the hole, quiet concentration."
+  },
+  {
+    "name": "about-step-up",
+    "aspect": "photo",
+    "description": "A golfer standing over the ball at the start of a hole, the cup in sight and the slope laid out ahead. The beginning of a putt."
+  },
+  {
+    "name": "about-take-putt",
+    "aspect": "photo",
+    "description": "A golfer mid-stroke sending a putt toward the cup, a steady hand and a good read, the ball tracking along the line."
+  },
+  {
+    "name": "about-ball-drops",
+    "aspect": "photo",
+    "description": "A close-up of a golf ball dropping into the cup on a manicured green, the successful end of a putt. Satisfying and clean."
+  }
+]

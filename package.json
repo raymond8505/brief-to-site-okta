@@ -22,13 +22,16 @@
     "sites:dev": "tsx packages/core/src/config/cli/dev-site.ts",
     "sites:novel": "tsx packages/core/src/config/cli/novel-list.ts",
     "theme:build": "tsx packages/core/src/config/cli/theme-build.ts",
-    "placeholders:copy": "tsx packages/core/src/config/cli/placeholders-copy.ts",
+    "placeholders:build": "tsx scripts/placeholder-gen.ts",
+    "placeholders:source": "tsx scripts/placeholder-source.ts",
+    "placeholders:logo": "tsx scripts/logo-placeholder-gen.ts",
     "capture:run": "tsx scripts/capture-run.ts",
     "storybook": "yarn workspace @brief-to-site/core storybook",
     "build-storybook": "yarn workspace @brief-to-site/core build-storybook"
   },
   "devDependencies": {
     "@eslint/js": "^9",
+    "@napi-rs/canvas": "^1.0.2",
     "@types/node": "^26.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
