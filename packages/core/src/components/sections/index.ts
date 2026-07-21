@@ -16,3 +16,19 @@ export {
   contactBlockVariants,
 } from "./contact-block/contact-block";
 export type { ContactBlockProps, ContactFormProps } from "./contact-block/contact-block";
+export { CtaBand, CtaBandBody, ctaBandVariants } from "./cta-band/cta-band";
+export type { CtaBandProps } from "./cta-band/cta-band";
+export {
+  Testimonials,
+  TestimonialsHeader,
+  testimonialsVariants,
+} from "./testimonials/testimonials";
+export type { TestimonialsProps } from "./testimonials/testimonials";
+export { StatBand, StatBandHeader } from "./stat-band/stat-band";
+export type { StatBandProps } from "./stat-band/stat-band";
+export { LogoStrip, LogoStripCaption } from "./logo-strip/logo-strip";
+export type { LogoStripProps } from "./logo-strip/logo-strip";
+export { Steps, StepsHeader, stepsVariants } from "./steps/steps";
+export type { StepsProps } from "./steps/steps";
+export { Faq, FaqHeader, faqVariants } from "./faq/faq";
+export type { FaqProps } from "./faq/faq";

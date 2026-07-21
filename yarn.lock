@@ -482,6 +482,7 @@ __metadata:
   resolution: "@brief-to-site/site-alf-pogs@workspace:sites/alf-pogs"
   dependencies:
     "@brief-to-site/core": "workspace:*"
+    lucide-react: "npm:1.24.0"
     next: "npm:16.2.6"
     react: "npm:19.2.4"
     react-dom: "npm:19.2.4"
@@ -525,11 +526,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@brief-to-site/site-template@workspace:sites/_template":
+"@brief-to-site/site-shell@workspace:sites/_shell":
   version: 0.0.0-use.local
-  resolution: "@brief-to-site/site-template@workspace:sites/_template"
+  resolution: "@brief-to-site/site-shell@workspace:sites/_shell"
   dependencies:
     "@brief-to-site/core": "workspace:*"
+    lucide-react: "npm:1.24.0"
     next: "npm:16.2.6"
     react: "npm:19.2.4"
     react-dom: "npm:19.2.4"
@@ -5402,6 +5404,15 @@ __metadata:
   dependencies:
     yallist: "npm:^3.0.2"
   checksum: 10c0/89b2ef2ef45f543011e38737b8a8622a2f8998cddf0e5437174ef8f1f70a8b9d14a918ab3e232cb3ba343b7abddffa667f0b59075b2b80e6b4d63c3de6127482
+  languageName: node
+  linkType: hard
+
+"lucide-react@npm:1.24.0":
+  version: 1.24.0
+  resolution: "lucide-react@npm:1.24.0"
+  peerDependencies:
+    react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/8bc2a7c6cfa33bfc6df5533cec12454197f9182b98da0dcb79c6f167ca99710d9360e68b4ba7959953b4c501a48a100713e1b047a18c326c955920f72b9207ee
   languageName: node
   linkType: hard
 

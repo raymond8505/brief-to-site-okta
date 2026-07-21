@@ -58,6 +58,22 @@ export function runDirName(run: string, ts: string): string {
   return `${run}-${ts}`;
 }
 
+/** The `sites:dev` / `next dev` default port — where an already-running dev server most likely is. */
+export const DEV_DEFAULT_PORT = 3000;
+
+/**
+ * The ports `capture:run` probes for an **already-running** dev server before spawning its own, in
+ * priority order: the requested capture port first, then the dev default (`sites:dev`) if different.
+ * So leaving `yarn sites:dev <slug>` up (port 3000) lets capture reuse that instance instead of
+ * starting a second server — which in the past collided with the operator's running dev server.
+ */
+export function serverProbePorts(
+  requestedPort: number,
+  devDefaultPort: number = DEV_DEFAULT_PORT,
+): number[] {
+  return requestedPort === devDefaultPort ? [requestedPort] : [requestedPort, devDefaultPort];
+}
+
 /** One screenshot to take: a page at a viewport, plus its output filename within the run dir. */
 export interface CaptureShot {
   /** Fully-qualified URL to load. */

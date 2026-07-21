@@ -104,3 +104,22 @@
 
   color: rgb(var(--text-val) var(--text-val) var(--text-val));
 }
+
+/* ── Brand-seed bridge (project addition — NOT part of the verbatim port) ─────
+   Maps the per-site brand RGB tokens (--brand-r/g/b, written by `theme:build`)
+   onto the generic --r/--g/--b inputs `.wcag-contrast` reads. Pair on the same
+   element — `class="wcag-contrast brand-rgb"` — for a brand-primary fill with an
+   auto-picked legible text colour (the Badge `brand` variant, Step index badge).
+
+   This replaces the inline `[--r:var(--brand-r)] [--g:…] [--b:…]` arbitrary-property
+   classes: Tailwind v4's oxide scanner miscounts byte-vs-char offsets and corrupts
+   such candidates when a scanned file has multi-byte chars before them, emitting
+   garbage CSS. An authored class (like `.wcag-contrast` itself) is never scanned as
+   a candidate, so it can't be corrupted. Both sit on one element, same scope, so the
+   contrast math resolves identically — verified in headless Chrome.
+   ────────────────────────────────────────────────────────────────────────── */
+.brand-rgb {
+  --r: var(--brand-r);
+  --g: var(--brand-g);
+  --b: var(--brand-b);
+}

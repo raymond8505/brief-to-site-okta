@@ -23,4 +23,8 @@ export { BulletList, BulletItem } from "./bullet-list/bullet-list";
 export type { BulletListProps, BulletItemProps } from "./bullet-list/bullet-list";
 export { LogoRow } from "./logo-row/logo-row";
 export type { LogoRowProps, LogoRowLogo } from "./logo-row/logo-row";
+export { Step } from "./step/step";
+export type { StepProps } from "./step/step";
+export { FaqItem } from "./faq-item/faq-item";
+export type { FaqItemProps } from "./faq-item/faq-item";
 export { assertAllowedChildren } from "./lib/assert-slot";

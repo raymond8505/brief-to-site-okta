@@ -6,7 +6,7 @@ agent-driven and copy may vary run-to-run, so there is deliberately no unit test
 that asserts on generated copy; these fixtures are exercised by pointing the `microsite` skill
 (`.claude/skills/microsite/SKILL.md`) at one of them in place of a real client brief.
 
-Each follows the intake contract from `sites/_template/brief.md`
+Each follows the intake contract from `sites/_shell/brief.md`
 (`What is this? / Audience / Key messages / Pages / Notes`).
 
 | fixture | case it exercises |

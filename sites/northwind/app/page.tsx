@@ -17,6 +17,8 @@ import {
   HeroMedia,
 } from "@brief-to-site/core/sections";
 
+import { CtaBand, CtaBandBody } from "../components/sections/cta-band/cta-band";
+
 /**
  * Home — leads with the studio's value proposition (brief.md: "Design that ships."), then how an
  * engagement runs as three features. Assembled from core sections; images are the copied
@@ -78,6 +80,24 @@ export default function HomePage() {
           imageAlt="A finished site going live"
         />
       </FeatureGrid>
+      <CtaBand>
+        <CtaBandBody>
+          <Eyebrow>Ready when you are</Eyebrow>
+          <Heading level={2}>Bring us your brief</Heading>
+          <Prose>
+            Fixed scope, fixed price, and the senior people you talked to doing the work. Start a
+            project or meet the studio first.
+          </Prose>
+          <CtaGroup align="center">
+            <Button size="lg" render={<Link href="/contact" />}>
+              Start a project
+            </Button>
+            <Button size="lg" variant="outline" render={<Link href="/about" />}>
+              Meet the studio
+            </Button>
+          </CtaGroup>
+        </CtaBandBody>
+      </CtaBand>
     </>
   );
 }
