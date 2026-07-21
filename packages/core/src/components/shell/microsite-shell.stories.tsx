@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 
 import { MicrositeShell } from "@core/components/shell/microsite-shell";
-import { Hero } from "@core/components/sections/hero/hero";
+import { Eyebrow, Heading, MediaFrame, Prose } from "@core/components/blocks";
+import { Hero, HeroBody, HeroMedia } from "@core/components/sections/hero/hero";
 
 /**
  * MicrositeShell frames a page with a non-sticky header (logo + `SiteNav`), the page `<main>`, and a
@@ -26,12 +27,21 @@ const meta = {
     },
     pages,
     children: (
-      <Hero
-        eyebrow="Design studio"
-        headline="Turn a brief into a site in minutes"
-        subcopy="Northwind assembles brand-true microsites from a short brief — themed, responsive, ready to review."
-        imageAlt="A sample of studio work"
-      />
+      <Hero>
+        <HeroBody>
+          <Eyebrow>Design studio</Eyebrow>
+          <Heading level={1} size="xl">
+            Turn a brief into a site in minutes
+          </Heading>
+          <Prose lead>
+            Northwind assembles brand-true microsites from a short brief — themed, responsive, ready
+            to review.
+          </Prose>
+        </HeroBody>
+        <HeroMedia>
+          <MediaFrame alt="A sample of studio work" rounded />
+        </HeroMedia>
+      </Hero>
     ),
   },
 } satisfies Meta<typeof MicrositeShell>;

@@ -1,41 +1,59 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 
-import { FeatureGrid, type FeatureGridItem } from "@core/components/sections/feature-grid/feature-grid";
+import { Eyebrow, FeatureCard, Heading, Prose } from "@core/components/blocks";
+import {
+  FeatureGrid,
+  FeatureGridHeader,
+} from "@core/components/sections/feature-grid/feature-grid";
 
-const sampleFeatures: FeatureGridItem[] = [
-  {
-    title: "Brief in, site out",
-    description: "Hand off a short brief and a brand colour; get back a responsive microsite.",
-    imageAlt: "Brief to site",
-  },
-  {
-    title: "Deterministic theme",
-    description: "One seed colour derives a full, legible palette — no manual tuning.",
-    imageAlt: "Colour theme",
-  },
-  {
-    title: "Section suite",
-    description: "Compound sections the agent assembles into on-theme SSR pages.",
-    imageAlt: "Section suite",
-  },
-  {
-    title: "Capture-ready",
-    description: "Multi-viewport, motion-free full-page screenshots as the deliverable.",
-    imageAlt: "Screenshot capture",
-  },
+const unsplash = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=80`;
+
+const sampleCards = [
+  <FeatureCard
+    key="1"
+    title="Brief in, site out"
+    description="Hand off a short brief and a brand colour; get back a responsive microsite."
+    imageAlt="Brief to site"
+  />,
+  <FeatureCard
+    key="2"
+    title="Deterministic theme"
+    description="One seed colour derives a full, legible palette — no manual tuning."
+    imageAlt="Colour theme"
+  />,
+  <FeatureCard
+    key="3"
+    title="Section suite"
+    description="Compound sections the agent assembles into on-theme SSR pages."
+    imageAlt="Section suite"
+  />,
+  <FeatureCard
+    key="4"
+    title="Capture-ready"
+    description="Multi-viewport, motion-free full-page screenshots as the deliverable."
+    imageAlt="Screenshot capture"
+  />,
 ];
 
-const unsplash = (id: string) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=80`;
+const sampleHeader = (
+  <FeatureGridHeader>
+    <Eyebrow>Why brief-to-site</Eyebrow>
+    <Heading level={2}>Everything the brief needs, assembled</Heading>
+    <Prose>
+      Each feature is a `FeatureCard` block in a responsive grid — the same section contract as the
+      Hero, proven across repeating content.
+    </Prose>
+  </FeatureGridHeader>
+);
 
 /**
- * FeatureGrid — a responsive grid of feature cards (each an image + title + description) above an
- * optional section header. One CSS-only layout axis: `columns` (`two` | `three` | `four`, default
- * `three`); the shared `density` axis is `compact` | `comfortable` | `spacious` (default
- * `comfortable`). `features` is an array of `FeatureGridItem` ({ title, description?, imageSrc?,
- * imageAlt }). Every meaningful variant has its own story below. Import from
- * `@brief-to-site/core/sections`.
+ * FeatureGrid — a responsive grid of `FeatureCard` blocks above an optional `FeatureGridHeader` slot
+ * (compose `Eyebrow` / `Heading` / `Prose` inside it). One layout axis: `columns` (`two` | `three` |
+ * `four`, default `three`, CSS `grid-template-columns`); plus the shared `density` (`compact` |
+ * `comfortable` | `spacious`, default `comfortable`). A "variant" is a composition — how many cards,
+ * at which `columns`, with or without a header. Import the section from `@brief-to-site/core/sections`
+ * and the blocks from `@brief-to-site/core/blocks`.
  */
 const meta = {
   title: "Sections/FeatureGrid",
@@ -46,7 +64,7 @@ const meta = {
     columns: {
       control: "inline-radio",
       options: ["two", "three", "four"],
-      description: "How many columns the grid resolves to at its widest — CSS `grid-template-columns` only. Default `three`.",
+      description: "Columns at the widest breakpoint (CSS grid-template-columns). Default `three`.",
       table: { defaultValue: { summary: "three" } },
     },
     density: {
@@ -56,70 +74,89 @@ const meta = {
       table: { defaultValue: { summary: "comfortable" } },
     },
   },
-  args: {
-    eyebrow: "Why brief-to-site",
-    heading: "Everything the brief needs, assembled",
-    subcopy:
-      "Each feature is a card in a CSS-only responsive grid — the same section contract as the Hero, proven across repeating content.",
-    features: sampleFeatures.slice(0, 3),
-  },
+  args: { columns: "three", density: "comfortable" },
+  render: (args) => (
+    <FeatureGrid {...args}>
+      {sampleHeader}
+      {sampleCards.slice(0, 3)}
+    </FeatureGrid>
+  ),
 } satisfies Meta<typeof FeatureGrid>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Default: three columns at the widest breakpoint, comfortable spacing. */
+/** Default: a three-up grid with a header. */
 export const Default: Story = {};
 
 /** `columns: two` — a two-up grid. */
 export const TwoUp: Story = {
-  args: { columns: "two", features: sampleFeatures.slice(0, 2) },
+  args: { columns: "two" },
+  render: (args) => (
+    <FeatureGrid {...args}>
+      {sampleHeader}
+      {sampleCards.slice(0, 2)}
+    </FeatureGrid>
+  ),
 };
 
 /**
- * `columns: three` — the default three-up grid. The play() confirms the CSS grid resolves to three
- * tracks in a real browser (the column count is CSS-only; DOM order never changes).
+ * `columns: three` — the play() confirms the CSS grid resolves to three tracks in a real browser
+ * (the column count is CSS-only).
  */
 export const ThreeUp: Story = {
-  args: { columns: "three", features: sampleFeatures.slice(0, 3) },
+  args: { columns: "three" },
   play: async ({ canvasElement }) => {
     await new Promise((r) => requestAnimationFrame(() => r(null)));
     const grid = canvasElement.querySelector<HTMLElement>("[data-slot=feature-grid]");
     if (!grid) throw new Error("missing feature grid");
-    // At ≥ lg the grid lays out three columns; below that it collapses (1 or 2 tracks).
     const tracks = getComputedStyle(grid).gridTemplateColumns.split(" ").length;
     if (tracks >= 3) expect(tracks).toBe(3);
   },
 };
 
-/** `columns: four` — a four-up grid; pairs with four features. */
+/** `columns: four` — a four-up grid; pairs with four cards. */
 export const FourUp: Story = {
-  args: { columns: "four", features: sampleFeatures },
+  args: { columns: "four" },
+  render: (args) => (
+    <FeatureGrid {...args}>
+      {sampleHeader}
+      {sampleCards}
+    </FeatureGrid>
+  ),
 };
 
-/** `density: compact` — tighter vertical rhythm from the shared Section axis. */
-export const Compact: Story = {
-  args: { density: "compact" },
+/** No header — just the grid of cards. */
+export const NoHeader: Story = {
+  render: (args) => <FeatureGrid {...args}>{sampleCards.slice(0, 3)}</FeatureGrid>,
 };
 
 /** `density: spacious` — generous vertical rhythm. */
-export const Spacious: Story = {
-  args: { density: "spacious" },
-};
+export const Spacious: Story = { args: { density: "spacious" } };
 
-/**
- * No `imageSrc` on any feature — each card shows the section-owned placeholder. This is the
- * default `args` state too; the story names it explicitly for the contract catalog.
- */
-export const WithPlaceholders: Story = {};
-
-/** Real image paths wired in — override the placeholder, same `object-cover` box. */
+/** Real image paths wired into the cards — override the placeholder, same `object-cover` box. */
 export const CustomImages: Story = {
-  args: {
-    features: [
-      { ...sampleFeatures[0]!, imageSrc: unsplash("photo-1551434678-e076c223a692") },
-      { ...sampleFeatures[1]!, imageSrc: unsplash("photo-1522202176988-66273c2fd55f") },
-      { ...sampleFeatures[2]!, imageSrc: unsplash("photo-1531403009284-440f080d1e12") },
-    ],
-  },
+  render: (args) => (
+    <FeatureGrid {...args}>
+      {sampleHeader}
+      <FeatureCard
+        title="Brief in, site out"
+        description="Hand off a short brief and a brand colour; get back a responsive microsite."
+        imageAlt="Brief to site"
+        imageSrc={unsplash("photo-1551434678-e076c223a692")}
+      />
+      <FeatureCard
+        title="Deterministic theme"
+        description="One seed colour derives a full, legible palette — no manual tuning."
+        imageAlt="Colour theme"
+        imageSrc={unsplash("photo-1522202176988-66273c2fd55f")}
+      />
+      <FeatureCard
+        title="Section suite"
+        description="Compound sections the agent assembles into on-theme SSR pages."
+        imageAlt="Section suite"
+        imageSrc={unsplash("photo-1531403009284-440f080d1e12")}
+      />
+    </FeatureGrid>
+  ),
 };

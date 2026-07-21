@@ -2,105 +2,83 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@core/lib/utils";
-import { Badge } from "@core/components/ui/badge";
 import { Section, type SectionProps } from "@core/components/sections/section";
-import { PLACEHOLDER_SPECS, placeholderDataUri } from "@core/components/sections/placeholder";
+import { assertAllowedChildren } from "@core/components/blocks/lib/assert-slot";
 
 /**
- * Hero — the first section and the worked example of the section contract (see `section.tsx`). A
- * two-column split of copy (eyebrow, headline, subcopy, CTAs) beside a media image, stacking on
- * small screens. It composes `Section` for the shell/container/density and adds its own **CSS-only**
- * layout CVA: every variant maps a semantic value to a class string and changes only CSS —
- * text alignment, and which side the image sits — never DOM/source order.
+ * Hero — the first section and the worked example of the compound section contract (see
+ * `section.tsx`). A two-column layout shell: a copy column (`HeroBody`) beside a second column that
+ * is either media (`HeroMedia`) or supporting content (`HeroAside` — a `StatRow`, a `Quote`, …),
+ * stacking on small screens. It composes `Section` for the shell/container/density and owns only the
+ * layout: which side the second column sits on (`mediaSide`), and copy alignment (`align`).
  *
- * The DOM order is fixed **copy → media**; the `media: inline-start` variant moves the image to the
- * visual left with `flex-row-reverse` (a CSS reorder, not a source reorder). This is the layout
- * exemplar: visual order decouples from DOM order via CSS only. The `MediaStart` story's play() reads
- * the computed `flex-direction` to prove the reorder is real.
+ * A "variant" is a **composition**, not a flag — fill the slots with different blocks:
+ * **split** (`HeroBody` + `HeroMedia`), **centered** (`HeroBody` only, `align="center"`),
+ * **with-stats** (`HeroBody` + `HeroAside` holding a `StatRow`), **quote-led** (`HeroBody` +
+ * `HeroAside` holding a `Quote`). Compose the copy from block primitives (`Eyebrow`, `Heading`,
+ * `Prose`, `CtaGroup`) — see `@brief-to-site/core/blocks`.
  */
 
 export const heroVariants = cva("flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-16", {
   variants: {
-    /** Copy alignment. Text alignment inherits; the copy column's cross-axis follows. */
+    /** Copy alignment. `center` also centres the copy column within its track. */
     align: {
-      start: "text-left [&_[data-slot=hero-copy]]:items-start",
-      center: "text-center [&_[data-slot=hero-copy]]:items-center",
+      start: "text-left [&_[data-slot=hero-body]]:items-start",
+      center: "text-center [&_[data-slot=hero-body]]:mx-auto [&_[data-slot=hero-body]]:items-center",
     },
-    /** Which side the media sits on — CSS `flex-direction` only; DOM order is unchanged. */
-    media: {
-      "inline-end": "", // copy left / media right (matches DOM order — default)
-      "inline-start": "lg:flex-row-reverse", // media visually left; DOM order still copy → media
+    /** Which side the second column (media/aside) sits on — CSS `flex-direction` only. */
+    mediaSide: {
+      end: "", // copy left / second column right (default)
+      start: "lg:flex-row-reverse", // second column visually left
     },
   },
   defaultVariants: {
     align: "start",
-    media: "inline-end",
+    mediaSide: "end",
   },
 });
 
-/** A single call-to-action rendered by the Hero. `href` is presentational. */
-export interface HeroCta {
-  label: string;
-  href?: string;
-}
-
 export interface HeroProps
-  extends VariantProps<typeof heroVariants>,
-    Pick<SectionProps, "density" | "className" | "id"> {
-  /** Optional kicker above the headline (rendered as a Badge). */
-  eyebrow?: string;
-  /** The headline — the section's `<h1>`. Required. */
-  headline: string;
-  /** Supporting paragraph under the headline. */
-  subcopy?: string;
-  /** CTA buttons/links. Passed as a slot so the page decides button-vs-link markup. */
-  actions?: React.ReactNode;
-  /** Image path. Omit to fall back to the section-owned placeholder. */
-  imageSrc?: string;
-  /** Alt text for the media image. Required so the box is always described. */
-  imageAlt: string;
-}
+  extends React.ComponentProps<"div">,
+    VariantProps<typeof heroVariants>,
+    Pick<SectionProps, "density"> {}
 
-export function Hero({
-  eyebrow,
-  headline,
-  subcopy,
-  actions,
-  imageSrc,
-  imageAlt,
-  align,
-  media,
-  density,
-  className,
-  id,
-}: HeroProps) {
+/**
+ * Hero root: a `Section` shell wrapping the two-column layout row. Compose `HeroBody` and
+ * (optionally) `HeroMedia` / `HeroAside` inside.
+ */
+function Hero({ align, mediaSide, density, id, className, children, ...props }: HeroProps) {
+  assertAllowedChildren(children, [HeroBody, HeroMedia, HeroAside], "Hero");
   return (
-    <Section density={density} id={id} className={className}>
-      <div data-slot="hero" className={cn(heroVariants({ align, media }))}>
-        {/* Copy column — always first in the DOM (source order never changes). */}
-        <div data-slot="hero-copy" className="flex flex-1 flex-col gap-6">
-          {eyebrow ? (
-            <Badge variant="brand" className="w-fit">
-              {eyebrow}
-            </Badge>
-          ) : null}
-          <h1 className="font-heading text-4xl font-bold tracking-tight text-balance text-foreground md:text-5xl">
-            {headline}
-          </h1>
-          {subcopy ? (
-            <p className="max-w-prose text-lg text-muted-foreground">{subcopy}</p>
-          ) : null}
-          {actions ? <div className="flex flex-wrap gap-3">{actions}</div> : null}
-        </div>
-        {/* Media column — always second in the DOM; the `media` variant flips the visual side. */}
-        <div data-slot="hero-media" className="flex-1">
-          <img
-            src={imageSrc ?? placeholderDataUri(PLACEHOLDER_SPECS.hero)}
-            alt={imageAlt}
-            className="aspect-[16/9] w-full rounded-xl bg-muted object-cover object-center"
-          />
-        </div>
+    <Section density={density} id={id}>
+      <div
+        data-slot="hero"
+        className={cn(heroVariants({ align, mediaSide }), className)}
+        {...props}
+      >
+        {children}
       </div>
     </Section>
   );
 }
+
+/** Copy column — compose `Eyebrow`, `Heading` (`level={1}`), `Prose`, `CtaGroup` inside. */
+function HeroBody({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div data-slot="hero-body" className={cn("flex flex-1 flex-col gap-6", className)} {...props} />
+  );
+}
+
+/** Media column — typically a single `MediaFrame`. Omit for a centered, single-column hero. */
+function HeroMedia({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="hero-media" className={cn("flex-1", className)} {...props} />;
+}
+
+/** Second column of supporting content instead of media — e.g. a `StatRow` or a `Quote`. */
+function HeroAside({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div data-slot="hero-aside" className={cn("flex flex-1 flex-col gap-6", className)} {...props} />
+  );
+}
+
+export { Hero, HeroBody, HeroMedia, HeroAside };

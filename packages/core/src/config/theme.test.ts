@@ -4,7 +4,7 @@ import type { BrandConfig } from "./brand.schema";
 import { buildThemeCss } from "./theme";
 
 // #7c3aed is Tailwind violet-600 → hsl(262 83% 58%); asserted against palette.hexToHsl elsewhere.
-const violet: BrandConfig = { primary: "#7c3aed", harmony: "complementary" };
+const violet: BrandConfig = { primary: "#7c3aed", harmony: "complementary", radius: "subtle" };
 
 describe("buildThemeCss", () => {
   it("emits the primary seed as integer HSL channels", () => {
@@ -16,7 +16,7 @@ describe("buildThemeCss", () => {
 
   it("points the harmony offsets at the chosen harmony's named vars", () => {
     expect(buildThemeCss(violet)).toContain("--secondary-h-offset: var(--secondary-h--complementary);");
-    expect(buildThemeCss({ primary: "#7c3aed", harmony: "triadic" })).toContain(
+    expect(buildThemeCss({ primary: "#7c3aed", harmony: "triadic", radius: "subtle" })).toContain(
       "--tertiary-h-offset: var(--tertiary-h--triadic);",
     );
   });
@@ -40,11 +40,23 @@ describe("buildThemeCss", () => {
       secondary: "#22d3ee",
       tertiary: "#f97316",
       harmony: "complementary",
+      radius: "subtle",
     });
     expect(explicit).toContain("--brand-secondary-h:");
     expect(explicit).toContain("--brand-secondary-r:");
     expect(explicit).toContain("--brand-tertiary-h:");
     expect(explicit).toContain("--brand-tertiary-r:");
+  });
+
+  it("emits a --radius override only for a non-default radius preset", () => {
+    // The default preset is a no-op — nothing emitted, so default sites' theme.css is unchanged.
+    expect(buildThemeCss(violet)).not.toContain("--radius:");
+
+    const playful = buildThemeCss({ ...violet, radius: "playful" });
+    expect(playful).toContain("--radius: 1.5rem;");
+
+    const sharp = buildThemeCss({ ...violet, radius: "sharp" });
+    expect(sharp).toContain("--radius: 0;");
   });
 
   it("prepends a GENERATED header and opens a :root block", () => {

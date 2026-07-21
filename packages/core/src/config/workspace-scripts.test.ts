@@ -12,7 +12,7 @@ const readJson = (path: string): Record<string, unknown> =>
  * The pre-push gate's `yarn typecheck` fans out via `yarn workspaces foreach run typecheck`, and
  * foreach SILENTLY SKIPS any workspace that doesn't define the script — a new workspace without it
  * would simply never be typechecked. This guard closes that gap: every workspace must carry a
- * `typecheck` script (`_template` carrying it is what makes scaffolded sites covered automatically).
+ * `typecheck` script (`_shell` carrying it is what makes scaffolded sites covered automatically).
  */
 describe("workspace typecheck coverage (pre-push gate drift guard)", () => {
   it("every workspace defines a typecheck script", () => {

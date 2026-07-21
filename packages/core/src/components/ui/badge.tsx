@@ -11,10 +11,11 @@ const badgeVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
         // Solid brand-primary fill with a WCAG-4.5:1 text colour picked by the pure-CSS
-        // `.wcag-contrast` utility — legible for ANY primary, no JS luminance. --r/--g/--b
-        // come from the brand RGB seed (`theme:build` writes --brand-r/g/b per site).
-        brand:
-          "wcag-contrast [--r:var(--brand-r)] [--g:var(--brand-g)] [--b:var(--brand-b)] border-transparent",
+        // `.wcag-contrast` utility — legible for ANY primary, no JS luminance. `brand-rgb`
+        // feeds it --r/--g/--b from the brand RGB seed (`theme:build` writes --brand-r/g/b
+        // per site). Authored classes, not inline `[--r:…]` arbitrary props — those trip the
+        // oxide scanner's byte/char offset bug (see contrast-math.css `.brand-rgb`).
+        brand: "wcag-contrast brand-rgb border-transparent",
         secondary:
           "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
         destructive:

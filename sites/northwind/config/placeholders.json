@@ -1,0 +1,47 @@
+[
+  {
+    "name": "hero-studio-screen",
+    "aspect": "video",
+    "description": "A boutique design studio mid-build: a designer at a large screen showing a polished website layout in progress, warm daylight, a clean uncluttered desk."
+  },
+  {
+    "name": "feature-brief-review",
+    "aspect": "photo",
+    "description": "Two people reviewing a written project brief on paper at a table, pointing at a printed page, collaborative and focused."
+  },
+  {
+    "name": "feature-design-exploration",
+    "aspect": "photo",
+    "description": "A designer exploring layout options on screen: several web-design variations side by side, with sketches and colour swatches nearby."
+  },
+  {
+    "name": "feature-launch-live",
+    "aspect": "photo",
+    "description": "A finished website going live on a laptop, the browser showing a freshly launched homepage, a small celebratory moment."
+  },
+  {
+    "name": "about-team-table",
+    "aspect": "video",
+    "description": "The whole small studio team working around a single table, laptops open and talking. No big office, everyone hands-on."
+  },
+  {
+    "name": "about-scope-agreement",
+    "aspect": "photo",
+    "description": "A signed one-page scope-and-price agreement resting on a desk with a pen on top, clean and simple."
+  },
+  {
+    "name": "about-senior-review",
+    "aspect": "photo",
+    "description": "Two senior designers reviewing work together at a monitor, experienced and engaged. No junior bench."
+  },
+  {
+    "name": "about-direct-conversation",
+    "aspect": "photo",
+    "description": "A client and a designer talking directly across a table, an easy working conversation with decisions being made in the room."
+  },
+  {
+    "name": "about-launched-site",
+    "aspect": "photo",
+    "description": "A newly launched website on a screen: the live homepage of a real, finished site, crisp and confident."
+  }
+]

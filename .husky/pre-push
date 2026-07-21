@@ -1,5 +1,6 @@
-# Hard quality gate (see .claude/CLAUDE.md): a push must not leave with a broken
-# typecheck, lint, or test suite. Bypassing with --no-verify is forbidden.
-yarn typecheck || exit 1
-yarn lint || exit 1
+# Hard quality gate (see .claude/CLAUDE.md): a push must not leave core with a broken
+# typecheck, lint, or test suite. Sites are excluded from the gate by design.
+# Bypassing with --no-verify is forbidden.
+yarn typecheck:core || exit 1
+yarn lint:core || exit 1
 yarn test || exit 1

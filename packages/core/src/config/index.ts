@@ -12,8 +12,31 @@ export {
   type ViewportsConfig,
 } from "./viewports.schema";
 export { generationSchema, type GenerationConfig } from "./generation.schema";
+export {
+  placeholderEntrySchema,
+  placeholdersSchema,
+  placeholderImagePath,
+  ASPECT_DIMENSIONS,
+  ASPECT_NAMES,
+  type AspectKey,
+  type PlaceholderEntry,
+  type PlaceholdersConfig,
+} from "./placeholders.schema";
 export { buildThemeCss } from "./theme";
-export { copyPlaceholders, placeholderPublicPath } from "./placeholders";
+export { loadPlaceholders, wrapText } from "./placeholders";
+export {
+  UNSPLASH_API,
+  UNSPLASH_APP_NAME,
+  aspectOrientation,
+  entryQuery,
+  unsplashSearchUrl,
+  unsplashImageUrl,
+  unsplashAttribution,
+  type UnsplashOrientation,
+  type UnsplashPhoto,
+  type UnsplashSearchResponse,
+  type UnsplashAttribution,
+} from "./unsplash";
 export { devSpawnSpec, type DevSpawnSpec } from "./dev";
 export {
   loadSiteConfig,

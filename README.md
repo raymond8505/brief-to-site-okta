@@ -14,22 +14,24 @@ packages/core/          @brief-to-site/core — everything shared
   src/
     components/
       ui/               base-nova primitives (Button, Badge, Card, Input, …)
-      sections/         the assembled section suite: Hero · FeatureGrid · ContactBlock
+      sections/         the assembled section suite: Hero · FeatureGrid · ContactBlock · CtaBand
+                        · Testimonials · StatBand · LogoStrip · Steps · Faq
       shell/            MicrositeShell + SiteNav (header / nav / footer)
     config/             Zod config schemas, loaders, and the CLI scripts (cli/)
     styles/             the CSS colour system — palette.ts, colors.css, contrast-math.css
     font/  lib/         shared font setup + utilities
 sites/<slug>/           each a standalone Next.js app importing from core; its app/**/page.tsx
                         arrange sections with brief-grounded copy
-sites/_template/        the committed, buildable scaffold sites:new copies (leading _ = not a site)
+sites/_shell/           the committed, buildable scaffold sites:new copies (leading _ = not a site)
 scripts/capture-run.ts  the Playwright capture driver (repo-root by design — keeps Playwright
                         out of every site's build)
 config/generation/      system-level house voice + guardrails (one style across all sites)
 fixtures/briefs/        dry-run test briefs (thin-brief + guardrail cases)
 ```
 
-**Storybook is the source of truth for the section suite** — each section's props, CSS-only
-variants, and a copy-me usage snippet live in its autodocs, not in a hand-written table.
+**Storybook is the source of truth for the section suite** — each section is a compound family
+(a root + named slots filled with block primitives); its slot vocabulary, layout axes, and
+copy-me composition snippets live in its autodocs, not in a hand-written table.
 
 ## Getting started
 
@@ -48,14 +50,15 @@ Each step is a discrete `yarn` script, non-interactive except the one intentiona
 before capture:
 
 | step | script | does |
-| ------------- | ---------------------------- | ------------------------------------------------------- |
-| scaffold      | `yarn sites:new <slug>`      | copy `sites/_template` into `sites/<slug>/`             |
-| author        | `yarn config:schema [name]`  | print config shapes (meta·brand·pages·viewports) as JSON Schema |
-|               | `yarn sites:validate <slug>` | Zod-validate a site's `config/*.json`                   |
-| theme+assets  | `yarn theme:build <slug>`    | `brand.json` (hex) → `theme.css` (HSL/RGB seed + harmony) |
-|               | `yarn placeholders:copy <slug>` | write placeholder SVGs into `public/images/placeholders/` |
-| verify        | `yarn sites:dev <slug>`      | run the site's `next dev` server                        |
-| capture       | `yarn capture:run <slug>`    | drive Chromium motion-free → full-page JPEGs per page × viewport |
+| ------------- | ---------------------------------- | ------------------------------------------------------- |
+| scaffold      | `yarn sites:new <slug>`            | copy `sites/_shell` into `sites/<slug>/`                |
+| author        | `yarn config:schema [name]`        | print config shapes (meta·brand·pages·viewports) as JSON Schema |
+|               | `yarn sites:validate <slug>`       | Zod-validate a site's `config/*.json`                   |
+| theme+assets  | `yarn theme:build <slug>`          | `brand.json` (hex) → `theme.css` (HSL/RGB seed + harmony) |
+|               | `yarn placeholders:build <slug>`   | draw offline text-placeholder PNGs from `config/placeholders.json` (the default) |
+|               | `yarn placeholders:source <slug>`  | opt-in — auto-fill placeholders with real Unsplash photos (`UNSPLASH_ACCESS_KEY`) |
+| verify        | `yarn sites:dev <slug>`            | run the site's `next dev` server                        |
+| capture       | `yarn capture:run <slug>`          | drive Chromium motion-free → full-page JPEGs per page × viewport |
 
 - **`brief.md`** in each site is the intake contract and the single source of copy grounding —
   every page's copy derives from it (`What / Audience / Key messages / Pages / Notes`).
@@ -77,9 +80,11 @@ before capture:
 Work ON brief-to-site happens mostly in `packages/core`:
 
 - **Sections** — add or change a section in `packages/core/src/components/sections/`; its
-  `*.stories.tsx` autodocs are the props/variants contract the assemble step reads (via the
-  Storybook MCP). Variants are **CSS-only** (alignment / spacing / child-order), never DOM
-  restructuring.
+  `*.stories.tsx` autodocs are the composition contract the assemble step reads (via the
+  Storybook MCP). Sections are **compound + block-composed** (shadcn-style: a root + named slots
+  filled with block primitives from `@brief-to-site/core/blocks`); a **variant is a composition**
+  (which blocks in which slots), with only genuine geometric layout kept as a CSS-only cva
+  (`align` / `mediaSide` / `columns` / …).
 - **Colour system** — `packages/core/src/styles`. Brand seeds and harmonies are set at `:root`
   (a site's `theme.css`), derived tokens resolve there, and legible foregrounds come from CSS
   contrast math (`contrast-math.css`), never JS. See the project

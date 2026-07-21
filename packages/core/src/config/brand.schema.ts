@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { HARMONIES, DEFAULT_HARMONY } from "../styles/palette";
+import { RADIUS_NAMES, DEFAULT_RADIUS } from "../styles/radius";
 
 /**
  * `brand.json` — the operator supplies ≥1 colour; up to three are accepted. Colours are
@@ -8,6 +9,10 @@ import { HARMONIES, DEFAULT_HARMONY } from "../styles/palette";
  * them to the HSL channels the CSS colour system consumes. Missing secondary/tertiary are derived
  * deterministically from `primary` via the chosen `harmony`; the enum is built from
  * `palette.ts`'s `HUE_OFFSETS` so it can't drift from the colour system.
+ *
+ * `radius` is a **style signal** (rounded = playful, sharp = elegant/serious), not a colour — but it
+ * belongs to the site's brand identity, so it rides in the same config. `theme:build` emits its
+ * `--radius` base into `theme.css`; the enum is built from `radius.ts`'s `RADIUS_PRESETS`.
  */
 const HEX = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 const hexColor = z.string().regex(HEX, "must be a hex colour like #7c3aed or #abc");
@@ -21,6 +26,8 @@ export const brandSchema = z.object({
   tertiary: hexColor.optional(),
   /** Harmony used to derive missing colours; defaults to the colour system's default. */
   harmony: z.enum(HARMONIES).default(DEFAULT_HARMONY),
+  /** Corner-radius style signal; defaults to the core default (a no-op that emits nothing). */
+  radius: z.enum(RADIUS_NAMES).default(DEFAULT_RADIUS),
 });
 
 export type BrandConfig = z.infer<typeof brandSchema>;

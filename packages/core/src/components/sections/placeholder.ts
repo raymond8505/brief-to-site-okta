@@ -1,12 +1,14 @@
 /**
- * Section-owned placeholder image. Every section takes an `imageSrc` path prop; when the
- * operator hasn't wired one yet, the section falls back to this so Storybook and dev renders still
- * show a correctly-sized image box. It returns an inline `data:image/svg+xml` URI — a solid neutral
- * bg with a centred label — so it flows through the very same `<img … object-cover>` element a real
- * asset would, with zero bundler/asset-pipeline config (identical in Storybook's vite build, a
- * Next.js site, and jsdom tests). The same SVG markup is also written as real files into a site's
- * `public/images/placeholders/` by `placeholders:copy` for the operator to overwrite; both
- * paths share `placeholderSvg` so the inline fallback and the file on disk can never diverge.
+ * The inline dev/Storybook fallback for an image box. When a real `src` hasn't been wired yet,
+ * `MediaFrame`/`MicrositeShell` fall back to this so Storybook, dev, and jsdom still render a
+ * correctly-sized box. It returns an inline `data:image/svg+xml` URI — a solid neutral bg with a
+ * centred label — flowing through the very same `<img … object-cover>` element a real asset would,
+ * with zero bundler/asset-pipeline config.
+ *
+ * This is **only** the render-time fallback (no filesystem there). A site's real, operator-facing
+ * placeholders are purpose-built **PNGs** drawn from the per-site `config/placeholders.json` manifest
+ * by `placeholders:build` (`scripts/placeholder-gen.ts`) into `public/images/` — a separate,
+ * raster path (the operator drops those into a stock/AI tool to source real art).
  *
  * The SVG can't read the page's brand CSS vars (an image in `<img src>` is an isolated document), so
  * the fill is a plain neutral — which is exactly what "reads as a placeholder" wants.
@@ -33,7 +35,7 @@ function escapeXml(value: string): string {
 
 /**
  * Build the raw SVG markup for a `width × height` placeholder. Pure and deterministic — safe to
- * call at render time, to write to disk (`placeholders:copy`), and to assert against in unit tests.
+ * call at render time and to assert against in unit tests.
  */
 export function placeholderSvg({ width, height, label }: PlaceholderOptions): string {
   const caption = escapeXml(label ?? `${width} × ${height}`);
@@ -50,24 +52,7 @@ export function placeholderSvg({ width, height, label }: PlaceholderOptions): st
   );
 }
 
-/** Inline data-URI form of `placeholderSvg` — the sections' render-time fallback. */
+/** Inline data-URI form of `placeholderSvg` — the render-time fallback. */
 export function placeholderDataUri(options: PlaceholderOptions): string {
   return `data:image/svg+xml,${encodeURIComponent(placeholderSvg(options))}`;
 }
-
-/**
- * The registry of every section-owned placeholder: one entry per distinct image box a section (or
- * the shell) renders. The single source of truth for placeholder dimensions — sections consume
- * these specs for their inline fallbacks, and `placeholders:copy` writes one
- * `public/images/placeholders/<name>.svg` per entry. Keys double as the file basenames.
- */
-export const PLACEHOLDER_SPECS = {
-  /** Hero media box (16:9). */
-  hero: { width: 1600, height: 900, label: "Hero image" },
-  /** FeatureGrid card art (4:3). */
-  feature: { width: 800, height: 600, label: "Feature image" },
-  /** MicrositeShell header logo. */
-  logo: { width: 160, height: 40, label: "Logo" },
-} as const satisfies Record<string, Required<PlaceholderOptions>>;
-
-export type PlaceholderName = keyof typeof PLACEHOLDER_SPECS;

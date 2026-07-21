@@ -2,21 +2,28 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 
 import { Button } from "@core/components/ui/button";
-import { Hero } from "@core/components/sections/hero/hero";
-
-const sampleActions = (
-  <>
-    <Button>Get started</Button>
-    <Button variant="outline">Learn more</Button>
-  </>
-);
+import {
+  CtaGroup,
+  Eyebrow,
+  Heading,
+  MediaFrame,
+  Prose,
+  Quote,
+  Stat,
+  StatRow,
+} from "@core/components/blocks";
+import { Hero, HeroAside, HeroBody, HeroMedia } from "@core/components/sections/hero/hero";
 
 /**
- * Hero — the first section: a two-column split of copy (eyebrow, headline, subcopy, CTAs) beside a
- * media image, stacking on small screens. CSS-only layout variants: `align` (`start` | `center`,
- * default `start`) and `media` (`inline-end` | `inline-start`, default `inline-end`); the shared
- * `density` axis is `compact` | `comfortable` | `spacious` (default `comfortable`). Every meaningful
- * variant has its own story below. Import from `@brief-to-site/core/sections`.
+ * Hero — the first section: a two-column layout shell composed from block primitives. A copy column
+ * (`HeroBody` with `Eyebrow` / `Heading` / `Prose` / `CtaGroup`) beside a second column that is media
+ * (`HeroMedia`) or supporting content (`HeroAside` — a `StatRow`, a `Quote`, …). Root props: `align`
+ * (`start` | `center`, default `start`), `mediaSide` (`end` | `start`, default `end`), and the shared
+ * `density` (`compact` | `comfortable` | `spacious`, default `comfortable`).
+ *
+ * A "variant" is a **composition** — each story below is a copy-me preset: **Default** (split),
+ * **Centered**, **WithStats**, **QuoteLed**. Import the section from `@brief-to-site/core/sections`
+ * and the blocks from `@brief-to-site/core/blocks`.
  */
 const meta = {
   title: "Sections/Hero",
@@ -27,14 +34,14 @@ const meta = {
     align: {
       control: "inline-radio",
       options: ["start", "center"],
-      description: "Copy alignment (CSS-only). Default `start`.",
+      description: "Copy alignment. Default `start`.",
       table: { defaultValue: { summary: "start" } },
     },
-    media: {
+    mediaSide: {
       control: "inline-radio",
-      options: ["inline-end", "inline-start"],
-      description: "Which side the media sits on — CSS `flex-direction` only, DOM order unchanged. Default `inline-end`.",
-      table: { defaultValue: { summary: "inline-end" } },
+      options: ["end", "start"],
+      description: "Which side the second column sits on (CSS flex-direction). Default `end`.",
+      table: { defaultValue: { summary: "end" } },
     },
     density: {
       control: "inline-radio",
@@ -42,41 +49,49 @@ const meta = {
       description: "Vertical rhythm from the shared Section axis. Default `comfortable`.",
       table: { defaultValue: { summary: "comfortable" } },
     },
-    imageSrc: { control: "text" },
-    actions: { control: false },
   },
-  args: {
-    eyebrow: "Now in beta",
-    headline: "Turn a brief into a site in minutes",
-    subcopy:
-      "Hand off a short brief and a brand colour; get back a responsive, on-theme microsite ready to capture.",
-    imageAlt: "Product preview",
-    actions: sampleActions,
-  },
+  args: { align: "start", mediaSide: "end", density: "comfortable" },
+  render: (args) => (
+    <Hero {...args}>
+      <HeroBody>
+        <Eyebrow>Boutique design studio</Eyebrow>
+        <Heading level={1} size="xl">
+          Design that ships.
+        </Heading>
+        <Prose lead>
+          Hand off a short brief and a brand colour; get back a responsive, on-theme microsite ready
+          to capture.
+        </Prose>
+        <CtaGroup>
+          <Button size="lg">Start a project</Button>
+          <Button size="lg" variant="outline">
+            Meet the studio
+          </Button>
+        </CtaGroup>
+      </HeroBody>
+      <HeroMedia>
+        <MediaFrame alt="Studio work preview" rounded />
+      </HeroMedia>
+    </Hero>
+  ),
 } satisfies Meta<typeof Hero>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Default: copy on the left, media on the right, comfortable spacing. */
+/** Split (default): copy on the left, media on the right. */
 export const Default: Story = {};
 
 /**
- * `media: inline-start` — image on the visual left. The DOM order is still copy → media; only CSS
- * `flex-direction` changes. The play() confirms the reorder is CSS-only in a real browser.
+ * `mediaSide: start` — media on the visual left via `flex-row-reverse` (CSS only). The play()
+ * confirms the reorder is real in a browser.
  */
 export const MediaStart: Story = {
-  args: { media: "inline-start" },
+  args: { mediaSide: "start" },
   play: async ({ canvasElement }) => {
     await new Promise((r) => requestAnimationFrame(() => r(null)));
     const row = canvasElement.querySelector<HTMLElement>("[data-slot=hero]");
     if (!row) throw new Error("missing hero row");
-
-    // DOM order never changes — copy is always the first child, media the second.
-    expect(row.children[0]?.getAttribute("data-slot")).toBe("hero-copy");
-    expect(row.children[1]?.getAttribute("data-slot")).toBe("hero-media");
-
-    // When the row lays out horizontally (≥ lg), the CSS reorder shows as `row-reverse`.
     const dir = getComputedStyle(row).flexDirection;
     if (dir === "row" || dir === "row-reverse") {
       expect(dir).toBe("row-reverse");
@@ -84,30 +99,77 @@ export const MediaStart: Story = {
   },
 };
 
-/** `align: center` — copy centred. Pairs well with a stacked, narrow-column feel. */
+/** Centered: copy only, `align="center"` — a single centred column, no media slot. */
 export const Centered: Story = {
   args: { align: "center" },
+  render: (args) => (
+    <Hero {...args}>
+      <HeroBody>
+        <Eyebrow>About the studio</Eyebrow>
+        <Heading level={1} size="xl">
+          The studio is the team.
+        </Heading>
+        <Prose lead>
+          A small group of designers and engineers who take a brief from first draft to a finished,
+          on-theme site.
+        </Prose>
+        <CtaGroup align="center">
+          <Button size="lg">Start a project</Button>
+        </CtaGroup>
+      </HeroBody>
+    </Hero>
+  ),
 };
 
-/** `density: compact` — tighter vertical rhythm from the shared Section axis. */
-export const Compact: Story = {
-  args: { density: "compact" },
+/** With-stats: the second column is a `StatRow` instead of media. */
+export const WithStats: Story = {
+  render: (args) => (
+    <Hero {...args}>
+      <HeroBody>
+        <Eyebrow>By the numbers</Eyebrow>
+        <Heading level={1} size="xl">
+          Briefs in, sites out.
+        </Heading>
+        <Prose lead>A fixed-scope engagement that turns a short brief into a finished microsite.</Prose>
+        <CtaGroup>
+          <Button size="lg">Start a project</Button>
+        </CtaGroup>
+      </HeroBody>
+      <HeroAside>
+        <StatRow columns="two">
+          <Stat value="12k" label="sites shipped" />
+          <Stat value="48h" label="brief to launch" />
+        </StatRow>
+      </HeroAside>
+    </Hero>
+  ),
 };
+
+/** Quote-led: the second column is a testimonial `Quote`. */
+export const QuoteLed: Story = {
+  render: (args) => (
+    <Hero {...args}>
+      <HeroBody>
+        <Eyebrow>What clients say</Eyebrow>
+        <Heading level={1} size="xl">
+          A finished site by the next standup.
+        </Heading>
+        <Prose lead>We hand off screenshots you can drop straight into a deck or a launch plan.</Prose>
+        <CtaGroup>
+          <Button size="lg">Start a project</Button>
+        </CtaGroup>
+      </HeroBody>
+      <HeroAside>
+        <Quote attribution="Ada Lovelace" role="Founder, Analytical Engines">
+          They turned our brief into a finished site before our next standup.
+        </Quote>
+      </HeroAside>
+    </Hero>
+  ),
+};
+
+/** `density: compact` — tighter vertical rhythm. */
+export const Compact: Story = { args: { density: "compact" } };
 
 /** `density: spacious` — generous vertical rhythm. */
-export const Spacious: Story = {
-  args: { density: "spacious" },
-};
-
-/** No `imageSrc` — the section-owned placeholder fills the fixed-aspect box. */
-export const WithPlaceholder: Story = {
-  args: { imageSrc: undefined },
-};
-
-/** A real image path wired in — overrides the placeholder, same `object-cover` box. */
-export const CustomImage: Story = {
-  args: {
-    imageSrc:
-      "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1600&q=80",
-  },
-};
+export const Spacious: Story = { args: { density: "spacious" } };

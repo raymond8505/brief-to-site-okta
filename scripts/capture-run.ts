@@ -24,6 +24,7 @@ import {
   HIDE_DEV_OVERLAY_CSS,
   MOTION_FREE_CSS,
   runDirName,
+  serverProbePorts,
   type CaptureShot,
 } from "../packages/core/src/config/capture";
 import { devSpawnSpec, resolveNextBin } from "../packages/core/src/config/dev";
@@ -73,6 +74,16 @@ async function waitForServer(url: string, timeoutMs: number): Promise<boolean> {
     await sleep(500);
   }
   return false;
+}
+
+/** One quick check for a server already listening at `url` (used to decide reuse vs. spawn). */
+async function probeServer(url: string, timeoutMs = 1500): Promise<boolean> {
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 /** Stop the dev server via a pure Node signal. `next` is the direct child, so this frees the port. */
@@ -148,34 +159,54 @@ async function main(): Promise<void> {
 
   const { pages, viewports } = loaded.config;
   const run = args.run ?? args.site.replace(/[/\\]+/g, "-");
-  const baseUrl = `http://localhost:${args.port}`;
-  const shots = captureManifest({ baseUrl, pages, viewports });
   const runDir = join(siteDir, "captures", runDirName(run, formatTimestamp(new Date())));
 
-  let nextBin: string;
-  try {
-    nextBin = resolveNextBin(siteDir);
-  } catch {
-    console.error(`✗ ${args.site}: next is not installed for this site`);
-    process.exit(1);
+  // Reuse an already-running dev server if one is up (e.g. the operator left `sites:dev` running) —
+  // in the past capture spawning its own server collided with that. Only spawn (and later tear down)
+  // a server when none is found; a reused server is the operator's and is left running.
+  let port = args.port;
+  let reused = false;
+  for (const candidate of serverProbePorts(args.port)) {
+    if (await probeServer(`http://localhost:${candidate}/`)) {
+      port = candidate;
+      reused = true;
+      break;
+    }
   }
 
-  const spec = devSpawnSpec(nextBin, siteDir, ["-p", String(args.port)]);
-  const child = spawn(spec.command, spec.args, spec.options);
-  let serverExited = false;
-  child.on("exit", () => {
-    serverExited = true;
-  });
-  child.on("error", () => {
-    serverExited = true;
-  });
+  const baseUrl = `http://localhost:${port}`;
+  const shots = captureManifest({ baseUrl, pages, viewports });
+
+  let child: ChildProcess | undefined;
+  if (reused) {
+    console.log(`↺ ${args.site}: reusing dev server already running on :${port}`);
+  } else {
+    let nextBin: string;
+    try {
+      nextBin = resolveNextBin(siteDir);
+    } catch {
+      console.error(`✗ ${args.site}: next is not installed for this site`);
+      process.exit(1);
+    }
+    const spec = devSpawnSpec(nextBin, siteDir, ["-p", String(port)]);
+    child = spawn(spec.command, spec.args, spec.options);
+    let serverExited = false;
+    child.on("exit", () => {
+      serverExited = true;
+    });
+    child.on("error", () => {
+      serverExited = true;
+    });
+    const ready = await waitForServer(`${baseUrl}/`, SERVER_READY_TIMEOUT_MS);
+    if (!ready || serverExited) {
+      stopServer(child);
+      console.error(`✗ ${args.site}: dev server did not become ready on port ${port}`);
+      process.exit(1);
+    }
+  }
 
   let exitCode = 0;
   try {
-    const ready = await waitForServer(`${baseUrl}/`, SERVER_READY_TIMEOUT_MS);
-    if (!ready || serverExited) {
-      throw new Error(`dev server did not become ready on port ${args.port}`);
-    }
     mkdirSync(runDir, { recursive: true });
 
     const written = await capture(shots, runDir);
@@ -188,7 +219,7 @@ async function main(): Promise<void> {
     console.error(`✗ ${args.site}: ${err instanceof Error ? err.message : String(err)}`);
     exitCode = 1;
   } finally {
-    stopServer(child);
+    if (child) stopServer(child); // only tear down a server we started; a reused one is the operator's
   }
 
   process.exit(exitCode);

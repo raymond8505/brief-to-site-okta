@@ -4,45 +4,97 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Section suite
 
-The tool is an **assembly engine**: the agent composes SSR pages from these compound
-**sections**, applies the deterministic theme, and fills brief-grounded copy.
-This page is the contract every section follows — and the vocabulary the agent selects from via the
-Storybook MCP addon.
+The tool is an **assembly engine**: the agent composes SSR pages from these compound **sections**,
+fills each section's slots with **block primitives**, applies the deterministic theme, and writes
+brief-grounded copy. This page is the contract every section follows — and, together with the
+**`Blocks/*`** catalog, the vocabulary the agent selects from via the Storybook MCP addon.
 
 ## The contract
 
 1. **Render through `Section`.** The shell is a full-bleed `<section>` that provides the standard
-   centred container (`max-w-7xl`, default breakpoints, responsive gutters) and the one
-   variant axis shared by all sections: spacing **density** (`compact` / `comfortable` / `spacious`).
-   Because it is full-bleed, a section may carry its own background on the outer element while its
-   copy still lands on the shared column.
-2. **Layout variants are CVA + CSS-only.** A variant maps a **semantic name** to a class
-   string, and may only change *alignment*, *spacing*, or *child order* (via `order` /
-   `flex-direction`). It must **never** change DOM/source order or child structure. Variants use
-   theme CSS vars only and must hold across breakpoints. Give each meaningful variant its own story.
-3. **Images are paths with a section-owned placeholder.** Sections take an `imageSrc` path
-   prop and fall back to `placeholderDataUri(...)` when it is absent. The `<img>` uses
-   `object-fit: cover; object-position: center` so an operator overwrites art of any size without
-   resizing.
+   centred container (`max-w-7xl`, default breakpoints, responsive gutters) and the one variant axis
+   shared by all sections: spacing **density** (`compact` / `comfortable` / `spacious`). Because it is
+   full-bleed, a section may carry its own background on the outer element while its content still
+   lands on the shared column.
+2. **A section is a compound family, filled with blocks.** Like the `Card` family, a section is a
+   root plus **named slot subcomponents** (e.g. `Hero` + `HeroBody` / `HeroMedia` / `HeroAside`), each
+   carrying a `data-slot`. The agent fills those slots with **block primitives** from
+   `@brief-to-site/core/blocks` (`Eyebrow`, `Heading`, `Prose`, `CtaGroup`, `MediaFrame`, `StatRow`,
+   `Quote`, …) — never ad-hoc markup. **A "variant" is a composition**: the same section reads as
+   *split*, *centered*, *with-stats*, or *quote-led* purely by which blocks fill which slots.
+   A section still owns any genuine geometric layout as a small **CSS-only CVA** (`align`, `mediaSide`,
+   `columns`, `formSide`); and layout may react to which slots are present via `has-[data-slot=…]`. A
+   dev-only `assertAllowedChildren` guard warns when a wrong component is composed into a slot.
+3. **Images go through the `MediaFrame` block.** No section renders a raw `<img>`. `MediaFrame` takes
+   a `src` path (the root-relative `/images/<name>.png` a placeholder manifest entry generated) in an
+   `object-cover` box — so an operator overwrites art of any size without resizing. When `src` is
+   omitted it falls back to an inline placeholder sized from its `aspect` (see **Guides/Placeholder
+   Sourcing** for the manifest + Unsplash workflow).
 
-Colour: sections consume **role tokens** (`bg-background`, `text-foreground`, `text-muted-foreground`,
-`bg-muted`) — never hardcoded colours — so the deterministic theme stays orthogonal.
+Colour: sections and blocks consume **role tokens** (`bg-background`, `text-foreground`,
+`text-muted-foreground`, `bg-muted`, `--brand-secondary`) — never hardcoded colours — so the
+deterministic theme stays orthogonal.
 
-## Why CSS-only order (and not DOM order)
+Icons: **`lucide-react`** is the icon library — import glyphs directly
+(`import { ArrowRight } from "lucide-react"`) into blocks/site-local components for visual interest,
+sized and coloured with Tailwind role-token utilities. It's a library, not hand-authored SVG, so it's
+exempt from the icons-barrel rule.
 
-Visual reordering via CSS decouples visual order from DOM/focus order — normally an a11y concern, but
-**moot here**: the deliverable is images and a11y is out of scope. This is flagged so
-structural (DOM-changing) variants are not reintroduced later. See **Sections/Hero → MediaStart**:
-the image moves to the visual left via `flex-row-reverse` while the DOM stays copy → media.
+## The bound is the block vocabulary
+
+Content order carries no constraint — a11y is out of scope here (the deliverable is full-page
+screenshots), so a section arranges its slots and blocks however reads best. What keeps output
+deterministic is the **bounded set of block primitives** the agent composes from, the typed slot
+props, and the dev-only slot guard: a bounded vocabulary in place of free-form markup. Compose from
+the published blocks first; when the vocabulary falls short, **extend it deliberately** — a new
+**site-local block** for one site (a new arrangement of core primitives; see below), or a promoted
+core block (with a story + tests), the same way you would a `ui/` primitive. Never drop raw JSX into a
+page.
 
 ## Building a new section
 
 Copy **`components/sections/_template/`** (see **Sections/_Template**), rename the files + symbols,
-and replace the body. It is a minimal, green, story-documented implementation of all three rules —
-the trustworthy starting point. Export the new section from `components/sections/index.ts` (the
+and replace the body. It is a minimal, green, story-documented compound section — the trustworthy
+starting point for all three rules. Export the new section from `components/sections/index.ts` (the
 `_template` itself is intentionally not exported).
 
-Live examples: **Sections/Hero** (variant vocabulary + placeholder/custom image),
-**Sections/FeatureGrid** (the image contract across a repeating content grid, CSS-only `columns`),
-**Sections/ContactBlock** (form primitives + a CSS-only side variant),
-**Sections/_Template** (the archetype).
+## Site-local components
+
+Not every component belongs in core. The assembly agent works an **escalation ladder**, checking the
+existing tier first but building new when nothing fits (an expected move, not a last resort):
+
+- **Site-local section** — when no core section provides the layout. An arrangement of core blocks at
+  `sites/<slug>/components/sections/<name>/`, following **this same contract** (render through
+  `Section`, compound `data-slot` slots filled with blocks, `assertAllowedChildren`, `MediaFrame`).
+- **Site-local block** — when a section needs a piece the block vocabulary can't express. An
+  arrangement of core **primitives** at `sites/<slug>/components/blocks/<name>/` (carries a
+  `data-slot`, CSS-only `cva` variants).
+- **New core primitive** — when a block needs a UI primitive core lacks. Added straight to core via
+  the shadcn MCP (registry-vetted), not site-local.
+
+Site-local components import from the **public** package surface (`@brief-to-site/core` / `/sections`
+/ `/blocks` / `/lib/utils`), not core-internal `@core/*` paths, are imported into pages by relative
+path, and ship **no story/test**. They never introduce **colour math or a new token/theme system** —
+those stay core-only (consume role tokens + `.wcag-contrast`, no JS twin). `yarn sites:novel <slug>`
+lists every site-local block and section for the HITL report; the operator decides whether any is
+worth **promoting** into core (copy it here, add a story + tests, export it). New primitives already
+live in core, so they surface as ordinary core changes.
+
+## The suite covers the common marketing archetypes
+
+The core suite is deep enough to stack a full landing page from it — reach for the whole vocabulary,
+not just Hero + one grid:
+
+- **Sections/Hero** — split / centered / with-stats / quote-led compositions.
+- **Sections/FeatureGrid** — `FeatureCard` blocks in a CSS-only `columns` grid, optional header slot.
+- **Sections/Steps** — a how-it-works grid of `Step` blocks (numbered), optional header.
+- **Sections/StatBand** — a "by the numbers" `StatRow`, optional header. *Placeholder-grade figures.*
+- **Sections/Testimonials** — a grid of `Quote` blocks, optional header. *Placeholder-grade quotes.*
+- **Sections/LogoStrip** — a slim social-proof band: caption + `LogoRow`.
+- **Sections/Faq** — static `FaqItem` Q/A pairs (always open — the deliverable is screenshots).
+- **Sections/CtaBand** — a closing call-to-action on a muted brand surface.
+- **Sections/ContactBlock** — a `ContactCopy` slot + a presentational `ContactForm`.
+
+**Proof sections stay honest.** `StatBand` and `Testimonials` render **placeholder-grade** content
+the operator finalizes (like placeholder images) — the agent never invents specific numbers, named
+customers, or real metrics (see `generation.json`). Block vocabulary: **Blocks/***.

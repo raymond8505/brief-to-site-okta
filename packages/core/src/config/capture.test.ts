@@ -2,12 +2,14 @@ import { describe, expect, it } from "vitest";
 
 import {
   captureManifest,
+  DEV_DEFAULT_PORT,
   formatTimestamp,
   HIDE_DEV_OVERLAY_CSS,
   MOTION_FREE_CSS,
   pageBasename,
   pageUrl,
   runDirName,
+  serverProbePorts,
 } from "./capture";
 import type { PageConfig } from "./pages.schema";
 import type { Viewport } from "./viewports.schema";
@@ -55,6 +57,21 @@ describe("pageUrl", () => {
 describe("runDirName", () => {
   it("joins run name and timestamp", () => {
     expect(runDirName("northwind", "20260707T143022Z")).toBe("northwind-20260707T143022Z");
+  });
+});
+
+describe("serverProbePorts", () => {
+  it("probes the requested spawn port first, then the dev default", () => {
+    expect(serverProbePorts(3210)).toEqual([3210, DEV_DEFAULT_PORT]);
+  });
+
+  it("does not duplicate when the requested port is already the dev default", () => {
+    expect(serverProbePorts(DEV_DEFAULT_PORT)).toEqual([DEV_DEFAULT_PORT]);
+  });
+
+  it("honours an explicit dev-default override", () => {
+    expect(serverProbePorts(4000, 4000)).toEqual([4000]);
+    expect(serverProbePorts(3210, 4000)).toEqual([3210, 4000]);
   });
 });
 

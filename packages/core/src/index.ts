@@ -42,18 +42,48 @@ export { Label } from "./components/ui/label";
 export { Separator } from "./components/ui/separator";
 export { Textarea } from "./components/ui/textarea";
 
+// Block library. The bounded vocabulary the agent composes into section slots. Also available
+// via the "./blocks" subpath; Storybook (`Blocks/*`) is the live catalog.
+export { Heading, headingVariants } from "./components/blocks/heading/heading";
+export type { HeadingProps } from "./components/blocks/heading/heading";
+export { Eyebrow } from "./components/blocks/eyebrow/eyebrow";
+export type { EyebrowProps } from "./components/blocks/eyebrow/eyebrow";
+export { Prose, proseVariants } from "./components/blocks/prose/prose";
+export type { ProseProps } from "./components/blocks/prose/prose";
+export { CtaGroup, ctaGroupVariants } from "./components/blocks/cta-group/cta-group";
+export type { CtaGroupProps } from "./components/blocks/cta-group/cta-group";
+export { MediaFrame, mediaFrameVariants } from "./components/blocks/media-frame/media-frame";
+export type { MediaFrameProps } from "./components/blocks/media-frame/media-frame";
+export { FeatureCard } from "./components/blocks/feature-card/feature-card";
+export type { FeatureCardProps } from "./components/blocks/feature-card/feature-card";
+export { Stat, StatRow, statRowVariants } from "./components/blocks/stat/stat";
+export type { StatProps, StatRowProps } from "./components/blocks/stat/stat";
+export { Quote } from "./components/blocks/quote/quote";
+export type { QuoteProps } from "./components/blocks/quote/quote";
+export { BulletList, BulletItem } from "./components/blocks/bullet-list/bullet-list";
+export type { BulletListProps, BulletItemProps } from "./components/blocks/bullet-list/bullet-list";
+export { LogoRow } from "./components/blocks/logo-row/logo-row";
+export type { LogoRowProps, LogoRowLogo } from "./components/blocks/logo-row/logo-row";
+export { Step } from "./components/blocks/step/step";
+export type { StepProps } from "./components/blocks/step/step";
+export { FaqItem } from "./components/blocks/faq-item/faq-item";
+export type { FaqItemProps } from "./components/blocks/faq-item/faq-item";
+export { assertAllowedChildren } from "./components/blocks/lib/assert-slot";
+
 // Section suite. Compound components the agent assembles into SSR pages; each carries
 // CSS-only, deterministic CVA variants. Also available via the "./sections" subpath.
 export { Section, sectionVariants } from "./components/sections/section";
 export type { SectionProps } from "./components/sections/section";
+export { placeholderSvg, placeholderDataUri } from "./components/sections/placeholder";
+export type { PlaceholderOptions } from "./components/sections/placeholder";
 export {
-  placeholderSvg,
-  placeholderDataUri,
-  PLACEHOLDER_SPECS,
-} from "./components/sections/placeholder";
-export type { PlaceholderOptions, PlaceholderName } from "./components/sections/placeholder";
-export { Hero, heroVariants } from "./components/sections/hero/hero";
-export type { HeroProps, HeroCta } from "./components/sections/hero/hero";
+  Hero,
+  HeroBody,
+  HeroMedia,
+  HeroAside,
+  heroVariants,
+} from "./components/sections/hero/hero";
+export type { HeroProps } from "./components/sections/hero/hero";
 
 // Microsite shell. The page frame + manifest-driven nav generated pages render through.
 export { MicrositeShell } from "./components/shell/microsite-shell";
@@ -70,6 +100,17 @@ export { brandSchema } from "./config/brand.schema";
 export type { BrandConfig } from "./config/brand.schema";
 export { pageSchema, pagesSchema } from "./config/pages.schema";
 export type { PageConfig, PagesConfig } from "./config/pages.schema";
+export {
+  placeholderEntrySchema,
+  placeholdersSchema,
+  placeholderImagePath,
+  ASPECT_DIMENSIONS,
+} from "./config/placeholders.schema";
+export type {
+  AspectKey,
+  PlaceholderEntry,
+  PlaceholdersConfig,
+} from "./config/placeholders.schema";
 export { viewportSchema, viewportsSchema, DEFAULT_VIEWPORTS } from "./config/viewports.schema";
 export type { Viewport, ViewportsConfig } from "./config/viewports.schema";
 export { generationSchema } from "./config/generation.schema";
