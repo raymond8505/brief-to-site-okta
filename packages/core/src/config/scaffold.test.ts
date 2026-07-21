@@ -83,6 +83,7 @@ describe("scaffoldSite", () => {
       "components/sections/README.md",
       "components/blocks/README.md",
       "public/images/.gitkeep",
+      "public/images/logo.png",
     ];
     for (const file of expected) expect(existsSync(join(siteDir, file))).toBe(true);
   });
@@ -95,6 +96,9 @@ describe("scaffoldSite", () => {
     const meta = readJson(join(siteDir, "config/meta.json"));
     expect(meta.name).toBe("Acme Widgets");
     expect(meta.description).toContain("Acme Widgets");
+    // The logo is a standard copied placeholder (public/images/logo.png), not a manifest entry —
+    // so the scaffold carries meta.logoSrc verbatim, pointing at the shipped asset.
+    expect(meta.logoSrc).toBe("/images/logo.png");
   });
 
   it("carries a theme.css consistent with the copied brand.json", () => {

@@ -1,4 +1,5 @@
 {
   "name": "Site Template",
-  "description": "A scaffold template — sites:new overwrites this."
+  "description": "A scaffold template — sites:new overwrites this.",
+  "logoSrc": "/images/logo.png"
 }

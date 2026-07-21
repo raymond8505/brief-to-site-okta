@@ -2,8 +2,9 @@ import { z } from "zod";
 
 /**
  * `meta.json` — site-level identity (one JSON file per concern). Feeds document titles and
- * the `MicrositeShell` header. `logoSrc` is a replaceable placeholder image path; when it's
- * omitted the shell falls back to the section-owned `placeholderDataUri`.
+ * the `MicrositeShell` header. `logoSrc` points at the standard `logo.png` placeholder the scaffold
+ * ships (a customer-provided asset the operator overwrites); when it's omitted the shell falls back to
+ * the section-owned `placeholderDataUri` (Storybook/dev only — never in a built site).
  */
 export const metaSchema = z.object({
   /** Site / brand name — shown in the header and footer. */

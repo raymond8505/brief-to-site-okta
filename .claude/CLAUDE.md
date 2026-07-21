@@ -235,10 +235,17 @@ shell out to platform commands and never branch on `process.platform`.
   `GlobalFonts.registerFromPath`, so output doesn't depend on host fonts. **`ASPECT_DIMENSIONS`**
   (`placeholders.schema.ts`) is the single source of box sizes (the manifest's `aspect` picks one) —
   never hardcode dimensions. PNGs are **committed** (operator overwrites in place), no byte-identical
-  drift test (like capture, the draw step isn't unit-tested). The **logo is a special case**: always
-  named `logo` → `/images/logo.png`. The inline SVG (`sections/placeholder.ts` `placeholderSvg`/
-  `placeholderDataUri`) is now **only** the Storybook/dev/jsdom render fallback — a separate concern
-  from the on-disk raster.
+  drift test (like capture, the draw step isn't unit-tested). The **logo is NOT a manifest entry** — it
+  is a **customer-provided** asset, so it is never described in `placeholders.json` and never sourced.
+  The scaffold ships one **standard logo placeholder** (`sites/_shell/public/images/logo.png`, a neutral
+  box reading "logo") that `sites:new` copies into every site (it rides the `_shell` tree) for the
+  operator to overwrite; `_shell/config/meta.json` sets `logoSrc: /images/logo.png` so scaffolds inherit
+  it. Regenerate that single committed asset with `yarn placeholders:logo` (root
+  `scripts/logo-placeholder-gen.ts`, self-contained `@napi-rs/canvas` like `placeholder-gen.ts`) only
+  when the shared placeholder style changes. The inline SVG (`sections/placeholder.ts` `placeholderSvg`/
+  `placeholderDataUri`) is **only** the Storybook/dev/jsdom render fallback — it **never fires in a built
+  site** (every image, incl. the logo, is a real committed PNG), a separate concern from the on-disk
+  raster.
 - **`placeholders:source <slug>` auto-fills real stock photos from the manifest** — **operator-run,
   NOT part of the generation pipeline** (the microsite skill phases don't invoke it; operator uses it
   at their discretion). Documented in the Storybook **Guides/Placeholder Sourcing** page

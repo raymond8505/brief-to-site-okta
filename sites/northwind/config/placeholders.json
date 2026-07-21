@@ -43,10 +43,5 @@
     "name": "about-launched-site",
     "aspect": "photo",
     "description": "A newly launched website on a screen: the live homepage of a real, finished site, crisp and confident."
-  },
-  {
-    "name": "logo",
-    "aspect": "logo",
-    "description": "Northwind Studio wordmark logo, on a transparent or white background."
   }
 ]
