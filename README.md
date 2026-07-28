@@ -41,6 +41,41 @@ yarn storybook                      # browse the section suite (props, variants,
 yarn playwright install chromium    # one-time, required ONLY for capture:run
 ```
 
+## Starting a site
+
+Kick a build off by describing the client in plain language — there is **no required format**. The
+agent reads what you give it, asks follow-up questions where it needs them, and fills sensible
+defaults for everything you leave out. A sparse brief still produces a complete site: the skill is
+built to **design more, not defer more** when detail is missing.
+
+The block below is a **guide, not a template** — a reminder of what tends to be worth mentioning.
+Its headings mirror the [`brief.md`](./sites/_shell/brief.md) skeleton the agent writes, so what you
+say maps straight onto the intake contract.
+
+```
+Build a microsite for <business name>.
+
+What is this?     <the business, in a couple of sentences>
+Audience          <who the copy speaks to>
+Key messages      <the 2–4 points every page should land>
+Pages             <defaults to Home / About / Contact — say if you want others,
+                   plus any per-page intent or CTA>
+Visual direction  <the creative steer: mood, palette accents, iconography feel,
+                   imagery, anything to evoke or avoid>
+Notes             <brand hex colour (at least one, up to three), tagline,
+                   real selling points, anything else concrete>
+```
+
+- **The only things it genuinely needs** are the business name, a sentence or two on what it does,
+  and one brand hex colour (`meta.json` requires `name` + `description`; `brand.json` requires
+  `primary`). Everything else has a default.
+- **The highest-leverage things to add** are *Key messages* and *Visual direction*. Key messages
+  ground every page's copy; visual direction is what lets the agent compose expressively — richer
+  arrangements, deliberate iconography — instead of falling back on a plain stack of blocks.
+- **Not worth specifying:** colour harmony and corner radius (inferred, and overridable in
+  `brand.json`), fonts (not per-site configurable — every site is Geist), and imagery (labelled
+  placeholders are generated automatically; `placeholders:source` can swap in real photos later).
+
 ## Building a site
 
 The whole pipeline is driven by the **`microsite` skill**
@@ -61,7 +96,8 @@ before capture:
 | capture       | `yarn capture:run <slug>`          | drive Chromium motion-free → full-page JPEGs per page × viewport |
 
 - **`brief.md`** in each site is the intake contract and the single source of copy grounding —
-  every page's copy derives from it (`What / Audience / Key messages / Pages / Notes`).
+  every page's copy derives from it
+  (`What / Audience / Key messages / Pages / Visual direction / Notes`).
 - **[`config/generation/`](./config/generation/)** holds the **system-level** voice + guardrails
   (one house style across all sites); the agent applies it to every line of generated copy.
 - The three committed **worked examples** cover all three colour harmonies:
