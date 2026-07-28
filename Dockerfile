@@ -12,7 +12,10 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN corepack enable && corepack prepare yarn@4.17.0 --activate
 
 # --- Claude Code CLI, so the whole pipeline is drivable from inside the container ---
-RUN npm install -g @anthropic-ai/claude-code
+# codegraph rides along: it's a stdio MCP (`codegraph serve --mcp` in .mcp.json), so it needs no
+# service/port — just the global binary, pinned so the version holds across rebuilds. Its .codegraph/
+# index is machine-local (gitignored) and builds on first use against the bind-mounted /workspace.
+RUN npm install -g @anthropic-ai/claude-code @colbymchenry/codegraph@1.5.0
 
 # Chromium already lives in the base image at this path; point Playwright at it so
 # `capture:run` never re-downloads a browser.

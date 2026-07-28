@@ -24,14 +24,21 @@ x-toolchain: &toolchain
 services:
   storybook:
     <<: *toolchain
-    # Install once (idempotent), then serve Storybook on all interfaces so the sibling
-    # `dev` container can reach the MCP at http://storybook:6006/mcp.
+    # Install once (idempotent), build the codegraph index, then serve Storybook on all
+    # interfaces so the sibling `dev` container can reach the MCP at http://storybook:6006/mcp.
     # NOTE: plain `yarn install` (not --immutable): the committed yarn.lock is currently stale
     # (it references a removed `sites/putting-challenge` workspace), so the first install heals
     # it. Commit the regenerated yarn.lock, then this becomes a no-op.
+    # `codegraph init` (~6s, source tree only) builds the .codegraph/ index that the codegraph
+    # stdio MCP serves — serve --mcp reads an existing index, it does NOT build one, so without
+    # this a fresh container has the binary but an empty graph. The index lives on the bind-mounted
+    # /workspace, so the `dev` container (where Claude runs `codegraph serve --mcp`) sees it too.
     command: >
       sh -c "yarn install &&
+             codegraph init &&
              yarn storybook -p 6006 --host 0.0.0.0 --no-open"
+    environment:
+      - CODEGRAPH_TELEMETRY=0 # no anonymous usage stats from a client-handoff tool
     ports:
       - "6006:6006" # browse the section suite from the host
     healthcheck:
@@ -65,6 +72,7 @@ services:
     environment:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - SSH_AUTH_SOCK=/ssh-agent
+      - CODEGRAPH_TELEMETRY=0 # no anonymous usage stats from a client-handoff tool
       # The Storybook MCP lives in the sibling container, reachable by service name. `.mcp.json`
       # defaults to localhost so a HOST checkout works untouched — this override is what makes the
       # committed config correct in BOTH places instead of only one.

@@ -95,7 +95,12 @@ docker compose down                   # stop; add -v to also wipe node_modules +
   service sets `BTS_STORYBOOK_URL=http://storybook:6006/mcp`. So the committed config is correct
   **both** in the container (sibling service name) and on a host checkout (localhost) — nothing
   to edit when switching between them.
-- The `codegraph` MCP in `.mcp.json` needs a `codegraph` binary that isn't part of this setup;
-  it's unused by the `microsite` skill and can be ignored (or removed).
+- The `codegraph` MCP in `.mcp.json` is a stdio server; the `codegraph` binary is baked into the
+  image (`@colbymchenry/codegraph`, pinned in the Dockerfile). The `storybook` service runs
+  `codegraph init` once at startup (~6s, source tree only) to build the `.codegraph/` index —
+  `serve --mcp` reads that index rather than building one, so this is what makes codegraph usable
+  out of the box. The index is machine-local (gitignored) and lives on the bind-mounted
+  `/workspace`, so the `dev` container (where Claude runs `serve --mcp`) shares it; its file watcher
+  auto-syncs on edits. Telemetry is disabled via `CODEGRAPH_TELEMETRY=0` in compose.
 - Chromium ships in the base image (`PLAYWRIGHT_BROWSERS_PATH=/ms-playwright`), so
   `capture:run` needs no `yarn playwright install`.

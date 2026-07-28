@@ -52,6 +52,7 @@ Or, on a host that already has Node 24 / Yarn 4:
 yarn install                        # workspaces; installs core + all sites
 yarn storybook                      # browse the section suite (props, variants, examples)
 yarn playwright install chromium    # one-time, required ONLY for capture:run
+npm i -g @colbymchenry/codegraph@1.5.0   # one-time, the codegraph MCP in .mcp.json (Docker bakes it in)
 ```
 
 ## Building a site
