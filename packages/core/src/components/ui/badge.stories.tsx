@@ -9,7 +9,7 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "brand", "secondary", "destructive", "outline", "ghost", "link"],
+      options: ["default", "brand", "brandTint", "secondary", "destructive", "outline", "ghost", "link"],
     },
   },
   args: { children: "Badge" },
@@ -20,6 +20,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 export const Brand: Story = { args: { variant: "brand" } };
+export const BrandTint: Story = { args: { variant: "brandTint" } };
 export const Secondary: Story = { args: { variant: "secondary" } };
 export const Destructive: Story = { args: { variant: "destructive" } };
 export const Outline: Story = { args: { variant: "outline" } };

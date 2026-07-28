@@ -49,7 +49,12 @@ shell out to platform commands and never branch on `process.platform`.
   (`--brand-r/g/b`, defaulted in colors.css and emitted per-site by `theme:build` via `hexToRgb` —
   no luminance math). `--primary-foreground` is left at core's near-white default; a saturated
   brand fill that carries text uses `.wcag-contrast` instead — see the **`Badge` `brand` variant**
-  (`wcag-contrast brand-rgb`), which the section eyebrows use. **`.brand-rgb`** (contrast-math.css)
+  (`wcag-contrast brand-rgb`). **But `.wcag-contrast` solves for the 4.5:1 AA *floor***, so a
+  saturated mid-tone fill (orange/green) lands ~4.51:1 — compliant but muddy at small sizes (white
+  text would *fail* AA on the same fill). So **`Eyebrow` defaults to the `brandTint` `Badge` variant**
+  (`bg-accent text-accent-foreground` — the l90 brand tint + dark text), which is ~12–16:1 with **no
+  contrast math** (light-tint + dark-text is always safe). Reach for the saturated `brand` variant
+  only when you deliberately want the fill, not for small text. **`.brand-rgb`** (contrast-math.css)
   is the authored bridge class feeding `--r/--g/--b` from `--brand-r/g/b`; it replaced the inline
   `[--r:var(--brand-r)] …` arbitrary-property classes, which Tailwind v4's **oxide scanner corrupts**
   (byte-vs-char offset bug) when a scanned file has multi-byte chars before the candidate → garbage

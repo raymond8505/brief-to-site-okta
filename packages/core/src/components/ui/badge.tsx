@@ -16,6 +16,12 @@ const badgeVariants = cva(
         // per site). Authored classes, not inline `[--r:…]` arbitrary props — those trip the
         // oxide scanner's byte/char offset bug (see contrast-math.css `.brand-rgb`).
         brand: "wcag-contrast brand-rgb border-transparent",
+        // Brand-hued but legible-by-default: a LIGHT brand tint (`--accent`, the l90 brand token)
+        // with dark `--accent-foreground` text. Light-tint + dark-text is always ≥4.5:1 with NO
+        // contrast math — it clears ~12–15:1 across hues, versus the `brand` fill which sits right on
+        // the 4.5:1 floor (a saturated mid-tone can't carry small text comfortably either way). This
+        // is the `Eyebrow` default; use `brand` when you explicitly want the saturated fill.
+        brandTint: "bg-accent text-accent-foreground border-transparent [a]:hover:bg-accent/80",
         secondary:
           "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
         destructive:

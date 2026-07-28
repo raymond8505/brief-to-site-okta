@@ -10,9 +10,15 @@ describe("Eyebrow", () => {
     expect(el).toHaveTextContent("New");
   });
 
-  it("defaults to the WCAG-safe brand fill", () => {
+  it("defaults to the legible light brand tint (not the 4.5-floor fill)", () => {
     render(<Eyebrow>Brand</Eyebrow>);
-    expect(screen.getByText("Brand")).toHaveClass("wcag-contrast", "w-fit");
+    expect(screen.getByText("Brand")).toHaveClass("bg-accent", "text-accent-foreground", "w-fit");
+    expect(screen.getByText("Brand")).not.toHaveClass("wcag-contrast");
+  });
+
+  it("can still opt into the saturated brand fill", () => {
+    render(<Eyebrow variant="brand">Fill</Eyebrow>);
+    expect(screen.getByText("Fill")).toHaveClass("wcag-contrast");
   });
 
   it("forwards className", () => {
