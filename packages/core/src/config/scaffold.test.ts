@@ -7,7 +7,7 @@ import { brandSchema } from "./brand.schema";
 import { pagesSchema } from "./pages.schema";
 import { placeholdersSchema } from "./placeholders.schema";
 import { DEFAULT_VIEWPORTS, viewportsSchema } from "./viewports.schema";
-import { isValidSlug, scaffoldSite, SHELL_DIR } from "./scaffold";
+import { buildSiteBuildInfo, isValidSlug, scaffoldSite, SHELL_DIR } from "./scaffold";
 import { buildThemeCss } from "./theme";
 
 const readJson = (path: string): Record<string, unknown> =>
@@ -54,13 +54,33 @@ describe("sites/_shell fixture", () => {
   });
 });
 
+describe("buildSiteBuildInfo", () => {
+  it("is deterministic given its inputs (provenance for tier-2 repos)", () => {
+    expect(
+      buildSiteBuildInfo("acme", { coreSha: "abc123", generatedAt: "2026-07-27T00:00:00.000Z" }),
+    ).toBe(
+      `{\n  "tool": "brief-to-site",\n  "slug": "acme",\n  "coreSha": "abc123",\n  "generatedAt": "2026-07-27T00:00:00.000Z"\n}\n`,
+    );
+  });
+
+  it("defaults missing provenance to unknown/null (never throws)", () => {
+    const info = JSON.parse(buildSiteBuildInfo("acme")) as Record<string, unknown>;
+    expect(info.tool).toBe("brief-to-site");
+    expect(info.coreSha).toBe("unknown");
+    expect(info.generatedAt).toBe(null);
+  });
+});
+
 describe("scaffoldSite", () => {
   let tmp: string;
   let siteDir: string;
 
   beforeAll(() => {
     tmp = mkdtempSync(join(tmpdir(), "bts-scaffold-"));
-    ({ siteDir } = scaffoldSite("acme-widgets", tmp));
+    ({ siteDir } = scaffoldSite("acme-widgets", tmp, {
+      coreSha: "deadbeef",
+      generatedAt: "2026-07-27T00:00:00.000Z",
+    }));
   }, 20000);
 
   afterAll(() => rmSync(tmp, { recursive: true, force: true }));
@@ -80,12 +100,23 @@ describe("scaffoldSite", () => {
       "config/viewports.json",
       "theme.css",
       "brief.md",
+      "build-info.json",
       "components/sections/README.md",
       "components/blocks/README.md",
       "public/images/.gitkeep",
       "public/images/logo.png",
     ];
     for (const file of expected) expect(existsSync(join(siteDir, file))).toBe(true);
+  });
+
+  it("stamps build-info.json with the tool provenance passed in", () => {
+    const info = readJson(join(siteDir, "build-info.json"));
+    expect(info).toEqual({
+      tool: "brief-to-site",
+      slug: "acme-widgets",
+      coreSha: "deadbeef",
+      generatedAt: "2026-07-27T00:00:00.000Z",
+    });
   });
 
   it("renames the workspace after the slug", () => {
