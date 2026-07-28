@@ -1,0 +1,81 @@
+name: brief-to-site
+
+# Two containers, one shared toolchain image and one shared node_modules volume:
+#
+#   storybook  — runs `yarn storybook`; this is what backs the Storybook MCP at :6006/mcp
+#                that the assemble step reads. Also owns the one-time `yarn install`.
+#   dev        — the toolbox. Run Claude Code + every `yarn <script>` here. Waits until
+#                storybook is healthy (i.e. install is done + the MCP is live) before it
+#                is usable, so you never assemble against a missing MCP.
+#
+# The repo is bind-mounted into both, so generated sites and `captures/` land back on the
+# host. node_modules lives in a named volume (fast, and never touches the host — the host
+# has no Node).
+
+x-toolchain: &toolchain
+  build:
+    context: .
+    dockerfile: Dockerfile
+  working_dir: /workspace
+  volumes:
+    - .:/workspace
+    - node_modules:/workspace/node_modules
+
+services:
+  storybook:
+    <<: *toolchain
+    # Install once (idempotent), then serve Storybook on all interfaces so the sibling
+    # `dev` container can reach the MCP at http://storybook:6006/mcp.
+    # NOTE: plain `yarn install` (not --immutable): the committed yarn.lock is currently stale
+    # (it references a removed `sites/putting-challenge` workspace), so the first install heals
+    # it. Commit the regenerated yarn.lock, then this becomes a no-op.
+    command: >
+      sh -c "yarn install &&
+             yarn storybook -p 6006 --host 0.0.0.0 --no-open"
+    ports:
+      - "6006:6006" # browse the section suite from the host
+    healthcheck:
+      # Node's global fetch — the base image has no curl. Any HTTP response = Storybook is up.
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:6006/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 60
+      start_period: 180s # first cold `yarn install` of the monorepo can take a few minutes
+
+  dev:
+    <<: *toolchain
+    depends_on:
+      storybook:
+        condition: service_healthy
+    volumes:
+      - .:/workspace
+      - node_modules:/workspace/node_modules
+      - claude-config:/root/.claude # persist Claude Code login across container rebuilds
+      # Forward the HOST's ssh-agent so `git push` works in here without copying any private key
+      # into the container. This path is Docker Desktop's (macOS/Windows) magic agent socket; on a
+      # Linux host use `${SSH_AUTH_SOCK}:/ssh-agent` instead. The key must be loaded on the host
+      # (`ssh-add -l`). Without this, git auth simply isn't available inside the container.
+      - /run/host-services/ssh-auth.sock:/ssh-agent
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - SSH_AUTH_SOCK=/ssh-agent
+      # The Storybook MCP lives in the sibling container, reachable by service name. `.mcp.json`
+      # defaults to localhost so a HOST checkout works untouched — this override is what makes the
+      # committed config correct in BOTH places instead of only one.
+      - BTS_STORYBOOK_URL=http://storybook:6006/mcp
+    ports:
+      - "3000:3000" # yarn sites:dev <slug>
+      - "3210:3210" # yarn capture:run dev server
+    tty: true
+    stdin_open: true
+    command: ["sleep", "infinity"]
+
+volumes:
+  node_modules:
+  claude-config:

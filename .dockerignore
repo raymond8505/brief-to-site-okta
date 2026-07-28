@@ -1,0 +1,12 @@
+# The build context is tiny — the Dockerfile installs a generic toolchain and the repo is
+# bind-mounted at runtime — but keep heavy/local dirs out of it anyway.
+node_modules
+.next
+storybook-static
+coverage
+test-results
+playwright-report
+sites/*/captures
+.git
+**/*.log
+.DS_Store
