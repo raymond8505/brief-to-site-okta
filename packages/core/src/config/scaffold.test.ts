@@ -100,6 +100,7 @@ describe("scaffoldSite", () => {
       "config/viewports.json",
       "theme.css",
       "brief.md",
+      ".gitignore",
       "build-info.json",
       "components/sections/README.md",
       "components/blocks/README.md",
@@ -107,6 +108,15 @@ describe("scaffoldSite", () => {
       "public/images/logo.png",
     ];
     for (const file of expected) expect(existsSync(join(siteDir, file))).toBe(true);
+  });
+
+  it("ships a site-level .gitignore that keeps captures (the deliverable) tracked", () => {
+    const gitignore = readFileSync(join(siteDir, ".gitignore"), "utf8");
+    expect(gitignore).toMatch(/^node_modules\/$/m);
+    expect(gitignore).toMatch(/^\.next\/$/m);
+    expect(gitignore).toMatch(/^next-env\.d\.ts$/m);
+    // captures/ is the deliverable — it must NOT be ignored in the site repo
+    expect(gitignore).not.toMatch(/^captures\/?$/m);
   });
 
   it("stamps build-info.json with the tool provenance passed in", () => {

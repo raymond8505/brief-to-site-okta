@@ -1,3 +1,4 @@
+import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { relative, resolve } from "node:path";
 
@@ -8,8 +9,10 @@ import { isValidSlug, scaffoldSite } from "../scaffold";
  * `sites/_shell` workspace. Thin fs + exit-code wrapper around `scaffoldSite`; mirrors
  * the other CLIs' status: 0 created, 1 slug invalid / already exists, 2 usage.
  *
- * It also reads the tool's current commit so `scaffoldSite` can stamp `build-info.json` — the
- * provenance pointer back to the tool state that can rebuild the site.
+ * It also applies the **tier-2 version-control strategy**: each site is its own git repository
+ * (the tool repo ignores `sites/<slug>/` entirely, so the nested repo is invisible to it). The
+ * copied `.gitignore` (from `_shell`) and the generated `build-info.json` are the committed record;
+ * this wrapper reads the tool's current commit for provenance and initializes the site repo.
  */
 
 /**
@@ -63,10 +66,22 @@ function main(): void {
     coreSha,
     generatedAt: new Date().toISOString(),
   });
-  console.log(`✓ ${slug}: scaffolded sites/${slug} (tool @ ${coreSha})`);
+  console.log(`✓ ${slug}: scaffolded sites/${slug}`);
   for (const rel of files) console.log(`  ${relative(repoRoot, resolve(siteDir, rel))}`);
 
+  // Tier-2: initialize the site's own git repo. git is a portable tool (identical binary name on
+  // every OS, invoked directly — no shell, no `.cmd` variant), so this stays OS-agnostic; it's
+  // best-effort, degrading to a printed instruction if git isn't available.
+  const init = spawnSync("git", ["init", "-q"], { cwd: siteDir, stdio: "ignore" });
+  const initialized = !init.error && init.status === 0;
+  console.log(
+    initialized
+      ? `\n✓ initialized a git repo in sites/${slug} (tool @ ${coreSha})`
+      : `\n! git unavailable — run \`git init\` in sites/${slug} yourself (tool @ ${coreSha})`,
+  );
+
   console.log(`\nNext: \`yarn install\` then \`yarn sites:validate ${slug}\` / \`yarn theme:build ${slug}\``);
+  console.log(`Commit at each pipeline phase; \`git tag review-1\` at each capture handoff.`);
   process.exit(0);
 }
 

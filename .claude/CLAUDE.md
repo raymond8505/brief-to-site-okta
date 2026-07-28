@@ -178,6 +178,26 @@ shell out to platform commands and never branch on `process.platform`.
   It does **no** luminance/contrast math. The pure builder is `config/theme.ts#buildThemeCss`
   (fs-free, unit-tested); the CLI is a thin wrapper. `loadBrandConfig` validates just brand.json so a
   theme can rebuild mid-edit.
+- **Version control is two-tier: the tool repo, then one git repo per generated site.** The tool
+  repo (this repo) tracks `packages/core`, the scripts, the skill, `sites/_shell`, and the **three
+  committed demo sites** (`northwind`/`meridian`/`lee-carvalo` — tier 1, they stay here as the
+  harmony demos). Every **other** `sites/<slug>` is its **own** independent git repo (tier 2) —
+  `sites/.gitignore` already excludes non-demo sites, so the nested `.git` is invisible to the tool
+  repo (no submodules, no embedded-repo warning). `sites:new` applies this automatically: it copies
+  a **site-level `.gitignore`** from `_shell` (build artifacts out, but `captures/` **kept** — the
+  screenshots are the deliverable, the opposite of the tool repo's `sites/*/captures/` ignore), writes
+  **`build-info.json`** stamping the tool commit the site was generated against (load-bearing: a site
+  imports core as raw TS source, so it can only rebuild inside this monorepo at a compatible core —
+  the SHA is the pointer back), and best-effort **`git init`**s the site. The tool SHA is read from
+  the tool repo's `.git` **via fs, not by spawning git** (`new-site.ts#readToolSha`) so provenance
+  survives without git; the `git init` itself does spawn `git` (a **portable** tool — same binary on
+  every OS, invoked with no shell/`.cmd`, so it doesn't break the OS-agnostic rule) and degrades to a
+  printed instruction when git is absent. Pure/testable split as usual: `buildSiteBuildInfo` (content)
+  lives in core `scaffold.ts` and is unit-tested; the git/date side effects live in the CLI.
+  `build-info.json` is **provenance, not a build-consumed config** — it is deliberately NOT in the
+  `config:schema` registry (like `brief.md`/`design-notes.md` content). The **demo sites predate this
+  and are intentionally left without** a per-site `.gitignore`/`build-info.json`/nested repo — they're
+  tier-1 tool content, not standalone deliverables.
 - **`sites:new <slug>` copies the real `sites/_shell` workspace**, it does NOT emit files from
   template strings. `_shell` is the **shell/wiring scaffold, NOT a design template** — a committed,
   installed, buildable Next.js app (leading `_` = "not a real site") holding core's `MicrositeShell`

@@ -75,6 +75,23 @@ before capture:
 - **[`fixtures/briefs/`](./fixtures/briefs/)** holds named test briefs (`low-context-brief.md`,
   `sensitive-product.md`) for exercising the thin-brief and guardrail paths in a dry-run.
 
+## Version control
+
+Two tiers, along the `sites/.gitignore` seam:
+
+- **Tier 1 — this repo (the tool):** `packages/core`, the scripts, the `microsite` skill,
+  `sites/_shell`, and the **three committed demo sites** (`northwind` / `meridian` / `lee-carvalo`,
+  the colour-harmony demos). These stay here.
+- **Tier 2 — one git repo per generated site:** every other `sites/<slug>` is its **own**
+  independent repo. `sites/.gitignore` excludes non-demo sites, so the nested `.git` is invisible to
+  the tool repo (no submodules). `yarn sites:new` sets this up automatically — it ships a site-level
+  `.gitignore` (build artifacts out, **`captures/` in** — the screenshots are the deliverable),
+  writes `build-info.json` (the tool commit the site was generated against, so an archived site can
+  be rebuilt against a compatible core — it imports core as raw TS source), and `git init`s the site.
+
+Then **commit at each pipeline phase** and **tag each review round** (`git tag review-1` at a capture
+handoff) so a client-approved set of screenshots is a checkoutable point in the site's history.
+
 ## Developing the tool
 
 Work ON brief-to-site happens mostly in `packages/core`:

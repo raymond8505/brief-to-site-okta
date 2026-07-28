@@ -1,0 +1,17 @@
+# This site is its OWN git repository (tier 2) — see build-info.json for the tool commit
+# it was generated against. The tool repo ignores sites/<slug>/ entirely, so these rules
+# govern the site's own history, not the tool's.
+
+# build + install artifacts — regenerable, never committed
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# os
+.DS_Store
+
+# NOTE: captures/ is intentionally NOT ignored here — the screenshots ARE the deliverable,
+# so each review round's images are committed to the site repo (the opposite of the tool repo,
+# where sites/*/captures/ is build output).

@@ -15,6 +15,22 @@ template) into `sites/<slug>/` and sets the package + meta name. You get core's 
 There is **no example page or reference site to mirror** — you author every page fresh from your plan
 (see "No template — compose into the shell" in [`conventions.md`](conventions.md)).
 
+## Version control — each site is its own repo (tier 2)
+
+`sites:new` also sets up the site's **own git repository** (the tool repo ignores `sites/<slug>/`, so
+it's independent): it copies a site-level `.gitignore` (build artifacts out, `captures/` **kept** —
+the screenshots are the deliverable), writes `build-info.json` (the tool commit this site was
+generated against — its rebuild pointer), and runs `git init`. Nothing to author here, but **you own
+the commits**:
+
+- **Commit at each pipeline phase** — after config (this phase), after assemble, after theme +
+  placeholders, and at each capture.
+- **Tag each review round** — `git tag review-1` at the capture handoff, `review-2` next round — so
+  "the screenshots the client approved in round 1" is a real, checkoutable point.
+
+The three committed **demo sites** are the exception: they live in the tool repo (tier 1) and are
+**not** their own repos — don't `git init` them.
+
 ## Author the four config files
 
 Edit the four **per-site** JSON files, one concern each (`meta`, `brand`, `pages`, `viewports`).
