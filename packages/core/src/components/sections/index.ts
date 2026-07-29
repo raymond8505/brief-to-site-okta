@@ -32,3 +32,12 @@ export { Steps, StepsHeader, stepsVariants } from "./steps/steps";
 export type { StepsProps } from "./steps/steps";
 export { Faq, FaqHeader, faqVariants } from "./faq/faq";
 export type { FaqProps } from "./faq/faq";
+export {
+  NewsletterSignup,
+  NewsletterSignupBody,
+  NewsletterForm,
+} from "./newsletter-signup/newsletter-signup";
+export type {
+  NewsletterSignupProps,
+  NewsletterFormProps,
+} from "./newsletter-signup/newsletter-signup";
