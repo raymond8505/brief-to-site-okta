@@ -25,4 +25,20 @@ describe("BulletList / BulletItem", () => {
     );
     expect(screen.getByRole("listitem")).toHaveTextContent("Only");
   });
+
+  it("renders a check icon marker instead of the dot when marker is check", () => {
+    const { container } = render(
+      <BulletList>
+        <BulletItem marker="check">Included</BulletItem>
+        <BulletItem>Plain</BulletItem>
+      </BulletList>,
+    );
+    const [checkItem, dotItem] = Array.from(
+      container.querySelectorAll("li[data-slot=bullet-item]"),
+    );
+    expect(checkItem?.querySelector("svg")).toBeInTheDocument();
+    expect(checkItem?.querySelector("span.rounded-full")).toBeNull();
+    expect(dotItem?.querySelector("svg")).toBeNull();
+    expect(dotItem?.querySelector("span.rounded-full")).toBeInTheDocument();
+  });
 });
