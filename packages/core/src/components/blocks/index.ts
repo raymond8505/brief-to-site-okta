@@ -15,6 +15,8 @@ export { MediaFrame, mediaFrameVariants } from "./media-frame/media-frame";
 export type { MediaFrameProps } from "./media-frame/media-frame";
 export { FeatureCard } from "./feature-card/feature-card";
 export type { FeatureCardProps } from "./feature-card/feature-card";
+export { IconTile } from "./icon-tile/icon-tile";
+export type { IconTileProps } from "./icon-tile/icon-tile";
 export { Stat, StatRow, statRowVariants } from "./stat/stat";
 export type { StatProps, StatRowProps } from "./stat/stat";
 export { Quote } from "./quote/quote";
