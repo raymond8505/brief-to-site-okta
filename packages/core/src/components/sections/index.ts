@@ -32,3 +32,9 @@ export { Steps, StepsHeader, stepsVariants } from "./steps/steps";
 export type { StepsProps } from "./steps/steps";
 export { Faq, FaqHeader, faqVariants } from "./faq/faq";
 export type { FaqProps } from "./faq/faq";
+export {
+  PricingTiers,
+  PricingTiersHeader,
+  pricingTiersVariants,
+} from "./pricing-tiers/pricing-tiers";
+export type { PricingTiersProps } from "./pricing-tiers/pricing-tiers";
