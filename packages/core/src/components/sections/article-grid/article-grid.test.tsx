@@ -38,7 +38,7 @@ describe("ArticleGrid", () => {
     );
     expect(container.querySelector("[data-slot=article-grid]")).toHaveClass("lg:grid-cols-3");
     rerender(
-      <ArticleGrid columns="two">
+      <ArticleGrid columns={2}>
         <ArticleCard title="P" imageAlt="a" />
       </ArticleGrid>,
     );

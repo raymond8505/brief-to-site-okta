@@ -32,7 +32,7 @@ export default function HomePage() {
           </CtaGroup>
         </HeroBody>
       </Hero>
-      <FeatureGrid columns="three">
+      <FeatureGrid columns={3}>
         <FeatureGridHeader>
           <Eyebrow>Small batch, short chain</Eyebrow>
           <Heading level={2}>From green bean to your cup</Heading>

@@ -44,7 +44,7 @@ const cards = [
 /**
  * ArticleGrid — a news/blog/resources section: a grid of `ArticleCard` blocks below an optional
  * `ArticleGridHeader` (compose `Eyebrow` / `Heading` / `Prose`). One layout axis: `columns`
- * (`two` | `three`, default `three`); plus the shared `density`. Article copy is placeholder-grade
+ * (`2` | `3`, default `3`); plus the shared `density`. Article copy is placeholder-grade
  * (operator-finalized) and card `href`s must point at real manifest pages. A "variant" is a
  * composition — how many cards, at which `columns`, how full each card is. Import the section from
  * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
@@ -57,9 +57,9 @@ const meta = {
   argTypes: {
     columns: {
       control: "inline-radio",
-      options: ["two", "three"],
-      description: "Cards per row at the widest breakpoint. Default `three`.",
-      table: { defaultValue: { summary: "three" } },
+      options: [2, 3],
+      description: "Cards per row at the widest breakpoint. Default `3`.",
+      table: { defaultValue: { summary: "3" } },
     },
     density: {
       control: "inline-radio",
@@ -68,7 +68,7 @@ const meta = {
       table: { defaultValue: { summary: "comfortable" } },
     },
   },
-  args: { columns: "three", density: "comfortable" },
+  args: { columns: 3, density: "comfortable" },
   render: (args) => (
     <ArticleGrid {...args}>
       {header}
@@ -83,9 +83,9 @@ type Story = StoryObj<typeof meta>;
 /** Default: a three-up grid of full teasers with a header. */
 export const Default: Story = {};
 
-/** `columns: two` — the blog-page 2-up grid (basicare-style). */
+/** `columns: 2` — the blog-page 2-up grid (basicare-style). */
 export const TwoUp: Story = {
-  args: { columns: "two" },
+  args: { columns: 2 },
   render: (args) => (
     <ArticleGrid {...args}>
       {header}

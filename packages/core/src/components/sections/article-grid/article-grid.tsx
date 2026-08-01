@@ -9,7 +9,7 @@ import { assertAllowedChildren } from "@core/components/blocks/lib/assert-slot";
 /**
  * ArticleGrid — a news/blog/resources section: a grid of `ArticleCard` blocks below an optional
  * `ArticleGridHeader` slot (compose `Eyebrow` / `Heading` / `Prose` inside it). The one layout axis
- * is `columns` (`two` | `three`, default `three`). Article copy is **placeholder-grade** —
+ * is `columns` (`2` | `3`, default `3`). Article copy is **placeholder-grade** —
  * operator-finalized, and every card `href` must point at a real page in the manifest. Import the
  * section from `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
  */
@@ -18,11 +18,11 @@ export const articleGridVariants = cva("grid grid-cols-1 gap-8", {
   variants: {
     /** How many cards sit per row at the widest breakpoint — CSS `grid-template-columns` only. */
     columns: {
-      two: "md:grid-cols-2",
-      three: "md:grid-cols-2 lg:grid-cols-3",
+      2: "md:grid-cols-2",
+      3: "md:grid-cols-2 lg:grid-cols-3",
     },
   },
-  defaultVariants: { columns: "three" },
+  defaultVariants: { columns: 3 },
 });
 
 export interface ArticleGridProps

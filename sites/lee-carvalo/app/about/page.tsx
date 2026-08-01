@@ -37,7 +37,7 @@ export default function AboutPage() {
           />
         </HeroMedia>
       </Hero>
-      <FeatureGrid columns="three">
+      <FeatureGrid columns={3}>
         <FeatureGridHeader>
           <Heading level={2}>What a round looks like</Heading>
           <Prose>A simple loop you can pick up in a minute.</Prose>

@@ -28,7 +28,7 @@ const items = [
 
 /**
  * Faq — a list of static `FaqItem` blocks above an optional `FaqHeader` (compose `Eyebrow` /
- * `Heading` / `Prose`). One layout axis: `columns` (`one` | `two`, default `two`); plus the shared
+ * `Heading` / `Prose`). One layout axis: `columns` (`1` | `2`, default `2`); plus the shared
  * `density`. Answers are always visible. Import the section from `@brief-to-site/core/sections` and
  * the blocks from `@brief-to-site/core/blocks`.
  */
@@ -40,9 +40,9 @@ const meta = {
   argTypes: {
     columns: {
       control: "inline-radio",
-      options: ["one", "two"],
-      description: "Single column or a two-column list. Default `two`.",
-      table: { defaultValue: { summary: "two" } },
+      options: [1, 2],
+      description: "Single column or a two-column list. Default `2`.",
+      table: { defaultValue: { summary: "2" } },
     },
     density: {
       control: "inline-radio",
@@ -51,7 +51,7 @@ const meta = {
       table: { defaultValue: { summary: "comfortable" } },
     },
   },
-  args: { columns: "two", density: "comfortable" },
+  args: { columns: 2, density: "comfortable" },
   render: (args) => (
     <Faq {...args}>
       {header}
@@ -66,9 +66,9 @@ type Story = StoryObj<typeof meta>;
 /** Default: a two-column FAQ with a header. */
 export const Default: Story = {};
 
-/** `columns: one` — a single-column list. */
+/** `columns: 1` — a single-column list. */
 export const SingleColumn: Story = {
-  args: { columns: "one" },
+  args: { columns: 1 },
   render: (args) => (
     <Faq {...args}>
       {header}

@@ -7,12 +7,12 @@ export const statRowVariants = cva("grid gap-6", {
   variants: {
     /** How many stats sit per row at the widest breakpoint. */
     columns: {
-      two: "grid-cols-2",
-      three: "grid-cols-3",
-      four: "grid-cols-2 sm:grid-cols-4",
+      2: "grid-cols-2",
+      3: "grid-cols-3",
+      4: "grid-cols-2 sm:grid-cols-4",
     },
   },
-  defaultVariants: { columns: "three" },
+  defaultVariants: { columns: 3 },
 });
 
 export interface StatRowProps
