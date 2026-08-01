@@ -55,7 +55,7 @@ export default function HomePage() {
           />
         </HeroMedia>
       </Hero>
-      <FeatureGrid columns="three">
+      <FeatureGrid columns={3}>
         <FeatureGridHeader>
           <Eyebrow>How it works</Eyebrow>
           <Heading level={2}>From brief to launch</Heading>

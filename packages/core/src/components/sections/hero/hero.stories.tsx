@@ -147,7 +147,7 @@ export const WithStats: Story = {
         </CtaGroup>
       </HeroBody>
       <HeroAside>
-        <StatRow columns="two">
+        <StatRow columns={2}>
           <Stat value="12k" label="sites shipped" />
           <Stat value="48h" label="brief to launch" />
         </StatRow>

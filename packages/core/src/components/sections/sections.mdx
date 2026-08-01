@@ -23,7 +23,8 @@ brief-grounded copy. This page is the contract every section follows — and, to
    `Quote`, …) — never ad-hoc markup. **A "variant" is a composition**: the same section reads as
    *split*, *centered*, *with-stats*, or *quote-led* purely by which blocks fill which slots.
    A section still owns any genuine geometric layout as a small **CSS-only CVA** (`align`, `mediaSide`,
-   `columns`, `formSide`); and layout may react to which slots are present via `has-[data-slot=…]`. A
+   `columns`, `formSide`); and layout may react to which slots are present via `has-[data-slot=…]`.
+   A quantity axis takes **numbers**, never number-words — `columns={3}`, not `columns="three"`. A
    dev-only `assertAllowedChildren` guard warns when a wrong component is composed into a slot.
 3. **Images go through the `MediaFrame` block.** No section renders a raw `<img>`. `MediaFrame` takes
    a `src` path (the root-relative `/images/<name>.png` a placeholder manifest entry generated) in an
