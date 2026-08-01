@@ -39,3 +39,9 @@ export {
   splitContentVariants,
 } from "./split-content/split-content";
 export type { SplitContentProps } from "./split-content/split-content";
+export {
+  ArticleGrid,
+  ArticleGridHeader,
+  articleGridVariants,
+} from "./article-grid/article-grid";
+export type { ArticleGridProps } from "./article-grid/article-grid";
