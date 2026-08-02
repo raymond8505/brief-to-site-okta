@@ -45,3 +45,9 @@ export {
   articleGridVariants,
 } from "./article-grid/article-grid";
 export type { ArticleGridProps } from "./article-grid/article-grid";
+export {
+  PricingTiers,
+  PricingTiersHeader,
+  pricingTiersVariants,
+} from "./pricing-tiers/pricing-tiers";
+export type { PricingTiersProps } from "./pricing-tiers/pricing-tiers";
