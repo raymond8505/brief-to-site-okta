@@ -51,3 +51,12 @@ export {
   pricingTiersVariants,
 } from "./pricing-tiers/pricing-tiers";
 export type { PricingTiersProps } from "./pricing-tiers/pricing-tiers";
+export {
+  NewsletterSignup,
+  NewsletterSignupBody,
+  NewsletterForm,
+} from "./newsletter-signup/newsletter-signup";
+export type {
+  NewsletterSignupProps,
+  NewsletterFormProps,
+} from "./newsletter-signup/newsletter-signup";

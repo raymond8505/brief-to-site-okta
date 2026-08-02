@@ -2,12 +2,9 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@core/lib/utils";
-import { Button } from "@core/components/ui/button";
-import { Input } from "@core/components/ui/input";
-import { Label } from "@core/components/ui/label";
-import { Textarea } from "@core/components/ui/textarea";
 import { Section, type SectionProps } from "@core/components/sections/section";
 import { assertAllowedChildren } from "@core/components/blocks/lib/assert-slot";
+import { ContactForm } from "@core/components/sections/contact-block/contact-form";
 
 /**
  * ContactBlock — the compound section contract proven across a **presentational form**. A two-column
@@ -17,8 +14,8 @@ import { assertAllowedChildren } from "@core/components/blocks/lib/assert-slot";
  * `end`) chooses which side the form sits on (the direct analog of Hero's `mediaSide`).
  *
  * `ContactForm` is **presentational**: real, labelled fields and a submit button, but no
- * `onSubmit`/`action` and no client state, so the section stays a server component. Field ids are
- * static (single-instance) — fine for an exemplar. Import from `@brief-to-site/core/sections`.
+ * `onSubmit`/`action` and no client state. Its field ids come from `useId`, so it lives in its own
+ * client module and this one stays a server component. Import from `@brief-to-site/core/sections`.
  */
 
 export const contactBlockVariants = cva(
@@ -69,32 +66,5 @@ function ContactCopy({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-export interface ContactFormProps extends React.ComponentProps<"form"> {
-  /** Submit button label. Defaults to "Send". */
-  submitLabel?: string;
-}
-
-/** The presentational contact form: labelled Name / Email / Message fields + a submit button. */
-function ContactForm({ submitLabel = "Send", className, ...props }: ContactFormProps) {
-  return (
-    <form data-slot="contact-form" className={cn("flex flex-1 flex-col gap-4", className)} {...props}>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="contact-name">Name</Label>
-        <Input id="contact-name" name="name" placeholder="Ada Lovelace" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="contact-email">Email</Label>
-        <Input id="contact-email" name="email" type="email" placeholder="you@example.com" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="contact-message">Message</Label>
-        <Textarea id="contact-message" name="message" placeholder="How can we help?" />
-      </div>
-      <Button type="submit" className="w-fit">
-        {submitLabel}
-      </Button>
-    </form>
-  );
-}
-
 export { ContactBlock, ContactCopy, ContactForm };
+export type { ContactFormProps } from "@core/components/sections/contact-block/contact-form";
