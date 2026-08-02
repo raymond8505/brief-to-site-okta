@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
+import { Activity, Brain, Droplets, HeartPulse, Thermometer } from "lucide-react";
 
-import { Eyebrow, FeatureCard, Heading, Prose } from "@core/components/blocks";
+import { Eyebrow, FeatureCard, Heading, IconTile, Prose } from "@core/components/blocks";
 import {
   FeatureGrid,
   FeatureGridHeader,
@@ -48,12 +49,15 @@ const sampleHeader = (
 );
 
 /**
- * FeatureGrid — a responsive grid of `FeatureCard` blocks above an optional `FeatureGridHeader` slot
- * (compose `Eyebrow` / `Heading` / `Prose` inside it). One layout axis: `columns` (`2` | `3` |
- * `4`, default `3`, CSS `grid-template-columns`); plus the shared `density` (`compact` |
- * `comfortable` | `spacious`, default `comfortable`). A "variant" is a composition — how many cards,
- * at which `columns`, with or without a header. Import the section from `@brief-to-site/core/sections`
- * and the blocks from `@brief-to-site/core/blocks`.
+ * FeatureGrid — a responsive grid of `FeatureCard` or `IconTile` blocks above an optional
+ * `FeatureGridHeader` slot (compose `Eyebrow` / `Heading` / `Prose` inside it). One layout axis:
+ * `columns` (`2` | `3` | `4` | `5`, default `3`, CSS `grid-template-columns`; `5` is the dense
+ * `IconTile` wall); plus the shared `density` (`compact` | `comfortable` | `spacious`, default
+ * `comfortable`). A "variant" is a composition — how many cards (or tiles), at which `columns`,
+ * with or without a header. For tabbed content (e.g. two condition groups), stack two FeatureGrids
+ * each with its own header — never hide content behind tabs (full-page capture must see
+ * everything). Import the section from `@brief-to-site/core/sections` and the blocks from
+ * `@brief-to-site/core/blocks`.
  */
 const meta = {
   title: "Sections/FeatureGrid",
@@ -63,8 +67,9 @@ const meta = {
   argTypes: {
     columns: {
       control: "inline-radio",
-      options: [2, 3, 4],
-      description: "Columns at the widest breakpoint (CSS grid-template-columns). Default `3`.",
+      options: [2, 3, 4, 5],
+      description:
+        "Columns at the widest breakpoint (CSS grid-template-columns). `5` is the dense IconTile wall. Default `3`.",
       table: { defaultValue: { summary: "3" } },
     },
     density: {
@@ -122,6 +127,28 @@ export const FourUp: Story = {
     <FeatureGrid {...args}>
       {sampleHeader}
       {sampleCards}
+    </FeatureGrid>
+  ),
+};
+
+/**
+ * Icon wall: `IconTile` blocks at `columns={5}` — the conditions/capabilities form. For two
+ * groups (e.g. chronic vs urgent), stack two of these sections, each with its own header, instead
+ * of tabs.
+ */
+export const IconGrid: Story = {
+  args: { columns: 5 },
+  render: (args) => (
+    <FeatureGrid {...args}>
+      <FeatureGridHeader>
+        <Eyebrow>What we treat</Eyebrow>
+        <Heading level={2}>Everyday conditions, covered</Heading>
+      </FeatureGridHeader>
+      <IconTile icon={HeartPulse} label="Heart health" />
+      <IconTile icon={Activity} label="Blood pressure" />
+      <IconTile icon={Droplets} label="Diabetes" />
+      <IconTile icon={Thermometer} label="Fever and flu" />
+      <IconTile icon={Brain} label="Mental wellness" />
     </FeatureGrid>
   ),
 };

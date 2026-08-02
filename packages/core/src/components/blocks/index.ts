@@ -19,6 +19,8 @@ export { ArticleCard } from "./article-card/article-card";
 export type { ArticleCardProps } from "./article-card/article-card";
 export { PriceCard } from "./price-card/price-card";
 export type { PriceCardProps } from "./price-card/price-card";
+export { IconTile } from "./icon-tile/icon-tile";
+export type { IconTileProps } from "./icon-tile/icon-tile";
 export { Stat, StatRow, statRowVariants } from "./stat/stat";
 export type { StatProps, StatRowProps } from "./stat/stat";
 export { Quote } from "./quote/quote";

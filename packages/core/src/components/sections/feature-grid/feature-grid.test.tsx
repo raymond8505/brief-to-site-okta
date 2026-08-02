@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { HeartPulse } from "lucide-react";
 
-import { Eyebrow, FeatureCard, Heading, Prose } from "@core/components/blocks";
+import { Eyebrow, FeatureCard, Heading, IconTile, Prose } from "@core/components/blocks";
 import {
   FeatureGrid,
   FeatureGridHeader,
@@ -81,6 +82,21 @@ describe("FeatureGrid", () => {
     );
     expect(warn).toHaveBeenCalledOnce();
     expect(warn.mock.calls[0]?.[0]).toContain("FeatureGrid");
+    warn.mockRestore();
+  });
+
+  it("admits IconTile children without a slot warning and maps the five-column wall", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const { container } = render(
+      <FeatureGrid columns={5}>
+        <IconTile icon={HeartPulse} label="Heart health" />
+        <IconTile icon={HeartPulse} label="Blood pressure" />
+      </FeatureGrid>,
+    );
+    expect(warn).not.toHaveBeenCalled();
+    const grid = container.querySelector("[data-slot=feature-grid]");
+    expect(grid).toHaveClass("lg:grid-cols-5");
+    expect(grid?.querySelectorAll("[data-slot=icon-tile]")).toHaveLength(2);
     warn.mockRestore();
   });
 });
