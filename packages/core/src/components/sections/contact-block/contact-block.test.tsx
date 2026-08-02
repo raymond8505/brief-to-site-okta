@@ -34,6 +34,19 @@ describe("ContactBlock", () => {
     expect(screen.getByRole("button", { name: "Request a quote" })).toBeInTheDocument();
   });
 
+  it("gives each form instance its own field ids", () => {
+    render(
+      <>
+        <ContactForm />
+        <ContactForm />
+      </>,
+    );
+    const [first, second] = screen.getAllByLabelText("Email");
+    // With hardcoded ids both labels resolve to the first input, so this is the real regression.
+    expect(first).not.toBe(second);
+    expect(first?.id).not.toBe(second?.id);
+  });
+
   it("maps formSide to a CSS-only flex-direction class", () => {
     const { container } = render(
       <ContactBlock formSide="start">

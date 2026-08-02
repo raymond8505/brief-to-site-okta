@@ -51,6 +51,24 @@ describe("NewsletterSignup", () => {
     expect(screen.getByRole("button", { name: "Notify me" })).toBeInTheDocument();
   });
 
+  it("gives each band its own field id, so a repeated signup stays correctly labelled", () => {
+    render(
+      <>
+        <NewsletterSignup>
+          <NewsletterForm emailLabel="Header email" />
+        </NewsletterSignup>
+        <NewsletterSignup>
+          <NewsletterForm emailLabel="Footer email" />
+        </NewsletterSignup>
+      </>,
+    );
+    const header = screen.getByLabelText("Header email");
+    const footer = screen.getByLabelText("Footer email");
+    // With a hardcoded id both labels resolve to the first input, so this is the real regression.
+    expect(header).not.toBe(footer);
+    expect(header.id).not.toBe(footer.id);
+  });
+
   it("forwards density to the Section shell", () => {
     const { container } = render(
       <NewsletterSignup density="compact">
