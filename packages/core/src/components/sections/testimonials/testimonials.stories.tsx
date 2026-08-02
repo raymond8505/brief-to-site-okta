@@ -28,7 +28,7 @@ const quotes = [
 
 /**
  * Testimonials — a grid of `Quote` blocks above an optional `TestimonialsHeader` (compose `Eyebrow` /
- * `Heading` / `Prose`). One layout axis: `columns` (`one` | `two` | `three`, default `two`); plus the
+ * `Heading` / `Prose`). One layout axis: `columns` (`1` | `2` | `3`, default `2`); plus the
  * shared `density`. Quotes are placeholder-grade (operator-finalized). A "variant" is a composition —
  * how many quotes, at which `columns`. Import the section from `@brief-to-site/core/sections` and the
  * blocks from `@brief-to-site/core/blocks`.
@@ -41,9 +41,9 @@ const meta = {
   argTypes: {
     columns: {
       control: "inline-radio",
-      options: ["one", "two", "three"],
-      description: "Quotes per row at the widest breakpoint. Default `two`.",
-      table: { defaultValue: { summary: "two" } },
+      options: [1, 2, 3],
+      description: "Quotes per row at the widest breakpoint. Default `2`.",
+      table: { defaultValue: { summary: "2" } },
     },
     density: {
       control: "inline-radio",
@@ -52,7 +52,7 @@ const meta = {
       table: { defaultValue: { summary: "comfortable" } },
     },
   },
-  args: { columns: "two", density: "comfortable" },
+  args: { columns: 2, density: "comfortable" },
   render: (args) => (
     <Testimonials {...args}>
       {header}
@@ -67,9 +67,9 @@ type Story = StoryObj<typeof meta>;
 /** Default: a two-up grid of quotes with a header. */
 export const Default: Story = {};
 
-/** `columns: three` — a three-up wall of quotes. */
+/** `columns: 3` — a three-up wall of quotes. */
 export const ThreeUp: Story = {
-  args: { columns: "three" },
+  args: { columns: 3 },
   render: (args) => (
     <Testimonials {...args}>
       {header}
@@ -78,8 +78,8 @@ export const ThreeUp: Story = {
   ),
 };
 
-/** `columns: one` — a single featured quote, no header. */
+/** `columns: 1` — a single featured quote, no header. */
 export const SingleFeatured: Story = {
-  args: { columns: "one" },
+  args: { columns: 1 },
   render: (args) => <Testimonials {...args}>{quotes.slice(0, 1)}</Testimonials>,
 };

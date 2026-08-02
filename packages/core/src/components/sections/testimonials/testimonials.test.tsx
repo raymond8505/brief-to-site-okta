@@ -48,7 +48,7 @@ describe("Testimonials", () => {
   });
 
   it("maps the columns variant to CSS grid classes", () => {
-    const { container } = render(<Testimonials columns="three">{quotes}</Testimonials>);
+    const { container } = render(<Testimonials columns={3}>{quotes}</Testimonials>);
     expect(container.querySelector("[data-slot=testimonials]")).toHaveClass(
       "md:grid-cols-2",
       "lg:grid-cols-3",

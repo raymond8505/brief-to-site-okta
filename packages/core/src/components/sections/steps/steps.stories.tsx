@@ -19,7 +19,7 @@ const steps = [
 
 /**
  * Steps — a grid of `Step` blocks above an optional `StepsHeader` (compose `Eyebrow` / `Heading` /
- * `Prose`). One layout axis: `columns` (`two` | `three` | `four`, default `three`); plus the shared
+ * `Prose`). One layout axis: `columns` (`2` | `3` | `4`, default `3`); plus the shared
  * `density`. A "variant" is a composition — how many steps, at which `columns`. Import the section
  * from `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
  */
@@ -31,9 +31,9 @@ const meta = {
   argTypes: {
     columns: {
       control: "inline-radio",
-      options: ["two", "three", "four"],
-      description: "Steps per row at the widest breakpoint. Default `three`.",
-      table: { defaultValue: { summary: "three" } },
+      options: [2, 3, 4],
+      description: "Steps per row at the widest breakpoint. Default `3`.",
+      table: { defaultValue: { summary: "3" } },
     },
     density: {
       control: "inline-radio",
@@ -42,7 +42,7 @@ const meta = {
       table: { defaultValue: { summary: "comfortable" } },
     },
   },
-  args: { columns: "three", density: "comfortable" },
+  args: { columns: 3, density: "comfortable" },
   render: (args) => (
     <Steps {...args}>
       {header}
@@ -57,9 +57,9 @@ type Story = StoryObj<typeof meta>;
 /** Default: a three-up how-it-works with a header. */
 export const Default: Story = {};
 
-/** `columns: four` — a four-step sequence. */
+/** `columns: 4` — a four-step sequence. */
 export const FourUp: Story = {
-  args: { columns: "four" },
+  args: { columns: 4 },
   render: (args) => (
     <Steps {...args}>
       {header}

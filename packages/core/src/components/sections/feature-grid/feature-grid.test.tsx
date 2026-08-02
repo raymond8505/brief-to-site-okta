@@ -52,7 +52,7 @@ describe("FeatureGrid", () => {
   });
 
   it("maps the columns variant to CSS grid-template-columns classes", () => {
-    const { container } = render(<FeatureGrid columns="four">{cards}</FeatureGrid>);
+    const { container } = render(<FeatureGrid columns={4}>{cards}</FeatureGrid>);
     expect(container.querySelector("[data-slot=feature-grid]")).toHaveClass(
       "sm:grid-cols-2",
       "lg:grid-cols-4",

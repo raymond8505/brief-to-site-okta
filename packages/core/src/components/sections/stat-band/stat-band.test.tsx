@@ -5,7 +5,7 @@ import { Heading, Stat, StatRow } from "@core/components/blocks";
 import { StatBand, StatBandHeader } from "@core/components/sections/stat-band/stat-band";
 
 const stats = (
-  <StatRow columns="two">
+  <StatRow columns={2}>
     <Stat value="48h" label="brief to launch" />
     <Stat value="1" label="brand colour" />
   </StatRow>

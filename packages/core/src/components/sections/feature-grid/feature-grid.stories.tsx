@@ -49,8 +49,8 @@ const sampleHeader = (
 
 /**
  * FeatureGrid — a responsive grid of `FeatureCard` blocks above an optional `FeatureGridHeader` slot
- * (compose `Eyebrow` / `Heading` / `Prose` inside it). One layout axis: `columns` (`two` | `three` |
- * `four`, default `three`, CSS `grid-template-columns`); plus the shared `density` (`compact` |
+ * (compose `Eyebrow` / `Heading` / `Prose` inside it). One layout axis: `columns` (`2` | `3` |
+ * `4`, default `3`, CSS `grid-template-columns`); plus the shared `density` (`compact` |
  * `comfortable` | `spacious`, default `comfortable`). A "variant" is a composition — how many cards,
  * at which `columns`, with or without a header. Import the section from `@brief-to-site/core/sections`
  * and the blocks from `@brief-to-site/core/blocks`.
@@ -63,9 +63,9 @@ const meta = {
   argTypes: {
     columns: {
       control: "inline-radio",
-      options: ["two", "three", "four"],
-      description: "Columns at the widest breakpoint (CSS grid-template-columns). Default `three`.",
-      table: { defaultValue: { summary: "three" } },
+      options: [2, 3, 4],
+      description: "Columns at the widest breakpoint (CSS grid-template-columns). Default `3`.",
+      table: { defaultValue: { summary: "3" } },
     },
     density: {
       control: "inline-radio",
@@ -74,7 +74,7 @@ const meta = {
       table: { defaultValue: { summary: "comfortable" } },
     },
   },
-  args: { columns: "three", density: "comfortable" },
+  args: { columns: 3, density: "comfortable" },
   render: (args) => (
     <FeatureGrid {...args}>
       {sampleHeader}
@@ -89,9 +89,9 @@ type Story = StoryObj<typeof meta>;
 /** Default: a three-up grid with a header. */
 export const Default: Story = {};
 
-/** `columns: two` — a two-up grid. */
+/** `columns: 2` — a two-up grid. */
 export const TwoUp: Story = {
-  args: { columns: "two" },
+  args: { columns: 2 },
   render: (args) => (
     <FeatureGrid {...args}>
       {sampleHeader}
@@ -101,11 +101,11 @@ export const TwoUp: Story = {
 };
 
 /**
- * `columns: three` — the play() confirms the CSS grid resolves to three tracks in a real browser
+ * `columns: 3` — the play() confirms the CSS grid resolves to three tracks in a real browser
  * (the column count is CSS-only).
  */
 export const ThreeUp: Story = {
-  args: { columns: "three" },
+  args: { columns: 3 },
   play: async ({ canvasElement }) => {
     await new Promise((r) => requestAnimationFrame(() => r(null)));
     const grid = canvasElement.querySelector<HTMLElement>("[data-slot=feature-grid]");
@@ -115,9 +115,9 @@ export const ThreeUp: Story = {
   },
 };
 
-/** `columns: four` — a four-up grid; pairs with four cards. */
+/** `columns: 4` — a four-up grid; pairs with four cards. */
 export const FourUp: Story = {
-  args: { columns: "four" },
+  args: { columns: 4 },
   render: (args) => (
     <FeatureGrid {...args}>
       {sampleHeader}

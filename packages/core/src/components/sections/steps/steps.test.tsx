@@ -40,7 +40,7 @@ describe("Steps", () => {
   });
 
   it("maps the columns variant to CSS grid classes", () => {
-    const { container } = render(<Steps columns="four">{steps}</Steps>);
+    const { container } = render(<Steps columns={4}>{steps}</Steps>);
     expect(container.querySelector("[data-slot=steps]")).toHaveClass("sm:grid-cols-2", "lg:grid-cols-4");
   });
 
