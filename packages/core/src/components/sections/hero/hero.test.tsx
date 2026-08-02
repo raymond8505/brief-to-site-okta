@@ -49,6 +49,27 @@ describe("Hero", () => {
     expect(container.querySelector("[data-slot=hero]")).toHaveClass("lg:flex-row-reverse");
   });
 
+  it("defaults to the row layout (side-by-side at lg)", () => {
+    const { container } = render(
+      <Hero>
+        <HeroBody>x</HeroBody>
+      </Hero>,
+    );
+    expect(container.querySelector("[data-slot=hero]")).toHaveClass("lg:flex-row");
+  });
+
+  it("keeps a single column when layout is stacked (media renders below the copy)", () => {
+    const { container } = render(
+      <Hero layout="stacked" mediaSide="start">
+        <HeroBody>x</HeroBody>
+      </Hero>,
+    );
+    const row = container.querySelector("[data-slot=hero]");
+    expect(row).not.toHaveClass("lg:flex-row");
+    // mediaSide's flex-row-reverse is a row-layout compound — it must not leak into a stack.
+    expect(row).not.toHaveClass("lg:flex-row-reverse");
+  });
+
   it("maps align to text alignment", () => {
     const { container } = render(
       <Hero align="center">

@@ -8,8 +8,8 @@ import { assertAllowedChildren } from "@core/components/blocks/lib/assert-slot";
 
 /**
  * Steps — a how-it-works section: a grid of `Step` blocks above an optional `StepsHeader` slot
- * (compose `Eyebrow` / `Heading` / `Prose` inside it). The one layout axis is `columns` (`two` |
- * `three` | `four`, default `three`, CSS `grid-template-columns`). Import the section from
+ * (compose `Eyebrow` / `Heading` / `Prose` inside it). The one layout axis is `columns` (`2` |
+ * `3` | `4`, default `3`, CSS `grid-template-columns`). Import the section from
  * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
  */
 
@@ -17,12 +17,12 @@ export const stepsVariants = cva("grid grid-cols-1 gap-8 md:gap-10", {
   variants: {
     /** How many steps sit per row at the widest breakpoint — CSS `grid-template-columns` only. */
     columns: {
-      two: "md:grid-cols-2",
-      three: "md:grid-cols-3",
-      four: "sm:grid-cols-2 lg:grid-cols-4",
+      2: "md:grid-cols-2",
+      3: "md:grid-cols-3",
+      4: "sm:grid-cols-2 lg:grid-cols-4",
     },
   },
-  defaultVariants: { columns: "three" },
+  defaultVariants: { columns: 3 },
 });
 
 export interface StepsProps
