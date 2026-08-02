@@ -33,8 +33,30 @@ export type { StepsProps } from "./steps/steps";
 export { Faq, FaqHeader, faqVariants } from "./faq/faq";
 export type { FaqProps } from "./faq/faq";
 export {
+  SplitContent,
+  SplitContentBody,
+  SplitContentMedia,
+  splitContentVariants,
+} from "./split-content/split-content";
+export type { SplitContentProps } from "./split-content/split-content";
+export {
   ArticleGrid,
   ArticleGridHeader,
   articleGridVariants,
 } from "./article-grid/article-grid";
 export type { ArticleGridProps } from "./article-grid/article-grid";
+export {
+  PricingTiers,
+  PricingTiersHeader,
+  pricingTiersVariants,
+} from "./pricing-tiers/pricing-tiers";
+export type { PricingTiersProps } from "./pricing-tiers/pricing-tiers";
+export {
+  NewsletterSignup,
+  NewsletterSignupBody,
+  NewsletterForm,
+} from "./newsletter-signup/newsletter-signup";
+export type {
+  NewsletterSignupProps,
+  NewsletterFormProps,
+} from "./newsletter-signup/newsletter-signup";

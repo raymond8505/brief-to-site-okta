@@ -86,16 +86,25 @@ live in core, so they surface as ordinary core changes.
 The core suite is deep enough to stack a full landing page from it — reach for the whole vocabulary,
 not just Hero + one grid:
 
-- **Sections/Hero** — split / centered / with-stats / quote-led compositions.
-- **Sections/FeatureGrid** — `FeatureCard` blocks in a CSS-only `columns` grid, optional header slot.
+- **Sections/Hero** — split / centered / with-stats / quote-led / page-intro / stacked compositions.
+- **Sections/SplitContent** — the generic **mid-page** copy+media split (about/explainer bands);
+  Hero stays the first section.
+- **Sections/FeatureGrid** — `FeatureCard` or `IconTile` blocks in a CSS-only `columns` grid
+  (`five` = dense icon wall), optional header slot.
 - **Sections/Steps** — a how-it-works grid of `Step` blocks (numbered), optional header.
 - **Sections/StatBand** — a "by the numbers" `StatRow`, optional header. *Placeholder-grade figures.*
 - **Sections/Testimonials** — a grid of `Quote` blocks, optional header. *Placeholder-grade quotes.*
+- **Sections/ArticleGrid** — a news/blog/resources grid of `ArticleCard` blocks, optional header.
+- **Sections/PricingTiers** — a plan wall of `PriceCard` blocks, optional header. *Brief-supplied
+  prices only.*
 - **Sections/LogoStrip** — a slim social-proof band: caption + `LogoRow`.
 - **Sections/Faq** — static `FaqItem` Q/A pairs (always open — the deliverable is screenshots).
 - **Sections/CtaBand** — a closing call-to-action on a muted brand surface.
+- **Sections/NewsletterSignup** — a centred email-capture band with a presentational inline form.
 - **Sections/ContactBlock** — a `ContactCopy` slot + a presentational `ContactForm`.
 
 **Proof sections stay honest.** `StatBand` and `Testimonials` render **placeholder-grade** content
 the operator finalizes (like placeholder images) — the agent never invents specific numbers, named
-customers, or real metrics (see `generation.json`). Block vocabulary: **Blocks/***.
+customers, or real metrics (see `generation.json`). The same rule bounds `PricingTiers`: a
+`PriceCard` states a `price` only when the brief supplies it verbatim; otherwise it renders the
+qualitative "Contact for pricing" fallback. Block vocabulary: **Blocks/***.
