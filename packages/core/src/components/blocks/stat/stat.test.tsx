@@ -13,7 +13,7 @@ describe("Stat / StatRow", () => {
 
   it("renders stats inside a stat-row grid and maps columns", () => {
     const { container } = render(
-      <StatRow columns="two">
+      <StatRow columns={2}>
         <Stat value="1" label="a" />
         <Stat value="2" label="b" />
       </StatRow>,

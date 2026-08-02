@@ -9,7 +9,7 @@ import { assertAllowedChildren } from "@core/components/blocks/lib/assert-slot";
 /**
  * Faq — a frequently-asked-questions section: a list of static `FaqItem` blocks above an optional
  * `FaqHeader` slot (compose `Eyebrow` / `Heading` / `Prose` inside it). The one layout axis is
- * `columns` (`one` | `two`, default `two`). Answers are always visible (no collapse — the deliverable
+ * `columns` (`1` | `2`, default `2`). Answers are always visible (no collapse — the deliverable
  * is screenshots). Import the section from `@brief-to-site/core/sections` and the blocks from
  * `@brief-to-site/core/blocks`.
  */
@@ -18,11 +18,11 @@ export const faqVariants = cva("grid grid-cols-1 gap-8", {
   variants: {
     /** Single column or a two-column list at the widest breakpoint — CSS only. */
     columns: {
-      one: "max-w-3xl",
-      two: "md:grid-cols-2 md:gap-x-12",
+      1: "max-w-3xl",
+      2: "md:grid-cols-2 md:gap-x-12",
     },
   },
-  defaultVariants: { columns: "two" },
+  defaultVariants: { columns: 2 },
 });
 
 export interface FaqProps
