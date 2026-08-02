@@ -18,12 +18,15 @@ import { Hero, HeroAside, HeroBody, HeroMedia } from "@core/components/sections/
  * Hero — the first section: a two-column layout shell composed from block primitives. A copy column
  * (`HeroBody` with `Eyebrow` / `Heading` / `Prose` / `CtaGroup`) beside a second column that is media
  * (`HeroMedia`) or supporting content (`HeroAside` — a `StatRow`, a `Quote`, …). Root props: `align`
- * (`start` | `center`, default `start`), `mediaSide` (`end` | `start`, default `end`), and the shared
- * `density` (`compact` | `comfortable` | `spacious`, default `comfortable`).
+ * (`start` | `center`, default `start`), `mediaSide` (`end` | `start`, default `end`), `layout`
+ * (`row` | `stacked`, default `row` — `stacked` keeps a single column and puts media full-width
+ * below the copy), and the shared `density` (`compact` | `comfortable` | `spacious`, default
+ * `comfortable`).
  *
  * A "variant" is a **composition** — each story below is a copy-me preset: **Default** (split),
- * **Centered**, **WithStats**, **QuoteLed**. Import the section from `@brief-to-site/core/sections`
- * and the blocks from `@brief-to-site/core/blocks`.
+ * **Centered**, **WithStats**, **QuoteLed**, **PageIntro** (interior page-title header: heading +
+ * intro prose, no CTA, compact), **StackedMedia** (centred copy, full-width media below). Import the
+ * section from `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
  */
 const meta = {
   title: "Sections/Hero",
@@ -40,8 +43,16 @@ const meta = {
     mediaSide: {
       control: "inline-radio",
       options: ["end", "start"],
-      description: "Which side the second column sits on (CSS flex-direction). Default `end`.",
+      description:
+        "Which side the second column sits on (CSS flex-direction). Row layout only. Default `end`.",
       table: { defaultValue: { summary: "end" } },
+    },
+    layout: {
+      control: "inline-radio",
+      options: ["row", "stacked"],
+      description:
+        "Column arrangement: side-by-side at `lg` (`row`) or a single stack with media full-width below the copy (`stacked`). Default `row`.",
+      table: { defaultValue: { summary: "row" } },
     },
     density: {
       control: "inline-radio",
@@ -50,7 +61,7 @@ const meta = {
       table: { defaultValue: { summary: "comfortable" } },
     },
   },
-  args: { align: "start", mediaSide: "end", density: "comfortable" },
+  args: { align: "start", mediaSide: "end", layout: "row", density: "comfortable" },
   render: (args) => (
     <Hero {...args}>
       <HeroBody>
@@ -136,7 +147,7 @@ export const WithStats: Story = {
         </CtaGroup>
       </HeroBody>
       <HeroAside>
-        <StatRow columns="two">
+        <StatRow columns={2}>
           <Stat value="12k" label="sites shipped" />
           <Stat value="48h" label="brief to launch" />
         </StatRow>
@@ -164,6 +175,54 @@ export const QuoteLed: Story = {
           They turned our brief into a finished site before our next standup.
         </Quote>
       </HeroAside>
+    </Hero>
+  ),
+};
+
+/**
+ * Page-intro: an interior page-title header — heading + intro prose only, no CTA, no media,
+ * `density="compact"`. Use it as the first section of a non-home page.
+ */
+export const PageIntro: Story = {
+  args: { density: "compact" },
+  render: (args) => (
+    <Hero {...args}>
+      <HeroBody>
+        <Heading level={1} size="lg">
+          Our services
+        </Heading>
+        <Prose lead>
+          Everything the studio takes on, from single-page launches to full microsite builds.
+        </Prose>
+      </HeroBody>
+    </Hero>
+  ),
+};
+
+/**
+ * Stacked: `layout="stacked" align="center"` — centred copy with full-width media below (a `wide`
+ * `MediaFrame`). The about-page hero shape.
+ */
+export const StackedMedia: Story = {
+  args: { layout: "stacked", align: "center" },
+  render: (args) => (
+    <Hero {...args}>
+      <HeroBody>
+        <Eyebrow>About the studio</Eyebrow>
+        <Heading level={1} size="xl">
+          One team, brief to launch.
+        </Heading>
+        <Prose lead>
+          Designers and engineers working from the same brief, so the site that ships is the site
+          that was promised.
+        </Prose>
+        <CtaGroup align="center">
+          <Button size="lg">Start a project</Button>
+        </CtaGroup>
+      </HeroBody>
+      <HeroMedia>
+        <MediaFrame alt="The studio at work" aspect="wide" rounded />
+      </HeroMedia>
     </Hero>
   ),
 };

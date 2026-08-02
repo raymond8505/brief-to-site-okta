@@ -15,7 +15,7 @@ export interface IconTileProps extends React.ComponentProps<"div"> {
 /**
  * IconTile — one compact icon + label cell (a condition, capability, or category): a lucide icon in
  * a brand-tinted square above the label. A group block: repeat it inside a `FeatureGrid` (use
- * `columns="five"` for dense walls). Lighter than `FeatureCard` — no Card chrome, no image.
+ * `columns={5}` for dense walls). Lighter than `FeatureCard` — no Card chrome, no image.
  */
 export function IconTile({ icon: Icon, label, description, className, ...props }: IconTileProps) {
   return (

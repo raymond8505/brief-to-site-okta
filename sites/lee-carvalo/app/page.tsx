@@ -52,7 +52,7 @@ export default function HomePage() {
           />
         </HeroMedia>
       </Hero>
-      <FeatureGrid columns="three">
+      <FeatureGrid columns={3}>
         <FeatureGridHeader>
           <Eyebrow>On the green</Eyebrow>
           <Heading level={2}>Three things, one putt</Heading>

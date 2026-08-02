@@ -43,7 +43,7 @@ describe("Faq", () => {
   });
 
   it("maps the columns variant to CSS grid classes", () => {
-    const { container } = render(<Faq columns="two">{items}</Faq>);
+    const { container } = render(<Faq columns={2}>{items}</Faq>);
     expect(container.querySelector("[data-slot=faq]")).toHaveClass("md:grid-cols-2");
   });
 

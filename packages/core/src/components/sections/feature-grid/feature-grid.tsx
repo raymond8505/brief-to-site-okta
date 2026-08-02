@@ -12,8 +12,8 @@ import { assertAllowedChildren } from "@core/components/blocks/lib/assert-slot";
  * and the Hero worked example). A responsive grid of `FeatureCard` or `IconTile` blocks, above an
  * optional `FeatureGridHeader` slot (compose `Eyebrow` / `Heading` / `Prose` inside it). The root
  * splits the header out and lays the remaining children into the grid, whose column count is the
- * one genuine layout axis — `columns` (`two` | `three` | `four` | `five`, default `three`) —
- * mapping to `grid-template-columns`. `five` is the dense icon-wall form for `IconTile`s.
+ * one genuine layout axis — `columns` (`2` | `3` | `4` | `5`, default `3`) — mapping to
+ * `grid-template-columns`. `5` is the dense icon-wall form for `IconTile`s.
  *
  * A "variant" is a composition: how many `FeatureCard`s (or `IconTile`s), at which `columns`, with
  * or without a header. For tabbed content (e.g. two condition groups), stack two FeatureGrids each
@@ -26,14 +26,14 @@ export const featureGridVariants = cva("grid grid-cols-1 gap-6 md:gap-8", {
   variants: {
     /** How many columns the grid resolves to at its widest — CSS `grid-template-columns` only. */
     columns: {
-      two: "md:grid-cols-2",
-      three: "md:grid-cols-2 lg:grid-cols-3",
-      four: "sm:grid-cols-2 lg:grid-cols-4",
-      five: "grid-cols-2 md:grid-cols-3 lg:grid-cols-5",
+      2: "md:grid-cols-2",
+      3: "md:grid-cols-2 lg:grid-cols-3",
+      4: "sm:grid-cols-2 lg:grid-cols-4",
+      5: "grid-cols-2 md:grid-cols-3 lg:grid-cols-5",
     },
   },
   defaultVariants: {
-    columns: "three",
+    columns: 3,
   },
 });
 

@@ -9,7 +9,7 @@ import { assertAllowedChildren } from "@core/components/blocks/lib/assert-slot";
 /**
  * Testimonials — a social-proof section: a grid of `Quote` blocks above an optional
  * `TestimonialsHeader` slot (compose `Eyebrow` / `Heading` / `Prose` inside it). The one layout axis
- * is `columns` (`one` | `two` | `three`, default `two`). Like every proof section, the quotes are
+ * is `columns` (`1` | `2` | `3`, default `2`). Like every proof section, the quotes are
  * **placeholder-grade** — qualitative, operator-finalized (never invented named customers). Import the
  * section from `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
  */
@@ -18,12 +18,12 @@ export const testimonialsVariants = cva("grid grid-cols-1 gap-8", {
   variants: {
     /** How many quotes sit per row at the widest breakpoint — CSS `grid-template-columns` only. */
     columns: {
-      one: "max-w-2xl",
-      two: "md:grid-cols-2",
-      three: "md:grid-cols-2 lg:grid-cols-3",
+      1: "max-w-2xl",
+      2: "md:grid-cols-2",
+      3: "md:grid-cols-2 lg:grid-cols-3",
     },
   },
-  defaultVariants: { columns: "two" },
+  defaultVariants: { columns: 2 },
 });
 
 export interface TestimonialsProps

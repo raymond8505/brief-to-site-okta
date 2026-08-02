@@ -12,7 +12,7 @@ const header = (
 );
 
 const stats = (
-  <StatRow columns="three">
+  <StatRow columns={3}>
     <Stat value="—" label="sites shipped" />
     <Stat value="48h" label="brief to launch" />
     <Stat value="1" label="brand colour needed" />

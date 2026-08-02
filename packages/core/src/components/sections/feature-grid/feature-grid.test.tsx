@@ -53,7 +53,7 @@ describe("FeatureGrid", () => {
   });
 
   it("maps the columns variant to CSS grid-template-columns classes", () => {
-    const { container } = render(<FeatureGrid columns="four">{cards}</FeatureGrid>);
+    const { container } = render(<FeatureGrid columns={4}>{cards}</FeatureGrid>);
     expect(container.querySelector("[data-slot=feature-grid]")).toHaveClass(
       "sm:grid-cols-2",
       "lg:grid-cols-4",
@@ -88,7 +88,7 @@ describe("FeatureGrid", () => {
   it("admits IconTile children without a slot warning and maps the five-column wall", () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     const { container } = render(
-      <FeatureGrid columns="five">
+      <FeatureGrid columns={5}>
         <IconTile icon={HeartPulse} label="Heart health" />
         <IconTile icon={HeartPulse} label="Blood pressure" />
       </FeatureGrid>,

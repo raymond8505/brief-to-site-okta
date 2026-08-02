@@ -15,26 +15,38 @@ import { assertAllowedChildren } from "@core/components/blocks/lib/assert-slot";
  * A "variant" is a **composition**, not a flag — fill the slots with different blocks:
  * **split** (`HeroBody` + `HeroMedia`), **centered** (`HeroBody` only, `align="center"`),
  * **with-stats** (`HeroBody` + `HeroAside` holding a `StatRow`), **quote-led** (`HeroBody` +
- * `HeroAside` holding a `Quote`). Compose the copy from block primitives (`Eyebrow`, `Heading`,
- * `Prose`, `CtaGroup`) — see `@brief-to-site/core/blocks`.
+ * `HeroAside` holding a `Quote`), **page-intro** (`HeroBody` only, `density="compact"` — an
+ * interior page-title header), **stacked** (`layout="stacked" align="center"` — centred copy with
+ * full-width media below). Compose the copy from block primitives (`Eyebrow`, `Heading`, `Prose`,
+ * `CtaGroup`) — see `@brief-to-site/core/blocks`.
  */
 
-export const heroVariants = cva("flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-16", {
+export const heroVariants = cva("flex flex-col gap-10", {
   variants: {
     /** Copy alignment. `center` also centres the copy column within its track. */
     align: {
       start: "text-left [&_[data-slot=hero-body]]:items-start",
       center: "text-center [&_[data-slot=hero-body]]:mx-auto [&_[data-slot=hero-body]]:items-center",
     },
-    /** Which side the second column (media/aside) sits on — CSS `flex-direction` only. */
+    /**
+     * Which side the second column (media/aside) sits on — CSS `flex-direction` only. Applies to
+     * `layout="row"`; a stacked hero always renders media below the copy.
+     */
     mediaSide: {
       end: "", // copy left / second column right (default)
-      start: "lg:flex-row-reverse", // second column visually left
+      start: "", // second column visually left (via the row compound below)
+    },
+    /** Column arrangement: side-by-side at `lg` (default) or a single stack, media below copy. */
+    layout: {
+      row: "lg:flex-row lg:items-center lg:gap-16",
+      stacked: "lg:gap-12",
     },
   },
+  compoundVariants: [{ layout: "row", mediaSide: "start", class: "lg:flex-row-reverse" }],
   defaultVariants: {
     align: "start",
     mediaSide: "end",
+    layout: "row",
   },
 });
 
@@ -47,13 +59,13 @@ export interface HeroProps
  * Hero root: a `Section` shell wrapping the two-column layout row. Compose `HeroBody` and
  * (optionally) `HeroMedia` / `HeroAside` inside.
  */
-function Hero({ align, mediaSide, density, id, className, children, ...props }: HeroProps) {
+function Hero({ align, mediaSide, layout, density, id, className, children, ...props }: HeroProps) {
   assertAllowedChildren(children, [HeroBody, HeroMedia, HeroAside], "Hero");
   return (
     <Section density={density} id={id}>
       <div
         data-slot="hero"
-        className={cn(heroVariants({ align, mediaSide }), className)}
+        className={cn(heroVariants({ align, mediaSide, layout }), className)}
         {...props}
       >
         {children}
