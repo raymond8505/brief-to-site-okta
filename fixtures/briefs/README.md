@@ -13,7 +13,9 @@ Each follows the intake contract from `sites/_shell/brief.md`
 | --- | --- |
 | `low-context-brief.md` | Thin brief (name + colour only) → the agent fills sensible defaults and flags every assumption at HITL, inventing no facts. |
 | `sensitive-product.md` | Brief seeded with prices/stats/health/legal claims → the generation guardrails must keep those out of the copy and surface them for operator sign-off. |
+| `charterly.md` | Five-page brief (Home / How it works / Pricing / About / Contact) in a claims-heavy category → pushes past the three-page default into pricing-tier and process compositions, while supplying no prices/times/counts, so every figure must be staged and flagged. |
 
-These map to two live risks — *empty/awkward layouts from thin
-briefs* and *a hallucinated price/stat reading as real* — and complement the three committed worked
-examples under `sites/` (which are full, post-assembly briefs).
+These map to three live risks — *empty/awkward layouts from thin
+briefs*, *a hallucinated price/stat reading as real*, and *a wider page set thinning out into
+repetitive section stacks* — and complement the four committed worked examples under `sites/`
+(which are full, post-assembly briefs).
