@@ -28,7 +28,7 @@ describe("PricingTiers", () => {
     expect(screen.getByRole("heading", { level: 2, name: "Plans" })).toBeInTheDocument();
   });
 
-  it("defaults to three columns and maps the other options", () => {
+  it("defaults to 3 columns and maps the other options", () => {
     const { container, rerender } = render(
       <PricingTiers>
         <PriceCard name="P" />
@@ -37,13 +37,13 @@ describe("PricingTiers", () => {
     const grid = () => container.querySelector("[data-slot=pricing-tiers]");
     expect(grid()).toHaveClass("lg:grid-cols-3");
     rerender(
-      <PricingTiers columns="four">
+      <PricingTiers columns={4}>
         <PriceCard name="P" />
       </PricingTiers>,
     );
     expect(grid()).toHaveClass("lg:grid-cols-4");
     rerender(
-      <PricingTiers columns="two">
+      <PricingTiers columns={2}>
         <PriceCard name="P" />
       </PricingTiers>,
     );

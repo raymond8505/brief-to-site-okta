@@ -35,7 +35,7 @@ const tierList = (items: string[]) => (
 /**
  * PricingTiers — a plan-comparison section: a grid of `PriceCard` blocks below an optional
  * `PricingTiersHeader` (compose `Eyebrow` / `Heading` / `Prose`). One layout axis: `columns`
- * (`two` | `three` | `four`, default `three`); plus the shared `density`. **Guardrail:** prices are
+ * (`2` | `3` | `4`, default `3`); plus the shared `density`. **Guardrail:** prices are
  * checkable specifics — a card gets a `price` ONLY when the brief supplies it verbatim; the
  * no-price fallback form is the default. Mark at most one tier with `badgeText`. A "variant" is a
  * composition — how many tiers, which is highlighted, priced vs fallback. Import the section from
@@ -49,9 +49,9 @@ const meta = {
   argTypes: {
     columns: {
       control: "inline-radio",
-      options: ["two", "three", "four"],
-      description: "Tiers per row at the widest breakpoint. Default `three`.",
-      table: { defaultValue: { summary: "three" } },
+      options: [2, 3, 4],
+      description: "Tiers per row at the widest breakpoint. Default `3`.",
+      table: { defaultValue: { summary: "3" } },
     },
     density: {
       control: "inline-radio",
@@ -60,7 +60,7 @@ const meta = {
       table: { defaultValue: { summary: "comfortable" } },
     },
   },
-  args: { columns: "three", density: "comfortable" },
+  args: { columns: 3, density: "comfortable" },
   render: (args) => (
     <PricingTiers {...args}>
       {header}
@@ -126,9 +126,9 @@ export const WithPrices: Story = {
   ),
 };
 
-/** `columns: two` — a narrower, centred pair of tiers. */
+/** `columns={2}` — a narrower, centred pair of tiers. */
 export const TwoUp: Story = {
-  args: { columns: "two" },
+  args: { columns: 2 },
   render: (args) => (
     <PricingTiers {...args}>
       {header}
