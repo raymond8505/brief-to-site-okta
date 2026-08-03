@@ -52,6 +52,22 @@ the published blocks first; when the vocabulary falls short, **extend it deliber
 core block (with a story + tests), the same way you would a `ui/` primitive. Never drop raw JSX into a
 page.
 
+## What earns a place in core
+
+A core section is **purpose-built**: it exists to present one *specific kind of content*, and its slots
+have a closed block vocabulary that says so — `ArticleGrid` holds `ArticleCard`s, `Steps` holds
+numbered `Step`s, `PricingTiers` holds `PriceCard`s, `Hero` opens a page. Name the content and the
+section's reason to exist follows.
+
+A **generic arrangement** is not a section — "N columns under a title", "copy beside media" — it is a
+*composition pattern*. Those go **site-local**, with whatever column count that page actually needs.
+Core deliberately carries no stand-in for them: a generic section is a magnet the agent force-fits
+pages into, and re-composing the pattern per site is cheap and is the intended cost.
+
+**Promotion follows the same test.** A site-local section moves into core when the operator decides at
+the HITL checkpoint that it is reusable *and* purpose-built. Recurrence alone doesn't qualify it — if
+what recurs is a generic arrangement, it stays site-local.
+
 ## Building a new section
 
 Copy **`components/sections/_template/`** (see **Sections/_Template**), rename the files + symbols,
@@ -84,11 +100,11 @@ live in core, so they surface as ordinary core changes.
 ## The suite covers the common marketing archetypes
 
 The core suite is deep enough to stack a full landing page from it — reach for the whole vocabulary,
-not just Hero + one grid:
+not just Hero + one grid. It is deliberately **purpose-built rather than exhaustive** (see above), so
+"no core section fits this" is an ordinary outcome, not a shortfall: build it site-local instead of
+stretching one of these to cover it.
 
 - **Sections/Hero** — split / centered / with-stats / quote-led / page-intro / stacked compositions.
-- **Sections/SplitContent** — the generic **mid-page** copy+media split (about/explainer bands);
-  Hero stays the first section.
 - **Sections/FeatureGrid** — `FeatureCard` or `IconTile` blocks in a CSS-only `columns` grid
   (`five` = dense icon wall), optional header slot.
 - **Sections/Steps** — a how-it-works grid of `Step` blocks (numbered), optional header.
