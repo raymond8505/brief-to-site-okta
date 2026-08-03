@@ -22,6 +22,15 @@ shell out to platform commands and never branch on `process.platform`.
 - **Detecting a platform assumption in review is a defect**, not a nuance — refactor it to a Node API
   and, if the fix reveals a reusable pattern, note it here.
 
+## Docker is optional — the container is a drop-in equal of the host
+
+**One container** (`docker-compose.yml` → `dev`), and running in it must be indistinguishable from
+running on a host that has the toolchain installed: same `yarn` scripts, same `localhost` ports
+(6006/3000/3210), same committed configs. **Nothing may branch on it** — no code, script, config, or
+skill mentions Docker (`.claude/` deliberately doesn't), and container-shaped values (service
+hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed config. Workflow doc:
+`DOCKER.md`.
+
 ## Colour system (`packages/core/src/styles`)
 
 - **CSS custom-property scope is the core gotcha.** Derived tokens (`--brand-secondary`,
@@ -49,7 +58,12 @@ shell out to platform commands and never branch on `process.platform`.
   (`--brand-r/g/b`, defaulted in colors.css and emitted per-site by `theme:build` via `hexToRgb` —
   no luminance math). `--primary-foreground` is left at core's near-white default; a saturated
   brand fill that carries text uses `.wcag-contrast` instead — see the **`Badge` `brand` variant**
-  (`wcag-contrast brand-rgb`), which the section eyebrows use. **`.brand-rgb`** (contrast-math.css)
+  (`wcag-contrast brand-rgb`). **But `.wcag-contrast` solves for the 4.5:1 AA *floor***, so a
+  saturated mid-tone fill (orange/green) lands ~4.51:1 — compliant but muddy at small sizes (white
+  text would *fail* AA on the same fill). So **`Eyebrow` defaults to the `brandTint` `Badge` variant**
+  (`bg-accent text-accent-foreground` — the l90 brand tint + dark text), which is ~12–16:1 with **no
+  contrast math** (light-tint + dark-text is always safe). Reach for the saturated `brand` variant
+  only when you deliberately want the fill, not for small text. **`.brand-rgb`** (contrast-math.css)
   is the authored bridge class feeding `--r/--g/--b` from `--brand-r/g/b`; it replaced the inline
   `[--r:var(--brand-r)] …` arbitrary-property classes, which Tailwind v4's **oxide scanner corrupts**
   (byte-vs-char offset bug) when a scanned file has multi-byte chars before the candidate → garbage
@@ -173,6 +187,26 @@ shell out to platform commands and never branch on `process.platform`.
   It does **no** luminance/contrast math. The pure builder is `config/theme.ts#buildThemeCss`
   (fs-free, unit-tested); the CLI is a thin wrapper. `loadBrandConfig` validates just brand.json so a
   theme can rebuild mid-edit.
+- **Version control is two-tier: the tool repo, then one git repo per generated site.** The tool
+  repo (this repo) tracks `packages/core`, the scripts, the skill, `sites/_shell`, and the **three
+  committed demo sites** (`northwind`/`meridian`/`lee-carvalo` — tier 1, they stay here as the
+  harmony demos). Every **other** `sites/<slug>` is its **own** independent git repo (tier 2) —
+  `sites/.gitignore` already excludes non-demo sites, so the nested `.git` is invisible to the tool
+  repo (no submodules, no embedded-repo warning). `sites:new` applies this automatically: it copies
+  a **site-level `.gitignore`** from `_shell` (build artifacts out, but `captures/` **kept** — the
+  screenshots are the deliverable, the opposite of the tool repo's `sites/*/captures/` ignore), writes
+  **`build-info.json`** stamping the tool commit the site was generated against (load-bearing: a site
+  imports core as raw TS source, so it can only rebuild inside this monorepo at a compatible core —
+  the SHA is the pointer back), and best-effort **`git init`**s the site. The tool SHA is read from
+  the tool repo's `.git` **via fs, not by spawning git** (`new-site.ts#readToolSha`) so provenance
+  survives without git; the `git init` itself does spawn `git` (a **portable** tool — same binary on
+  every OS, invoked with no shell/`.cmd`, so it doesn't break the OS-agnostic rule) and degrades to a
+  printed instruction when git is absent. Pure/testable split as usual: `buildSiteBuildInfo` (content)
+  lives in core `scaffold.ts` and is unit-tested; the git/date side effects live in the CLI.
+  `build-info.json` is **provenance, not a build-consumed config** — it is deliberately NOT in the
+  `config:schema` registry (like `brief.md`/`design-notes.md` content). The **demo sites predate this
+  and are intentionally left without** a per-site `.gitignore`/`build-info.json`/nested repo — they're
+  tier-1 tool content, not standalone deliverables.
 - **`sites:new <slug>` copies the real `sites/_shell` workspace**, it does NOT emit files from
   template strings. `_shell` is the **shell/wiring scaffold, NOT a design template** — a committed,
   installed, buildable Next.js app (leading `_` = "not a real site") holding core's `MicrositeShell`

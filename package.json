@@ -4,6 +4,9 @@
   "private": true,
   "description": "AI Sales Microsite Tool — brief + brand colour(s) → SSR microsite → multi-viewport screenshots.",
   "packageManager": "yarn@4.17.0",
+  "engines": {
+    "node": ">=24.17.0 <25"
+  },
   "workspaces": [
     "packages/*",
     "sites/*"

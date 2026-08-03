@@ -1,0 +1,16 @@
+{
+  "name": "brief-to-site",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "dev",
+  "workspaceFolder": "/workspace",
+  // storybook (a service_healthy dependency) has already run `yarn install` by the time
+  // dev starts, so this is a fast no-op that just guarantees the tree is present.
+  "postCreateCommand": "yarn install",
+  "forwardPorts": [6006, 3000, 3210],
+  "portsAttributes": {
+    "6006": { "label": "Storybook + MCP" },
+    "3000": { "label": "site dev server" },
+    "3210": { "label": "capture dev server" }
+  },
+  "remoteUser": "root"
+}

@@ -21,6 +21,13 @@ describe("Badge", () => {
     expect(screen.getByText("Brand")).toHaveClass("wcag-contrast");
   });
 
+  it("brandTint uses the light brand tint + dark foreground (legible without contrast math)", () => {
+    render(<Badge variant="brandTint">Tint</Badge>);
+    expect(screen.getByText("Tint")).toHaveClass("bg-accent", "text-accent-foreground");
+    // It must NOT rely on the 4.5-floor contrast utility — the tint pairing is high-contrast.
+    expect(screen.getByText("Tint")).not.toHaveClass("wcag-contrast");
+  });
+
   it("forwards className", () => {
     render(<Badge className="custom-x">Tag</Badge>);
     expect(screen.getByText("Tag")).toHaveClass("custom-x");

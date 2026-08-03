@@ -45,6 +45,34 @@ function keepInScaffold(source: string): boolean {
   return true;
 }
 
+/** The tool that generates a site — recorded in every site's `build-info.json`. */
+export const TOOL_NAME = "brief-to-site";
+
+/** Provenance inputs for `build-info.json` — all passed in so scaffolding stays deterministic. */
+export interface BuildInfoInput {
+  /** The tool-repo commit the site was scaffolded against; `"unknown"` when it can't be read. */
+  coreSha?: string;
+  /** ISO timestamp the site was scaffolded; `null` when unknown. */
+  generatedAt?: string | null;
+}
+
+/**
+ * `build-info.json` content — provenance stamping which tool commit a site was generated against.
+ * Load-bearing because a site imports core as **raw TS source** (`transpilePackages`): it can only
+ * rebuild inside this monorepo at a compatible core, so an archived site repo (tier 2) needs a
+ * pointer back to the tool state that can rebuild it. Pure + deterministic (every input is passed
+ * in), so it's unit-testable and the scaffold stays reproducible — the CLI reads the real SHA/date.
+ */
+export function buildSiteBuildInfo(slug: string, input: BuildInfoInput = {}): string {
+  const info = {
+    tool: TOOL_NAME,
+    slug,
+    coreSha: input.coreSha ?? "unknown",
+    generatedAt: input.generatedAt ?? null,
+  };
+  return `${JSON.stringify(info, null, 2)}\n`;
+}
+
 /** Read a JSON file, mutate the parsed object, write it back pretty-printed with a trailing newline. */
 function editJson(file: string, mutate: (data: Record<string, unknown>) => void): void {
   const data = JSON.parse(readFileSync(file, "utf8")) as Record<string, unknown>;
@@ -71,7 +99,11 @@ export function listSiteFiles(siteDir: string): string[] {
  * Copy `sites/_shell` to `<sitesDir>/<slug>` and apply the slug-derived edits. Assumes the target
  * does not exist (the CLI refuses otherwise). Returns the created dir + its file list.
  */
-export function scaffoldSite(slug: string, sitesDir: string): { siteDir: string; files: string[] } {
+export function scaffoldSite(
+  slug: string,
+  sitesDir: string,
+  buildInfo: BuildInfoInput = {},
+): { siteDir: string; files: string[] } {
   const siteDir = join(sitesDir, slug);
   cpSync(SHELL_DIR, siteDir, { recursive: true, filter: (src) => keepInScaffold(src) });
 
@@ -83,6 +115,10 @@ export function scaffoldSite(slug: string, sitesDir: string): { siteDir: string;
     meta.name = name;
     meta.description = `${name} — placeholder description; edit config/meta.json.`;
   });
+
+  // Stamp the tool provenance (tier-2 repo strategy). The `.gitignore` rides the `_shell` copy;
+  // `build-info.json` is generated here because it's per-site (slug + the tool commit/date).
+  writeFileSync(join(siteDir, "build-info.json"), buildSiteBuildInfo(slug, buildInfo), "utf8");
 
   return { siteDir, files: listSiteFiles(siteDir) };
 }
