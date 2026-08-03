@@ -37,7 +37,7 @@ export default function AboutPage() {
           />
         </HeroMedia>
       </Hero>
-      <FeatureGrid columns="two">
+      <FeatureGrid columns={2}>
         <FeatureGridHeader>
           <Heading level={2}>How we work</Heading>
           <Prose>Four principles that keep engagements fast and outcomes predictable.</Prose>

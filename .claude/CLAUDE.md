@@ -361,6 +361,11 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
 - **Committed example sites** exist as pipeline/regression demos; they are **not** cited to the agent
   as design models (each site is authored fresh). No automated check asserts they stay in sync with
   the tooling.
+- **Locally generated sites are gitignored yet still workspaces** (e.g. a site scaffolded from a
+  fixture brief): full-repo `yarn typecheck` includes them, but the Grep tool (ripgrep) skips them
+  by default. When a core component API changes, sweep `sites/` with ignore-files disabled
+  (`grep -r` / `rg --no-ignore`) and update generated sites too, or the operator's local typecheck
+  breaks. The full-repo typecheck is the backstop that catches a missed one.
 - **Build/verify one site with `yarn workspace @brief-to-site/site-<slug> build`** (there is no
   `sites:build` script); `yarn sites:dev <slug>` for dev, `yarn capture:run <slug> --run <name>` for a
   named throwaway capture. Heads-up: a site's `viewports.json` may ship fewer than the default 4

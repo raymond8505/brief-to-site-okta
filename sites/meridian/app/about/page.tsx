@@ -39,7 +39,7 @@ export default function AboutPage() {
           />
         </HeroMedia>
       </Hero>
-      <FeatureGrid columns="four" density="spacious">
+      <FeatureGrid columns={4} density="spacious">
         <FeatureGridHeader>
           <Heading level={2}>What stays constant</Heading>
           <Prose>However much we grow, four things don't change.</Prose>
