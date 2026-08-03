@@ -76,6 +76,10 @@ vocabulary falls short — never strain to force-fit, and never drop raw markup 
 1. **Compose an existing core section** if one fits in *any* documented composition (a "variant" is a
    composition, so one usually does). Confirm props/variants via the **Storybook MCP**.
 2. **Author a site-local section** — an arrangement of core **blocks** — when no core section fits.
+   Core sections are **purpose-built**, not a generic layout kit, so reaching this rung is *routine*,
+   not a shortfall. A generic arrangement — a copy/media split, an N-column band under one title — has
+   no core equivalent **by design**: build it here, with the column count the page needs, rather than
+   stretching `Hero` or a grid section to stand in for it.
 3. **Author a site-local block** — an arrangement of core **primitives** — when a section needs a
    piece the block vocabulary can't express.
 4. **Add a core primitive** via the **shadcn MCP** when no primitive exists for a block you need.
