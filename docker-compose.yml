@@ -1,0 +1,83 @@
+name: brief-to-site
+
+# ONE container, and it is optional. It is simply a machine that already has the toolchain on it —
+# Node, Yarn 4, Chromium, Claude Code, codegraph — so a host with those installed (see README's
+# "Getting started") is an equal path, not a lesser one. Same yarn scripts, same localhost ports,
+# same committed configs either way; nothing in the repo branches on which one you're using.
+#
+# The container's job is Storybook (which is what backs the Storybook MCP at :6006/mcp that the
+# assemble step reads). Everything else — Claude Code, every `yarn <script>` — is a
+# `docker compose exec dev …` into that same container.
+#
+# The repo is bind-mounted, so generated sites and captures/ land back on the host. node_modules
+# lives in a named volume (fast, and the host never grows one it doesn't need).
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /workspace
+    # Install, build the codegraph index, then serve Storybook. `--host 0.0.0.0` so the published
+    # port reaches the host browser; from inside the container it is plain localhost:6006, exactly
+    # as on a host checkout — which is why .mcp.json can hold a literal URL.
+    # NOTE: plain `yarn install`, not `--immutable`: sites/.gitignore is allowlist-based, so a
+    # locally scaffolded site adds a workspace the committed yarn.lock cannot know about. An
+    # immutable install would fail on a working tree that has one.
+    # `codegraph init` (~6s, source tree only) builds the .codegraph/ index the codegraph stdio MCP
+    # serves — `serve --mcp` READS an index, it does not build one, so without this a fresh
+    # container has the binary but an empty graph. It indexes the bind-mounted source and writes to
+    # the container's own index volume (see below). (Host equivalent: the same one-time
+    # `codegraph init`, see README.)
+    command: >
+      sh -c "yarn install &&
+             codegraph init &&
+             yarn storybook -p 6006 --host 0.0.0.0 --no-open"
+    volumes:
+      - .:/workspace
+      - node_modules:/workspace/node_modules
+      # The container gets its OWN codegraph index. It must NOT share the host's: it's a SQLite DB
+      # in WAL mode, and a bind-mounted one held open by a host daemon fails from in here with
+      # "disk I/O error". The index is machine-local and gitignored anyway, so a per-world copy
+      # costs one ~6s rebuild and nothing else — and both worlds get a working graph.
+      - codegraph-index:/workspace/.codegraph
+      - claude-config:/root/.claude # persist Claude Code login across container rebuilds
+      # Forward the HOST's ssh-agent so `git push` works in here without copying any private key
+      # into the container. This path is Docker Desktop's (macOS/Windows) magic agent socket; on a
+      # Linux host use `${SSH_AUTH_SOCK}:/ssh-agent` instead. The key must be loaded on the host
+      # (`ssh-add -l`). Without this, git auth simply isn't available inside the container.
+      - /run/host-services/ssh-auth.sock:/ssh-agent
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - SSH_AUTH_SOCK=/ssh-agent
+      - CODEGRAPH_TELEMETRY=0 # no anonymous usage stats from a client-handoff tool
+    # Published HOST ports. The defaults match the host path exactly, so parity is the default
+    # behaviour; the override exists because a hard-coded binding makes an unrelated host process
+    # on one of these ports block the WHOLE container from starting (Storybook included) — worse
+    # than the host path, where a busy port only fails the one server that wanted it. Set the var
+    # (shell or .env) to publish elsewhere: BTS_SITE_PORT=3001 docker compose up -d. Only the HOST
+    # side moves; inside the container it is always 6006/3000/3210, which is what keeps .mcp.json
+    # and every script identical in both worlds.
+    ports:
+      - "${BTS_STORYBOOK_PORT:-6006}:6006" # Storybook + the Storybook MCP at /mcp
+      - "${BTS_SITE_PORT:-3000}:3000" # yarn sites:dev <slug>
+      - "${BTS_CAPTURE_PORT:-3210}:3210" # yarn capture:run dev server
+    healthcheck:
+      # Node's global fetch — the base image has no curl. Any HTTP response = Storybook is up,
+      # which also means the install finished.
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:6006/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 60
+      start_period: 180s # first cold `yarn install` of the monorepo can take a few minutes
+
+volumes:
+  node_modules:
+  codegraph-index:
+  claude-config:

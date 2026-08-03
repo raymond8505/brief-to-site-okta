@@ -35,10 +35,25 @@ copy-me composition snippets live in its autodocs, not in a hand-written table.
 
 ## Getting started
 
+Two equally supported paths to the same toolchain — Docker is **optional**. Same `yarn` scripts,
+same `localhost` ports, same committed config either way; switch between them freely.
+
+**On the host** — needs Node 24.17.0 (see [`.nvmrc`](./.nvmrc)) and Yarn 4 via Corepack:
+
 ```bash
 yarn install                        # workspaces; installs core + all sites
 yarn storybook                      # browse the section suite (props, variants, examples)
 yarn playwright install chromium    # one-time, required ONLY for capture:run
+npm i -g @colbymchenry/codegraph@1.5.0   # one-time, the codegraph MCP in .mcp.json
+codegraph init                      # one-time, builds the index that MCP serves (it won't build one)
+```
+
+**In Docker** — one container with all of the above already in it, plus Claude Code; nothing on the
+host but Docker. See **[DOCKER.md](./DOCKER.md)**:
+
+```bash
+docker compose up -d                # builds the image, installs, indexes, serves Storybook on 6006
+docker compose exec dev claude      # drive the microsite pipeline from inside the container
 ```
 
 ## Starting a site

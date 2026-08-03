@@ -22,6 +22,15 @@ shell out to platform commands and never branch on `process.platform`.
 - **Detecting a platform assumption in review is a defect**, not a nuance — refactor it to a Node API
   and, if the fix reveals a reusable pattern, note it here.
 
+## Docker is optional — the container is a drop-in equal of the host
+
+**One container** (`docker-compose.yml` → `dev`), and running in it must be indistinguishable from
+running on a host that has the toolchain installed: same `yarn` scripts, same `localhost` ports
+(6006/3000/3210), same committed configs. **Nothing may branch on it** — no code, script, config, or
+skill mentions Docker (`.claude/` deliberately doesn't), and container-shaped values (service
+hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed config. Workflow doc:
+`DOCKER.md`.
+
 ## Colour system (`packages/core/src/styles`)
 
 - **CSS custom-property scope is the core gotcha.** Derived tokens (`--brand-secondary`,
