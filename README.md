@@ -35,24 +35,25 @@ copy-me composition snippets live in its autodocs, not in a hand-written table.
 
 ## Getting started
 
-Two supported paths — Docker is **optional**, not required.
+Two equally supported paths to the same toolchain — Docker is **optional**. Same `yarn` scripts,
+same `localhost` ports, same committed config either way; switch between them freely.
 
-Run everything in Docker (Node, Yarn, Storybook, Playwright, and Claude Code itself — nothing on
-the host) — see **[DOCKER.md](./DOCKER.md)**:
-
-```bash
-docker compose up -d storybook      # builds the toolchain image, installs, serves the MCP
-docker compose up -d dev            # the toolbox — run Claude + yarn scripts here
-docker compose exec dev claude      # drive the microsite pipeline from inside the container
-```
-
-Or, on a host that already has Node 24 / Yarn 4:
+**On the host** — needs Node 24.17.0 (see [`.nvmrc`](./.nvmrc)) and Yarn 4 via Corepack:
 
 ```bash
 yarn install                        # workspaces; installs core + all sites
 yarn storybook                      # browse the section suite (props, variants, examples)
 yarn playwright install chromium    # one-time, required ONLY for capture:run
-npm i -g @colbymchenry/codegraph@1.5.0   # one-time, the codegraph MCP in .mcp.json (Docker bakes it in)
+npm i -g @colbymchenry/codegraph@1.5.0   # one-time, the codegraph MCP in .mcp.json
+codegraph init                      # one-time, builds the index that MCP serves (it won't build one)
+```
+
+**In Docker** — one container with all of the above already in it, plus Claude Code; nothing on the
+host but Docker. See **[DOCKER.md](./DOCKER.md)**:
+
+```bash
+docker compose up -d                # builds the image, installs, indexes, serves Storybook on 6006
+docker compose exec dev claude      # drive the microsite pipeline from inside the container
 ```
 
 ## Building a site

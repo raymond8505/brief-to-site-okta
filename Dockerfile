@@ -1,10 +1,12 @@
 # syntax=docker/dockerfile:1
 
-# Toolchain image for brief-to-site.
+# Toolchain image for brief-to-site — ONE of the two supported ways to get the toolchain. The
+# other is installing it on the host (README "Getting started"); neither is preferred, and the
+# repo itself never knows which you used.
 #
-# The Playwright base ships Node + Chromium + every system lib `capture:run` needs, so
-# nothing is ever installed on the host. Pinned to match the repo's `playwright` dependency
-# (package.json devDependencies) — bump both together.
+# The Playwright base ships Node + Chromium + every system lib `capture:run` needs, so a host
+# that doesn't want any of that on it can run everything in here instead. Pinned to match the
+# repo's `playwright` dependency (package.json devDependencies) — bump both together.
 FROM mcr.microsoft.com/playwright:v1.61.1-noble
 
 # --- Yarn 4 via Corepack (version pinned by package.json "packageManager") ---
@@ -34,5 +36,6 @@ RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh \
 
 WORKDIR /workspace
 
-# Idle by default so `docker compose exec` / the devcontainer can attach and drive it.
+# Image default: idle, so a bare `docker run` on this image is a usable toolbox. Compose overrides
+# it with the install + Storybook command (see docker-compose.yml).
 CMD ["sleep", "infinity"]
