@@ -128,6 +128,14 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   (`blocks/lib/assert-slot.ts`), which warns (dev/Storybook only, reference-identity) on wrong-slot
   children. Children **cannot** be strictly typed to a component set in React/TS — the guard is
   best-effort, the real bound is the closed `@brief-to-site/core/blocks` import surface + review.
+  - **This is a rule about SECTIONS; blocks are not compound by default.** A block rendering a
+    *homogeneous repeated set* takes a **data array** and builds its own rows (`BulletList` `items`,
+    `StatRow` `stats`, `LogoRow` `logos`) — which makes the item shape a real compile-time type
+    instead of a best-effort warning, and sidesteps the RSC no-`createContext` trap below. A block
+    wrapping *arbitrary/heterogeneous* content keeps `children` (`CtaGroup`'s `Button`s, `PriceCard`'s
+    slot, `Prose`/`Quote`/`FaqItem`'s rich text). Sections holding repeated blocks
+    (`Steps`/`Step`, `Faq`/`FaqItem`, …) stay compound — the rule doesn't reach them. Full convention
+    (item-type naming, required array, index keys, no item subcomponent) in `sections.mdx`.
   `MediaFrame` is the **sole** render-time image element; no section renders a raw `<img>`. In a real
   site its `src` is an explicit `/images/<name>.png` (from the placeholder manifest); when `src` is
   omitted (Storybook/dev/jsdom) it falls back to an inline SVG data-URI sized from `aspect` via
@@ -141,12 +149,15 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   behind `"use client"` for the same reason). Only `label.tsx`, `separator.tsx` and the two form
   components carry `"use client"`, and adding it is **not** an escape hatch for a compound block: an
   icon/component prop (`icon={Check}`) passed from a server page into a client component is a
-  function crossing the RSC boundary, which is rejected. So when a compound parent must hand a value
-  to children **it did not construct** (the slot API means the consumer builds them), the supported
-  mechanism is `React.Children.map` + `cloneElement`, unwrapping `React.Fragment` yourself because
-  `React.Children` treats a fragment as one opaque child — see `blocks/bullet-list` (list-level
-  `icon`), which pairs it with `assertAllowedChildren` so an untraversable child is a flagged
-  contract violation rather than a silent fallback. **Nothing but a real `next build` catches this**:
+  function crossing the RSC boundary, which is rejected. **The fix is almost always to not need the
+  mechanism**: a parent can't pass props to children it didn't construct, so if it renders a
+  *homogeneous repeated set*, give it a **data array** and let it build its own rows — an ordinary
+  prop, a compile-time item type, no traversal (`BulletList`/`StatRow`/`LogoRow`; rule + convention in
+  `sections.mdx`). `React.Children.map` + `cloneElement` (unwrapping `React.Fragment` yourself, since
+  `React.Children` treats one as a single opaque child) is the **fallback**, correct only when
+  children must genuinely stay opaque. `BulletList` was that worked example for one day and was
+  converted to a data prop; the repo now has **zero** `cloneElement` call sites — don't reintroduce
+  one just to illustrate this paragraph. **Nothing but a real `next build` catches a violation**:
   vitest runs jsdom against client React, and `tsc`/`eslint` have no notion of the server/client
   boundary — so verify component changes with `yarn workspace @brief-to-site/site-<slug> build`, not
   just the push gate.

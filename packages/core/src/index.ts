@@ -56,12 +56,12 @@ export { MediaFrame, mediaFrameVariants } from "./components/blocks/media-frame/
 export type { MediaFrameProps } from "./components/blocks/media-frame/media-frame";
 export { FeatureCard } from "./components/blocks/feature-card/feature-card";
 export type { FeatureCardProps } from "./components/blocks/feature-card/feature-card";
-export { Stat, StatRow, statRowVariants } from "./components/blocks/stat/stat";
-export type { StatProps, StatRowProps } from "./components/blocks/stat/stat";
+export { StatRow, statRowVariants } from "./components/blocks/stat/stat";
+export type { StatRowProps, StatRowStat } from "./components/blocks/stat/stat";
 export { Quote } from "./components/blocks/quote/quote";
 export type { QuoteProps } from "./components/blocks/quote/quote";
-export { BulletList, BulletItem } from "./components/blocks/bullet-list/bullet-list";
-export type { BulletListProps, BulletItemProps } from "./components/blocks/bullet-list/bullet-list";
+export { BulletList } from "./components/blocks/bullet-list/bullet-list";
+export type { BulletListProps, BulletListItem } from "./components/blocks/bullet-list/bullet-list";
 export { LogoRow } from "./components/blocks/logo-row/logo-row";
 export type { LogoRowProps, LogoRowLogo } from "./components/blocks/logo-row/logo-row";
 export { Step } from "./components/blocks/step/step";

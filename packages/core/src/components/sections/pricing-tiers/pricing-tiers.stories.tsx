@@ -2,14 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Check } from "lucide-react";
 
 import { Button } from "@core/components/ui/button";
-import {
-  BulletItem,
-  BulletList,
-  Eyebrow,
-  Heading,
-  PriceCard,
-  Prose,
-} from "@core/components/blocks";
+import { BulletList, Eyebrow, Heading, PriceCard, Prose } from "@core/components/blocks";
 import {
   PricingTiers,
   PricingTiersHeader,
@@ -24,11 +17,7 @@ const header = (
 );
 
 const tierList = (items: string[]) => (
-  <BulletList icon={Check}>
-    {items.map((item) => (
-      <BulletItem key={item}>{item}</BulletItem>
-    ))}
-  </BulletList>
+  <BulletList icon={Check} items={items.map((text) => ({ text }))} />
 );
 
 /**

@@ -2,16 +2,14 @@ import { render, screen } from "@testing-library/react";
 import { Check } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
 
-import { BulletItem, BulletList } from "@core/components/blocks/bullet-list/bullet-list";
+import { BulletList } from "@core/components/blocks/bullet-list/bullet-list";
 import { PriceCard } from "@core/components/blocks/price-card/price-card";
 
 describe("PriceCard", () => {
   it("renders the plan name and checklist under the price-card data-slot", () => {
     const { container } = render(
       <PriceCard name="Starter">
-        <BulletList icon={Check}>
-          <BulletItem>One page</BulletItem>
-        </BulletList>
+        <BulletList icon={Check} items={[{ text: "One page" }]} />
       </PriceCard>,
     );
     expect(container.querySelector("[data-slot=price-card]")).toBeInTheDocument();

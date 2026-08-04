@@ -53,6 +53,37 @@ Icons: **`lucide-react`** is the icon library — import glyphs directly
 sized and coloured with Tailwind role-token utilities. It's a library, not hand-authored SVG, so it's
 exempt from the icons-barrel rule.
 
+## Group blocks take data, not children
+
+Sections are compound (a root plus named slot subcomponents, above). **Blocks are not, by default.**
+The rule:
+
+> A block that renders a **homogeneous repeated set** takes a data array and builds its own rows. A
+> block that wraps **arbitrary or heterogeneous** content keeps `children`.
+
+`BulletList` (`items`), `StatRow` (`stats`) and `LogoRow` (`logos`) take data. `CtaGroup` (arbitrary
+`Button`s with their own hrefs and variants), `PriceCard` (a heterogeneous slot — a `BulletList` *and*
+a CTA) and `Prose` / `Quote` / `FaqItem` (free-form rich text) keep `children`.
+
+This isn't stylistic. A parent cannot pass a prop to children it did not construct — the mechanism
+for that is context, and core's blocks are **Server Components**, where React's `react-server` build
+exports no `createContext`. Composing a repeated set as children therefore forces
+`React.Children.map` + `cloneElement` + fragment-unwrapping to reach the items, and the item shape can
+only be checked by a dev-only `assertAllowedChildren` warning. A data array replaces all of it with an
+ordinary prop and a **compile-time** type.
+
+The convention, so the next group block is mechanical:
+
+- Export a named item interface — `<Component><Singular>` (`LogoRowLogo`, `BulletListItem`,
+  `StatRowStat`) — declared **above** the props interface, with per-field JSDoc.
+- The array prop is **required** and named for its plural noun (`items`, `stats`, `logos`) — the shape
+  is uniform, the noun stays semantic so it reads at a call site.
+- Props still extend the DOM element props; the array is additive. Key by index (these lists are
+  static and never reorder).
+- No item subcomponent. A `<li>` or a `<dt>`/`<dd>` is invalid outside its parent anyway, so exporting
+  one only invites misuse.
+- No `assertAllowedChildren` — the type is the contract.
+
 ## The bound is the block vocabulary
 
 Content order carries no constraint — a11y is out of scope here (the deliverable is full-page

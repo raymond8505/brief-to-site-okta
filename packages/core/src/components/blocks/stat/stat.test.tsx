@@ -1,11 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { Stat, StatRow } from "@core/components/blocks/stat/stat";
+import { StatRow } from "@core/components/blocks/stat/stat";
 
-describe("Stat / StatRow", () => {
-  it("renders a value and label under the stat data-slot", () => {
-    const { container } = render(<Stat value="12k" label="sites shipped" />);
+describe("StatRow", () => {
+  it("renders a value and label per stat, under the stat data-slot", () => {
+    const { container } = render(<StatRow stats={[{ value: "12k", label: "sites shipped" }]} />);
     expect(container.querySelector("[data-slot=stat]")).toBeInTheDocument();
     expect(screen.getByText("12k")).toBeInTheDocument();
     expect(screen.getByText("sites shipped")).toBeInTheDocument();
@@ -13,10 +13,13 @@ describe("Stat / StatRow", () => {
 
   it("renders stats inside a stat-row grid and maps columns", () => {
     const { container } = render(
-      <StatRow columns={2}>
-        <Stat value="1" label="a" />
-        <Stat value="2" label="b" />
-      </StatRow>,
+      <StatRow
+        columns={2}
+        stats={[
+          { value: "1", label: "a" },
+          { value: "2", label: "b" },
+        ]}
+      />,
     );
     const row = container.querySelector("[data-slot=stat-row]");
     expect(row).toHaveClass("grid-cols-2");

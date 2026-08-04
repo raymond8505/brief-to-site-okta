@@ -1,14 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { Heading, Stat, StatRow } from "@core/components/blocks";
+import { Heading, StatRow } from "@core/components/blocks";
 import { StatBand, StatBandHeader } from "@core/components/sections/stat-band/stat-band";
 
 const stats = (
-  <StatRow columns={2}>
-    <Stat value="48h" label="brief to launch" />
-    <Stat value="1" label="brand colour" />
-  </StatRow>
+  <StatRow
+    columns={2}
+    stats={[
+      { value: "48h", label: "brief to launch" },
+      { value: "1", label: "brand colour" },
+    ]}
+  />
 );
 
 describe("StatBand", () => {

@@ -9,7 +9,6 @@ import {
   MediaFrame,
   Prose,
   Quote,
-  Stat,
   StatRow,
 } from "@core/components/blocks";
 import { Hero, HeroAside, HeroBody, HeroMedia } from "@core/components/sections/hero/hero";
@@ -155,10 +154,13 @@ export const WithStats: Story = {
         </CtaGroup>
       </HeroBody>
       <HeroAside>
-        <StatRow columns={2}>
-          <Stat value="12k" label="sites shipped" />
-          <Stat value="48h" label="brief to launch" />
-        </StatRow>
+        <StatRow
+          columns={2}
+          stats={[
+            { value: "12k", label: "sites shipped" },
+            { value: "48h", label: "brief to launch" },
+          ]}
+        />
       </HeroAside>
     </Hero>
   ),
