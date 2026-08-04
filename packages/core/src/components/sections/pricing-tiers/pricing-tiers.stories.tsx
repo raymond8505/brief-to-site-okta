@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { Check } from "lucide-react";
 
 import { Button } from "@core/components/ui/button";
 import {
@@ -23,11 +24,9 @@ const header = (
 );
 
 const tierList = (items: string[]) => (
-  <BulletList>
+  <BulletList icon={Check}>
     {items.map((item) => (
-      <BulletItem key={item} marker="check">
-        {item}
-      </BulletItem>
+      <BulletItem key={item}>{item}</BulletItem>
     ))}
   </BulletList>
 );
@@ -40,6 +39,12 @@ const tierList = (items: string[]) => (
  * no-price fallback form is the default. Mark at most one tier with `badgeText`. A "variant" is a
  * composition — how many tiers, which is highlighted, priced vs fallback. Import the section from
  * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens** — the section sets no colour of its own: it inherits the page surface
+ * (`--background` / `--foreground`) and takes all colour from the blocks in its slots — the
+ * `PriceCard` cards (`--card`, and `--brand-secondary` on the highlighted tier's border) and the
+ * `BulletList` check markers (`--brand-secondary`). `columns` and `density` are spacing-only axes
+ * with no token of their own.
  */
 const meta = {
   title: "Sections/PricingTiers",

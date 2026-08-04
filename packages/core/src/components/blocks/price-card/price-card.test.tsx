@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { Check } from "lucide-react";
 import { describe, expect, it, vi } from "vitest";
 
 import { BulletItem, BulletList } from "@core/components/blocks/bullet-list/bullet-list";
@@ -8,8 +9,8 @@ describe("PriceCard", () => {
   it("renders the plan name and checklist under the price-card data-slot", () => {
     const { container } = render(
       <PriceCard name="Starter">
-        <BulletList>
-          <BulletItem marker="check">One page</BulletItem>
+        <BulletList icon={Check}>
+          <BulletItem>One page</BulletItem>
         </BulletList>
       </PriceCard>,
     );

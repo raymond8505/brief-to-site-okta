@@ -29,7 +29,7 @@ export interface PriceCardProps extends Omit<React.ComponentProps<typeof Card>, 
 
 /**
  * PriceCard — one plan/tier cell: a `Card` with the plan name, a price line, and a children slot
- * for a `BulletList` (use `marker="check"`) plus an optional `Button` / `CtaGroup`. A group block:
+ * for a `BulletList` (use `icon={Check}`) plus an optional `Button` / `CtaGroup`. A group block:
  * repeat it inside a `PricingTiers`. **Prices are checkable specifics** — state one only when the
  * brief supplies it; otherwise omit `price` and the card renders the qualitative fallback.
  */
