@@ -9,6 +9,11 @@ import { IconTile } from "@core/components/blocks/icon-tile/icon-tile";
  * (`columns={5}` for dense walls). Pass any `lucide-react` icon component as `icon`; the icon is
  * decorative (aria-hidden) — the label carries the meaning. Import from
  * `@brief-to-site/core/blocks`.
+ *
+ * **Tokens** — the glyph is `--brand-secondary` (a raw brand var, `:root`-derived, not a remappable
+ * role token) on a `--secondary` tinted square whose corners scale with `--radius` (`rounded-lg`).
+ * The label inherits `--foreground`; the optional description is `--muted-foreground`. The tile
+ * needs no contrast math: the glyph is decorative and the light tint carries no text.
  */
 const meta = {
   title: "Blocks/IconTile",

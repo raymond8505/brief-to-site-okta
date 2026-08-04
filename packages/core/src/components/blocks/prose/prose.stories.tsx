@@ -6,6 +6,10 @@ import { Prose } from "@core/components/blocks/prose/prose";
  * Prose — a supporting paragraph block. `tone` selects the text role (`muted` default, `default` for
  * foreground) and `lead` bumps the size for the sentence directly under a headline. A leaf block:
  * compose it under a `Heading`. Import from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens** — `tone` *is* the token choice: `muted` (default) is `--muted-foreground`, `default` is
+ * `--foreground`. Both are role tokens, remappable per site in `theme.css`. No brand var, no
+ * surface — `lead` only changes the type size.
  */
 const meta = {
   title: "Blocks/Prose",

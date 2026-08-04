@@ -36,6 +36,18 @@ Colour: sections and blocks consume **role tokens** (`bg-background`, `text-fore
 `text-muted-foreground`, `bg-muted`, `--brand-secondary`) — never hardcoded colours — so the
 deterministic theme stays orthogonal.
 
+**Every section and block story documents the tokens it consumes**, as a `**Tokens** —` line closing
+the JSDoc block immediately above `const meta` — the comment the Storybook MCP serves to the
+assembling agent. Order it: raw brand vars first (`--brand-secondary`, `--brand-r/g/b` — derived at
+`:root` by `theme:build`, *not* remappable role tokens), then the role tokens an operator remaps in a
+site's `theme.css`, then any `.wcag-contrast` / `.brand-rgb` use where a saturated fill carries text,
+then `--radius` / `--font-heading`, then whatever is delegated to a `ui/` primitive or to the blocks
+filling the slots. A component that sets no colour says so — "no tokens of its own, inherits
+`--background`" is information, not an omission. **This line is hand-maintained and nothing checks
+it:** when you change a component's classes, update its `**Tokens**` line in the same commit, or the
+docs will confidently describe a colour the component no longer has. See **Sections/_Template** for
+the worked example.
+
 Icons: **`lucide-react`** is the icon library — import glyphs directly
 (`import { ArrowRight } from "lucide-react"`) into blocks/site-local components for visual interest,
 sized and coloured with Tailwind role-token utilities. It's a library, not hand-authored SVG, so it's

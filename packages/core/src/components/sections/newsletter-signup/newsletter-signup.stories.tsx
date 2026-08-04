@@ -13,6 +13,12 @@ import {
  * field + submit; labels via `emailLabel` / `placeholder` / `submitLabel`). The form is
  * **presentational** (no submit wiring — the operator connects a real destination after handoff).
  * No layout axis beyond the shared `density`. Import from `@brief-to-site/core/sections`.
+ *
+ * **Tokens** — the section sets no colour of its own: it inherits the page surface (`--background` /
+ * `--foreground`). The copy takes its colour from the blocks; the inline form is delegated to the
+ * `Input` / `Button` primitives — the field is `--input` with a `--border` edge and a `--ring` focus
+ * ring at `--radius` corners, the submit is `--primary` / `--primary-foreground`. `density` is a
+ * spacing axis with no token.
  */
 const meta = {
   title: "Sections/NewsletterSignup",

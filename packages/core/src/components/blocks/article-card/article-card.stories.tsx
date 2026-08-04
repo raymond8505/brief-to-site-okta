@@ -7,6 +7,12 @@ import { ArticleCard } from "@core/components/blocks/article-card/article-card";
  * category `Badge`, a (linkable) title, an optional excerpt, and an optional attribution line
  * (`meta`). A group block: repeat it inside an `ArticleGrid`. Import from
  * `@brief-to-site/core/blocks`.
+ *
+ * **Tokens** — no brand var: this card is deliberately neutral. Excerpt and `meta` line are
+ * `--muted-foreground`. The rest is delegated — the `Card` surface is `--card` /
+ * `--card-foreground` with a `--foreground`-tinted ring and `--radius`-scaled corners
+ * (`rounded-xl`), the category badge is the `Badge` `secondary` variant (`--secondary` /
+ * `--secondary-foreground`), and the image sits in a `MediaFrame` (`--muted` box).
  */
 const meta = {
   title: "Blocks/ArticleCard",

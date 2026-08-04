@@ -133,6 +133,23 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   omitted (Storybook/dev/jsdom) it falls back to an inline SVG data-URI sized from `aspect` via
   `ASPECT_DIMENSIONS`. The section contract doc is `components/sections/sections.mdx`; the copy-me
   archetype is `components/sections/_template/`.
+- **Core sections/blocks are React SERVER Components — there is no `createContext`.** Sites render
+  static/SSR, so core's components land in the RSC graph; React's `react-server` build exports only
+  `Children, Fragment, cloneElement, createElement, isValidElement, use, useId, useMemo, useCallback,
+  cache, memo, lazy, forwardRef` — **no `createContext`/`useContext`/`useState`** (dumped from
+  `react/cjs/react.react-server.development.js`; `lucide-react` quarantines its own `LucideProvider`
+  behind `"use client"` for the same reason). Only `label.tsx`, `separator.tsx` and the two form
+  components carry `"use client"`, and adding it is **not** an escape hatch for a compound block: an
+  icon/component prop (`icon={Check}`) passed from a server page into a client component is a
+  function crossing the RSC boundary, which is rejected. So when a compound parent must hand a value
+  to children **it did not construct** (the slot API means the consumer builds them), the supported
+  mechanism is `React.Children.map` + `cloneElement`, unwrapping `React.Fragment` yourself because
+  `React.Children` treats a fragment as one opaque child — see `blocks/bullet-list` (list-level
+  `icon`), which pairs it with `assertAllowedChildren` so an untraversable child is a flagged
+  contract violation rather than a silent fallback. **Nothing but a real `next build` catches this**:
+  vitest runs jsdom against client React, and `tsc`/`eslint` have no notion of the server/client
+  boundary — so verify component changes with `yarn workspace @brief-to-site/site-<slug> build`, not
+  just the push gate.
 - **Sites & core follow an escalation ladder — the agent may author *site-local* components.** The
   agent checks the existing tier first, then goes one rung further when nothing fits: compose a core
   **section** → author a site-local **section** (arrangement of core blocks, under
@@ -174,6 +191,18 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   (`description` + `table.defaultValue`) document the variant props there (they don't surface in
   `get-documentation`). Note `parameters.docs.description.component` does **not** surface in
   `get-documentation` — use the meta-leading JSDoc for the MCP-visible description.
+  - **That JSDoc must also close with a `**Tokens** —` line** naming the design tokens the component
+    consumes (raw brand vars → role tokens → `.wcag-contrast`/`.brand-rgb` → `--radius`/
+    `--font-heading` → what's delegated to a `ui/` primitive or the slot blocks); "sets no colour of
+    its own, inherits `--background`" is a valid and expected answer. Rule + worked example:
+    `sections.mdx` and `sections/_template/`. It is **hand-maintained on every component change** —
+    same standing drift caveat as the variant vocabulary below. A declarative alternative was
+    investigated and **deferred**: Storybook's slot for structured per-component metadata is
+    `parameters` (typed via a shared `Meta` wrapper so `tsc` enforces it), but the MCP composes its
+    output from *only* the meta-leading JSDoc, story descriptions + snippets, props docgen, and
+    attached MDX — `parameters` never enter it (read from `formatComponentManifest` in
+    `@storybook/mcp/dist/index.js`), so a typed parameter would be invisible to the assembling agent.
+    Any future deterministic solution has to clear that bar.
   - The old `yarn sections:catalog` CLI (`components/sections/catalog.ts` + `catalog.test.ts` +
     `config/cli/sections-catalog.ts` + per-section exported `*VariantsConfig`) was **removed**; the
     configs are inlined back into each `cva()` call. Consequence: story `argTypes` variant lists and

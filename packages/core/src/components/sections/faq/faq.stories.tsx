@@ -31,6 +31,11 @@ const items = [
  * `Heading` / `Prose`). One layout axis: `columns` (`1` | `2`, default `2`); plus the shared
  * `density`. Answers are always visible. Import the section from `@brief-to-site/core/sections` and
  * the blocks from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens** — the section sets no colour of its own: it inherits the page surface (`--background` /
+ * `--foreground`) and takes all colour from the blocks in its slots — `FaqItem` questions
+ * (`--font-heading`, `--foreground`) and answers (`--muted-foreground`). `columns` and `density` are
+ * spacing axes with no token. To restyle, remap the role tokens in the site's `theme.css`.
  */
 const meta = {
   title: "Sections/Faq",

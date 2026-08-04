@@ -48,6 +48,11 @@ const cards = [
  * (operator-finalized) and card `href`s must point at real manifest pages. A "variant" is a
  * composition — how many cards, at which `columns`, how full each card is. Import the section from
  * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens** — the section sets no colour of its own: it inherits the page surface (`--background` /
+ * `--foreground`) and takes all colour from the blocks in its slots — `ArticleCard` (`--card`,
+ * `--muted-foreground`, `--secondary` category badge) and the header blocks. `columns` and `density`
+ * are spacing axes with no token. To restyle, remap the role tokens in the site's `theme.css`.
  */
 const meta = {
   title: "Sections/ArticleGrid",

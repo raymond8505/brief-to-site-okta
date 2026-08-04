@@ -7,6 +7,11 @@ import { Step } from "@core/components/blocks/step/step";
  * and optional `description`. A leaf block: repeat it inside a `Steps` section. Icon-free — the badge
  * carries the step number on the brand fill via the `.wcag-contrast` utility. Import from
  * `@brief-to-site/core/blocks`.
+ *
+ * **Tokens** — the index badge is the saturated brand-primary fill, and because it *carries text* the
+ * number's colour is solved in CSS by `.wcag-contrast` from `--brand-r/g/b` (raw brand vars written
+ * per site by `theme:build`) — never picked in JS, and legible at ≥4.5:1 for any hue. The title is
+ * `--font-heading` in `--foreground`; the description is `--muted-foreground`.
  */
 const meta = {
   title: "Blocks/Step",

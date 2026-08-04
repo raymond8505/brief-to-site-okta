@@ -24,6 +24,11 @@ const stats = (
  * of `Stat` blocks; the `StatRow` owns the column count, so `density` is the only section axis.
  * Figures are placeholder-grade (operator-finalized). Import the section from
  * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens** — the section sets no colour of its own: it inherits the page surface (`--background` /
+ * `--foreground`) and takes all colour from the blocks in its slots — `Stat` values
+ * (`--font-heading`, `--foreground`) over `--muted-foreground` labels. No brand var anywhere;
+ * `density` is a spacing axis with no token.
  */
 const meta = {
   title: "Sections/StatBand",

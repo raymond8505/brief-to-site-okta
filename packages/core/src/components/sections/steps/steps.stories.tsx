@@ -22,6 +22,11 @@ const steps = [
  * `Prose`). One layout axis: `columns` (`2` | `3` | `4`, default `3`); plus the shared
  * `density`. A "variant" is a composition — how many steps, at which `columns`. Import the section
  * from `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens** — the section sets no colour of its own: it inherits the page surface (`--background` /
+ * `--foreground`) and takes all colour from the blocks in its slots. The brand appears via `Step`'s
+ * index badge — a saturated brand-primary fill whose number colour is solved in CSS by
+ * `.wcag-contrast` from `--brand-r/g/b`. `columns` and `density` are spacing axes with no token.
  */
 const meta = {
   title: "Sections/Steps",

@@ -7,6 +7,10 @@ import { Heading } from "@core/components/blocks/heading/heading";
  * content sections); `size` picks the type scale independently (`xl` | `lg` | `md` | `sm`, default
  * `lg`), so a small `h2` or a large `h1` are both expressible. A leaf block: compose it inside a
  * section slot (e.g. `HeroBody`). Import from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens** — `--font-heading` for the typeface and `--foreground` for the colour. No brand var and
+ * no surface: a heading takes the brand hue only indirectly, from whatever background it sits on.
+ * `size` is a pure type-scale axis with no token of its own.
  */
 const meta = {
   title: "Blocks/Heading",

@@ -8,6 +8,12 @@ import { Eyebrow } from "@core/components/blocks/eyebrow/eyebrow";
  * only reaches the 4.5:1 AA floor and reads muddy at this size) and `w-fit`. Pass `variant="brand"`
  * for the saturated fill. A leaf block: compose it above a `Heading`. Import from
  * `@brief-to-site/core/blocks`.
+ *
+ * **Tokens** — the default `brandTint` is the `Badge` variant `--accent` / `--accent-foreground`
+ * (the l90 brand tint plus dark text — no contrast math needed). `variant="brand"` switches to the
+ * saturated brand fill, where the text colour is computed in CSS by `.wcag-contrast` from
+ * `--brand-r/g/b` (raw brand vars written per site by `theme:build`), never picked in JS. Corners
+ * scale with `--radius` (`rounded-4xl`).
  */
 const meta = {
   title: "Blocks/Eyebrow",

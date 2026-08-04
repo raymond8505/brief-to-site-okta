@@ -7,6 +7,10 @@ import { Stat, StatRow } from "@core/components/blocks/stat/stat";
  * `4`, default `3`). Compose `Stat` children inside (each a large `value` over a small
  * `label`). A group block: use it in a hero aside or a standalone metrics section. Import from
  * `@brief-to-site/core/blocks`.
+ *
+ * **Tokens** — no brand var. Each `Stat` value is `--font-heading` in `--foreground`; its label is
+ * `--muted-foreground`. `columns` is a grid axis with no token of its own, and the row sets no
+ * surface, so it inherits its container's background.
  */
 const meta = {
   title: "Blocks/StatRow",
