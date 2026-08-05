@@ -8,10 +8,7 @@ import { PriceCard } from "@core/components/blocks/price-card/price-card";
 /**
  * PriceCard — one plan/tier cell: plan name, a price line, and a children slot for a `BulletList`
  * (`icon={Check}` + its `items`) plus an optional `Button`. A group block: repeat it inside a
- * `PricingTiers`.
- * **Guardrail:** prices are checkable specifics — pass `price` ONLY when the brief supplies it
- * verbatim; otherwise omit it and the card renders the qualitative fallback ("Contact for
- * pricing"). `badgeText` marks the highlighted tier. Import from `@brief-to-site/core/blocks`.
+ * `PricingTiers`. Import from `@brief-to-site/core/blocks`.
  *
  * **Tokens**
  * - `--brand-secondary` — the 2px accent border, on a `badgeText` tier only; an unhighlighted card

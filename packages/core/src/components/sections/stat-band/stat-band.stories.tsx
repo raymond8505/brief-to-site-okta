@@ -25,9 +25,8 @@ const stats = (
 /**
  * StatBand — an optional `StatBandHeader` (compose `Eyebrow` / `Heading` / `Prose`) above a `StatRow`
  * (pass its `stats` array); the `StatRow` owns the column count, so `density` is the only section
- * axis.
- * Figures are placeholder-grade (operator-finalized). Import the section from
- * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
+ * axis. Import the section from `@brief-to-site/core/sections` and the blocks from
+ * `@brief-to-site/core/blocks`.
  *
  * **Tokens**
  * - `--background` / `--foreground` — the inherited page surface. The section sets no colour of its

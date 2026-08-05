@@ -10,15 +10,9 @@ import { assertAllowedChildren } from "@core/components/blocks/lib/assert-slot";
  * `section.tsx`). A two-column layout shell: a copy column (`HeroBody`) beside a second column that
  * is either media (`HeroMedia`) or supporting content (`HeroAside` — a `StatRow`, a `Quote`, …),
  * stacking on small screens. It composes `Section` for the shell/container/density and owns only the
- * layout: which side the second column sits on (`mediaSide`), and copy alignment (`align`).
- *
- * A "variant" is a **composition**, not a flag — fill the slots with different blocks:
- * **split** (`HeroBody` + `HeroMedia`), **centered** (`HeroBody` only, `align="center"`),
- * **with-stats** (`HeroBody` + `HeroAside` holding a `StatRow`), **quote-led** (`HeroBody` +
- * `HeroAside` holding a `Quote`), **page-intro** (`HeroBody` only, `density="compact"` — an
- * interior page-title header), **stacked** (`layout="stacked" align="center"` — centred copy with
- * full-width media below). Compose the copy from block primitives (`Eyebrow`, `Heading`, `Prose`,
- * `CtaGroup`) — see `@brief-to-site/core/blocks`.
+ * layout: which side the second column sits on (`mediaSide`), copy alignment (`align`), and whether
+ * the columns sit in a row or stack (`layout`). Every axis is CSS-only, which is what makes a
+ * "variant" a composition of slots rather than a flag on the root.
  */
 
 export const heroVariants = cva("flex flex-col gap-10", {

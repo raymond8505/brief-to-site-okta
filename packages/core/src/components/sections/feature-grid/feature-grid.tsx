@@ -14,12 +14,6 @@ import { assertAllowedChildren } from "@core/components/blocks/lib/assert-slot";
  * splits the header out and lays the remaining children into the grid, whose column count is the
  * one genuine layout axis — `columns` (`2` | `3` | `4` | `5`, default `3`) — mapping to
  * `grid-template-columns`. `5` is the dense icon-wall form for `IconTile`s.
- *
- * A "variant" is a composition: how many `FeatureCard`s (or `IconTile`s), at which `columns`, with
- * or without a header. For tabbed content (e.g. two condition groups), stack two FeatureGrids each
- * with its own header — never hide content behind tabs (full-page capture must see everything).
- * Import the section from `@brief-to-site/core/sections` and the blocks (incl. `FeatureCard` /
- * `IconTile`) from `@brief-to-site/core/blocks`.
  */
 
 export const featureGridVariants = cva("grid grid-cols-1 gap-6 md:gap-8", {

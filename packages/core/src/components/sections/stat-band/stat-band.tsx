@@ -8,9 +8,7 @@ import { assertAllowedChildren } from "@core/components/blocks/lib/assert-slot";
 /**
  * StatBand — a "by the numbers" section: an optional `StatBandHeader` slot (compose `Eyebrow` /
  * `Heading` / `Prose`) above a `StatRow` (pass its `stats` array). The `StatRow` owns the column count, so
- * this section has no layout axis of its own beyond the shared `density`. Like every proof section,
- * the figures are **placeholder-grade** — operator-finalized, never invented metrics. Import the
- * section from `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
+ * this section has no layout axis of its own beyond the shared `density`.
  */
 
 export interface StatBandProps extends React.ComponentProps<"div">, Pick<SectionProps, "density"> {}

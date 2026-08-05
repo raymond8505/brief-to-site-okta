@@ -22,10 +22,8 @@ import { Hero, HeroAside, HeroBody, HeroMedia } from "@core/components/sections/
  * below the copy), and the shared `density` (`compact` | `comfortable` | `spacious`, default
  * `comfortable`).
  *
- * A "variant" is a **composition** — each story below is a copy-me preset: **Default** (split),
- * **Centered**, **WithStats**, **QuoteLed**, **PageIntro** (interior page-title header: heading +
- * intro prose, no CTA, compact), **StackedMedia** (centred copy, full-width media below). Import the
- * section from `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
+ * A "variant" is a **composition** — which blocks fill which slots. Import the section from
+ * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
  *
  * **Tokens**
  * - `--background` / `--foreground` — the inherited page surface, already brand-tinted

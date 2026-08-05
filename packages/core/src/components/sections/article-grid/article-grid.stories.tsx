@@ -44,8 +44,7 @@ const cards = [
 /**
  * ArticleGrid — a news/blog/resources section: a grid of `ArticleCard` blocks below an optional
  * `ArticleGridHeader` (compose `Eyebrow` / `Heading` / `Prose`). One layout axis: `columns`
- * (`2` | `3`, default `3`); plus the shared `density`. Article copy is placeholder-grade
- * (operator-finalized) and card `href`s must point at real manifest pages. A "variant" is a
+ * (`2` | `3`, default `3`); plus the shared `density`. A "variant" is a
  * composition — how many cards, at which `columns`, how full each card is. Import the section from
  * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
  *

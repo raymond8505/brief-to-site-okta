@@ -29,7 +29,7 @@ const quotes = [
 /**
  * Testimonials — a grid of `Quote` blocks above an optional `TestimonialsHeader` (compose `Eyebrow` /
  * `Heading` / `Prose`). One layout axis: `columns` (`1` | `2` | `3`, default `2`); plus the
- * shared `density`. Quotes are placeholder-grade (operator-finalized). A "variant" is a composition —
+ * shared `density`. A "variant" is a composition —
  * how many quotes, at which `columns`. Import the section from `@brief-to-site/core/sections` and the
  * blocks from `@brief-to-site/core/blocks`.
  *

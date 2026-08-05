@@ -35,10 +35,11 @@ then executes this plan.
 ## Plan real depth, not a stub
 
 Plan each page's section sequence from the brief — enough distinct sections to tell its story, not a
-thin stub. **What sections exist, and any content expectation a section carries** (e.g. proof
-sections that stay placeholder-grade), come from that section's own **Storybook MCP** entry
-(`list-all-documentation` → `get-documentation`) — read them there; this file doesn't enumerate the
-suite (it would drift from the live registry).
+thin stub. **What sections exist, and what each composes**, come from that section's own **Storybook
+MCP** entry (`list-all-documentation` → `get-documentation`) — read them there; this file doesn't
+enumerate the suite (it would drift from the live registry). **What a section may say** — which proof
+content stays placeholder-grade, what is never invented — is the invention posture in
+[`conventions.md`](conventions.md), not the component docs.
 
 When the brief needs a beat no core section covers, author a **site-local** section — but check the
 core suite (via the MCP) first. The invention posture (what to compose confidently vs. never invent)

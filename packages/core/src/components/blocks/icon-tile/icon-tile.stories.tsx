@@ -6,9 +6,7 @@ import { IconTile } from "@core/components/blocks/icon-tile/icon-tile";
 /**
  * IconTile — one compact icon + label cell (a condition, capability, or category): a lucide icon in
  * a brand-tinted square above the label. A group block: repeat it inside a `FeatureGrid`
- * (`columns={5}` for dense walls). Pass any `lucide-react` icon component as `icon`; the icon is
- * decorative (aria-hidden) — the label carries the meaning. Import from
- * `@brief-to-site/core/blocks`.
+ * (`columns={5}` for dense walls). Import from `@brief-to-site/core/blocks`.
  *
  * **Tokens**
  * - `--brand-secondary` — the glyph. Raw brand var, `:root`-derived by `theme:build`, not remappable
