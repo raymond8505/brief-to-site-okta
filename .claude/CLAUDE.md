@@ -292,8 +292,8 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   raster.
 - **`placeholders:source <slug>` auto-fills real stock photos from the manifest** — **operator-run,
   NOT part of the generation pipeline** (the microsite skill phases don't invoke it; operator uses it
-  at their discretion). Documented in the Storybook **Guides/Placeholder Sourcing** page
-  (`config/placeholder-sourcing.mdx`). Root `scripts/placeholder-source.ts` (network + fs, OUT of core
+  at their discretion). Operator guide: root `PLACEHOLDERS.md` — Storybook documents components, so
+  a CLI manual doesn't live there. Root `scripts/placeholder-source.ts` (network + fs, OUT of core
   like the other scripts) reads the
   manifest and per entry: Unsplash `search/photos` by `query ?? description` (optional manifest
   `query` field — keywords beat prose), takes the top match, fetches an exact-`aspect` cropped PNG

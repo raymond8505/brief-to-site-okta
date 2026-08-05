@@ -1,7 +1,3 @@
-import { Meta } from "@storybook/addon-docs/blocks";
-
-<Meta title="Guides/Placeholder Sourcing" />
-
 # Placeholder sourcing (Unsplash)
 
 `yarn placeholders:source <slug>` turns a site's placeholder **descriptions** into real stock photos
