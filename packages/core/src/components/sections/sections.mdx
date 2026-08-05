@@ -36,17 +36,28 @@ Colour: sections and blocks consume **role tokens** (`bg-background`, `text-fore
 `text-muted-foreground`, `bg-muted`, `--brand-secondary`) — never hardcoded colours — so the
 deterministic theme stays orthogonal.
 
-**Every section and block story documents the tokens it consumes**, as a `**Tokens** —` line closing
-the JSDoc block immediately above `const meta` — the comment the Storybook MCP serves to the
-assembling agent. Order it: raw brand vars first (`--brand-secondary`, `--brand-r/g/b` — derived at
-`:root` by `theme:build`, *not* remappable role tokens), then the role tokens an operator remaps in a
-site's `theme.css`, then any `.wcag-contrast` / `.brand-rgb` use where a saturated fill carries text,
-then `--radius` / `--font-heading`, then whatever is delegated to a `ui/` primitive or to the blocks
-filling the slots. A component that sets no colour says so — "no tokens of its own, inherits
-`--background`" is information, not an omission. **This line is hand-maintained and nothing checks
-it:** when you change a component's classes, update its `**Tokens**` line in the same commit, or the
-docs will confidently describe a colour the component no longer has. See **Sections/_Template** for
-the worked example.
+**Every section and block story documents the tokens it consumes**, as a `**Tokens**` bullet list
+closing the JSDoc block immediately above `const meta` — the comment the Storybook MCP serves to the
+assembling agent. **One bullet per token**, shaped `` - `--token` — where it's used ``, so the list
+scans; prose paragraphs don't. Order it: raw brand vars first (`--brand-secondary`, `--brand-r/g/b` —
+derived at `:root` by `theme:build`, *not* remappable role tokens), then the role tokens an operator
+remaps in a site's `theme.css`, then any `.wcag-contrast` / `.brand-rgb` use where a saturated fill
+carries text, then `--radius` / `--font-heading`, then one closing `- Delegated — …` bullet.
+
+That last bullet **names** what the colour is delegated to — a `ui/` primitive, or the blocks filling
+a section's slots — it does not re-list their tokens. Each block documents its own; a section that
+copies them out has two records of one fact and they drift. A component that sets no colour says so
+on a bullet — "no tokens of its own, inherits `--background`" is information, not an omission.
+
+**This list is hand-maintained and nothing checks it:** when you change a component's classes, update
+its `**Tokens**` list in the same commit, or the docs will confidently describe a colour the component
+no longer has. See **Sections/_Template** for the worked example.
+
+**No code examples in a JSDoc block.** The Storybook MCP already serves each story's composed JSX as a
+paste-ready snippet, so a snippet hand-written into a comment is a second copy of the same fact and
+drifts from the real one. If a use case genuinely needs example code, **write a story for it** — then
+it is type-checked, rendered, and visible to humans and agents alike. Naming a prop and its value
+(`columns={5}`, `icon={Check}`) is API vocabulary, not an example; that stays.
 
 Icons: **`lucide-react`** is the icon library — import glyphs directly
 (`import { ArrowRight } from "lucide-react"`) into blocks/site-local components for visual interest,

@@ -13,16 +13,15 @@ import {
  * primitives, one CSS-only CVA axis (`align`), and images via the `MediaFrame` block. Copy the folder
  * to start a new section; compose its slots from `@brief-to-site/core/blocks`.
  *
- * **Tokens** — every section and block story ends with a line like this one, and it is
- * **hand-maintained**: when you change a component's classes, update its `**Tokens**` line in the
- * same commit. Name the raw brand vars first (`--brand-secondary`, `--brand-r/g/b` — `:root`-derived
- * by `theme:build`, *not* remappable role tokens), then the role tokens an operator remaps in
- * `theme.css` (`--background`, `--foreground`, `--muted-foreground`, `--card`, …), then any
- * `.wcag-contrast` / `.brand-rgb` usage where a saturated fill carries text, then `--radius` /
- * `--font-heading`, then what is delegated to a `ui/` primitive or to the blocks in the slots. This
- * template sets **no colour of its own**: it inherits the page surface (`--background` /
- * `--foreground`) and takes all colour from the blocks composed into its slots. Say that explicitly
- * rather than omitting the line — "no tokens" is information too. See **Sections/Overview**.
+ * **Tokens**
+ * - `--background` / `--foreground` — the inherited page surface. This template sets no colour of its
+ *   own; say so rather than omitting the list, because "no tokens" is information too.
+ * - Delegated — all colour comes from the blocks composed into the slots (`Eyebrow`, `Heading`,
+ *   `Prose`, `MediaFrame`). Name them; don't re-list their tokens — each documents its own.
+ *
+ * Every section and block story closes with a list like this one, hand-maintained: change a
+ * component's classes, update its `**Tokens**` list in the same commit. Ordering rules and the
+ * no-code-examples-in-JSDoc rule are in **Sections/Overview**.
  */
 const meta = {
   title: "Sections/_Template",

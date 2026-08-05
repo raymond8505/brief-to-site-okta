@@ -202,11 +202,19 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   (`description` + `table.defaultValue`) document the variant props there (they don't surface in
   `get-documentation`). Note `parameters.docs.description.component` does **not** surface in
   `get-documentation` — use the meta-leading JSDoc for the MCP-visible description.
-  - **That JSDoc must also close with a `**Tokens** —` line** naming the design tokens the component
-    consumes (raw brand vars → role tokens → `.wcag-contrast`/`.brand-rgb` → `--radius`/
-    `--font-heading` → what's delegated to a `ui/` primitive or the slot blocks); "sets no colour of
-    its own, inherits `--background`" is a valid and expected answer. Rule + worked example:
-    `sections.mdx` and `sections/_template/`. It is **hand-maintained on every component change** —
+  - **That JSDoc carries no code examples.** The MCP already serves each story's composed JSX as a
+    paste-ready snippet, so a hand-written snippet in a comment is a second copy that drifts from the
+    real one. A use case that genuinely needs example code gets **its own story** — type-checked,
+    rendered, and visible to humans and agents alike. Naming a prop and its value (`columns={5}`,
+    `icon={Check}`) is API vocabulary, not an example, and stays.
+  - **That JSDoc must also close with a `**Tokens**` bullet list** naming the design tokens the
+    component consumes — **one bullet per token**, `` - `--token` — where it's used ``, ordered raw
+    brand vars → role tokens → `.wcag-contrast`/`.brand-rgb` → `--radius`/`--font-heading` → one
+    closing `- Delegated — …` bullet. That last bullet **names** the `ui/` primitive or the slot
+    blocks the colour comes from; it does **not** re-list their tokens (each block documents its own;
+    copying them out gives one fact two records, which drift). "No tokens of its own, inherits
+    `--background`" is a valid and expected bullet. Rule + worked example: `sections.mdx` and
+    `sections/_template/`. It is **hand-maintained on every component change** —
     same standing drift caveat as the variant vocabulary below. A declarative alternative was
     investigated and **deferred**: Storybook's slot for structured per-component metadata is
     `parameters` (typed via a shared `Meta` wrapper so `tsc` enforces it), but the MCP composes its

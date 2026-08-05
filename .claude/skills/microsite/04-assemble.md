@@ -22,12 +22,13 @@ by imitating another site's design.
 - Sections import from `@brief-to-site/core/sections`; blocks from `@brief-to-site/core/blocks`;
   primitives from `@brief-to-site/core`. (Core's section `_template/` archetype is a structural
   **contract** for authoring a site-local section — not a design to mirror and not importable.)
-- **Each MCP entry ends with a `**Tokens**` line** listing the design tokens that component consumes.
-  Read it before reaching for a `className` override: to restyle, remap the **role token** in the
-  site's `theme.css` (a global, deterministic change) rather than overriding classes at the call site.
-  Raw brand vars (`--brand-secondary`, `--brand-r/g/b`) are `:root`-derived from `brand.json` by
-  `theme:build` and are **not** remappable per element — see the colour rules in
-  [`conventions.md`](conventions.md).
+- **Each MCP entry ends with a `**Tokens**` list** — one bullet per design token that component
+  consumes, and a closing `Delegated` bullet naming the primitive or slot blocks the rest of its
+  colour comes from (read those entries for their own tokens). Check it before reaching for a
+  `className` override: to restyle, remap the **role token** in the site's `theme.css` (a global,
+  deterministic change) rather than overriding classes at the call site. Raw brand vars
+  (`--brand-secondary`, `--brand-r/g/b`) are `:root`-derived from `brand.json` by `theme:build` and
+  are **not** remappable per element — see the colour rules in [`conventions.md`](conventions.md).
 - **Icons** come from `lucide-react` (`import { ArrowRight } from "lucide-react"`) — reach for them to
   add visual interest: inside a `Button` (as children), a `FeatureCard`, or a site-local block.
   Size/colour them with Tailwind (`className="size-5 text-muted-foreground"`); pick names the Visual
