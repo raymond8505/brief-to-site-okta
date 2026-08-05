@@ -187,49 +187,9 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   failures. Do **not** widen it back to `"../components"`. (See the colour-system `.brand-rgb` note.) `yarn sites:novel <slug>` (pure
   `config/novel-inventory.ts#formatNovelComponents` + thin `cli/novel-list.ts`) lists site-local blocks
   AND sections for the HITL report — the directory IS the record, not agent memory.
-- **Section shapes come from the Storybook MCP, not a bespoke CLI.** `get-documentation` (per section)
-  returns everything the old catalog did, from three sources: (1) the **component description** — the
-  JSDoc block **immediately above `const meta`** in each `*.stories.tsx` (react-docgen only attaches
-  the leading comment adjacent to the default-export meta; a `const` between the comment and `meta`
-  drops it — verified empirically). Put the section's **purpose + slot/composition vocabulary +
-  layout-axis defaults** there. For a compound section, `get-documentation` returns each variant
-  story's **full composed children JSX** as a paste-ready copy-me snippet (verified) — so the variant
-  stories ARE the composition presets. The same applies to the `Blocks/*` tree (each block has its own
-  autodocs entry). (2) **copy-me usage + every variant value** — the per-variant **stories** (each
-  meaningful variant has its own story; the `Default` story is the type-checked copy-me snippet, which
-  is why we don't hand-write a usage block — that would drift). (3) **content-prop docs** — the
-  interface JSDoc. `tags: ["autodocs"]` generates the human Docs page and enriched variant `argTypes`
-  (`description` + `table.defaultValue`) document the variant props there (they don't surface in
-  `get-documentation`). Note `parameters.docs.description.component` does **not** surface in
-  `get-documentation` — use the meta-leading JSDoc for the MCP-visible description.
-  - **That JSDoc carries no code examples.** The MCP already serves each story's composed JSX as a
-    paste-ready snippet, so a hand-written snippet in a comment is a second copy that drifts from the
-    real one. A use case that genuinely needs example code gets **its own story** — type-checked,
-    rendered, and visible to humans and agents alike. Naming a prop and its value (`columns={5}`,
-    `icon={Check}`) is API vocabulary, not an example, and stays.
-  - **That JSDoc must also close with a `**Tokens**` bullet list** naming the design tokens the
-    component consumes — **one bullet per token**, `` - `--token` — where it's used ``, ordered raw
-    brand vars → role tokens → `.wcag-contrast`/`.brand-rgb` → `--radius`/`--font-heading` → one
-    closing `- Delegated — …` bullet. What that bullet says turns on whether the target has an entry
-    of its own: a **section** just names its slot blocks (each documents its own tokens — copying them
-    out gives one fact two records, which drift), but a **block** delegating to a `ui/` primitive
-    names that primitive's tokens too, because `ui/` ships **no stories**, so nothing else records
-    what `Card`/`Badge` colour. "No tokens of its own, inherits
-    `--background`" is a valid and expected bullet. Rule + worked example: `sections.mdx` and
-    `sections/_template/`. It is **hand-maintained on every component change** —
-    same standing drift caveat as the variant vocabulary below. A declarative alternative was
-    investigated and **deferred**: Storybook's slot for structured per-component metadata is
-    `parameters` (typed via a shared `Meta` wrapper so `tsc` enforces it), but the MCP composes its
-    output from *only* the meta-leading JSDoc, story descriptions + snippets, props docgen, and
-    attached MDX — `parameters` never enter it (read from `formatComponentManifest` in
-    `@storybook/mcp/dist/index.js`), so a typed parameter would be invisible to the assembling agent.
-    Any future deterministic solution has to clear that bar.
-  - The old `yarn sections:catalog` CLI (`components/sections/catalog.ts` + `catalog.test.ts` +
-    `config/cli/sections-catalog.ts` + per-section exported `*VariantsConfig`) was **removed**; the
-    configs are inlined back into each `cva()` call. Consequence: story `argTypes` variant lists and
-    the JSDoc variant vocabulary are **hand-maintained** and can drift from the `cva` config (the
-    catalog's zero-drift guarantee was intentionally dropped; no replacement drift test). SKILL.md
-    step 5 points at the Storybook MCP as the authoritative props source.
+- **Section and block shapes come from the Storybook MCP** (`list-all-documentation` /
+  `get-documentation`), never a hand-written list here or a bespoke CLI. Authoring the docs the MCP
+  serves → `./skills/storybook-docs/index.md`.
 - **`theme:build <slug>`** reads `config/brand.json` (hex) and writes `sites/<slug>/theme.css`:
   `--brand-h/s/l` (via `palette.hexToHsl`) **and `--brand-r/g/b`** (via `palette.hexToRgb`, the input
   `.wcag-contrast` reads), the harmony offset vars, and explicit `--brand-secondary/tertiary-*`
@@ -492,6 +452,16 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   file-access interstitial). Chrome + Edge are installed under `Program Files`.
 
 ## Storybook (SB10, nextjs-vite)
+
+**Never document what Storybook or its MCP already exposes.** Component inventories, story rosters,
+and explicitly-declared prop signatures are *retrieved* (`list-all-documentation` /
+`get-documentation`), never transcribed into prose — a second copy has no reader and drifts.
+Document only what the MCP can't see: cva-derived variant vocabulary and defaults, slot
+composition, item shapes, tokens, and the correct import subpath. And **Storybook documents
+components** — tool/CLI/workflow docs live with the tool, referenced not reproduced.
+
+Writing or editing any story JSDoc, `**Tokens**` list, or `.mdx` page → **./skills/storybook-docs/index.md**
+(the MCP-visibility matrix that decides what is redundant lives there).
 
 - Correct import paths: `storybook/test` (assertions), `@storybook/addon-docs/blocks` (MDX `Meta`).
   NOT `@storybook/test` / `@storybook/blocks` (not installed).

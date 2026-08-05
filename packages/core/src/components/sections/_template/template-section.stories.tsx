@@ -15,13 +15,8 @@ import {
  *
  * **Tokens**
  * - `--background` / `--foreground` — the inherited page surface. This template sets no colour of its
- *   own; say so rather than omitting the list, because "no tokens" is information too.
- * - Delegated — all colour comes from the blocks composed into the slots (`Eyebrow`, `Heading`,
- *   `Prose`, `MediaFrame`). Name them; don't re-list their tokens — each documents its own.
- *
- * Every section and block story closes with a list like this one, hand-maintained: change a
- * component's classes, update its `**Tokens**` list in the same commit. Ordering rules and the
- * no-code-examples-in-JSDoc rule are in **Sections/Overview**.
+ *   own.
+ * - Delegated — the blocks composed into its slots: `Eyebrow`, `Heading`, `Prose`, `MediaFrame`.
  */
 const meta = {
   title: "Sections/_Template",

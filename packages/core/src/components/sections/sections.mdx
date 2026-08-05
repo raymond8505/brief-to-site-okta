@@ -4,10 +4,12 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Section suite
 
-The tool is an **assembly engine**: the agent composes SSR pages from these compound **sections**,
-fills each section's slots with **block primitives**, applies the deterministic theme, and writes
-brief-grounded copy. This page is the contract every section follows — and, together with the
-**`Blocks/*`** catalog, the vocabulary the agent selects from via the Storybook MCP addon.
+A **section** is one full-width horizontal band of a page — a hero, a feature grid, a closing
+call to action. Sections are the largest composable unit: a page is a stack of them. Each is a
+compound family whose slots are filled with **blocks**, the smaller presentational leaves.
+
+Browse the suite in the **Sections/\*** tree, and the block vocabulary in **Blocks/\***. Each entry
+documents its own slots, variant axes and tokens. This page is the contract they all follow.
 
 ## The contract
 
@@ -18,55 +20,22 @@ brief-grounded copy. This page is the contract every section follows — and, to
    lands on the shared column.
 2. **A section is a compound family, filled with blocks.** Like the `Card` family, a section is a
    root plus **named slot subcomponents** (e.g. `Hero` + `HeroBody` / `HeroMedia` / `HeroAside`), each
-   carrying a `data-slot`. The agent fills those slots with **block primitives** from
-   `@brief-to-site/core/blocks` (`Eyebrow`, `Heading`, `Prose`, `CtaGroup`, `MediaFrame`, `StatRow`,
-   `Quote`, …) — never ad-hoc markup. **A "variant" is a composition**: the same section reads as
-   *split*, *centered*, *with-stats*, or *quote-led* purely by which blocks fill which slots.
-   A section still owns any genuine geometric layout as a small **CSS-only CVA** (`align`, `mediaSide`,
-   `columns`, `formSide`); and layout may react to which slots are present via `has-[data-slot=…]`.
-   A quantity axis takes **numbers**, never number-words — `columns={3}`, not `columns="three"`. A
-   dev-only `assertAllowedChildren` guard warns when a wrong component is composed into a slot.
+   carrying a `data-slot`. Fill those slots with **block primitives** from
+   `@brief-to-site/core/blocks` — never ad-hoc markup. **A "variant" is a composition**: the same
+   section reads as _split_, _centered_, _with-stats_, or _quote-led_ purely by which blocks fill
+   which slots. A section still owns any genuine geometric layout as a small **CSS-only CVA**
+   (`align`, `mediaSide`, `columns`, `formSide`); and layout may react to which slots are present via
+   `has-[data-slot=…]`. A quantity axis takes **numbers**, never number-words — `columns={3}`, not
+   `columns="three"`. A dev-only `assertAllowedChildren` guard warns when a wrong component is
+   composed into a slot.
 3. **Images go through the `MediaFrame` block.** No section renders a raw `<img>`. `MediaFrame` takes
    a `src` path (the root-relative `/images/<name>.png` a placeholder manifest entry generated) in an
    `object-cover` box — so an operator overwrites art of any size without resizing. When `src` is
-   omitted it falls back to an inline placeholder sized from its `aspect` (see **Guides/Placeholder
-   Sourcing** for the manifest + Unsplash workflow).
+   omitted it falls back to an inline placeholder sized from its `aspect`.
 
 Colour: sections and blocks consume **role tokens** (`bg-background`, `text-foreground`,
 `text-muted-foreground`, `bg-muted`, `--brand-secondary`) — never hardcoded colours — so the
-deterministic theme stays orthogonal.
-
-**Every section and block story documents the tokens it consumes**, as a `**Tokens**` bullet list
-closing the JSDoc block immediately above `const meta` — the comment the Storybook MCP serves to the
-assembling agent. **One bullet per token**, shaped `` - `--token` — where it's used ``, so the list
-scans; prose paragraphs don't. Order it: raw brand vars first (`--brand-secondary`, `--brand-r/g/b` —
-derived at `:root` by `theme:build`, *not* remappable role tokens), then the role tokens an operator
-remaps in a site's `theme.css`, then any `.wcag-contrast` / `.brand-rgb` use where a saturated fill
-carries text, then `--radius` / `--font-heading`, then one closing `- Delegated — …` bullet.
-
-What that last bullet says depends on whether the target has an entry of its own. **Slot blocks do** —
-so a section just *names* them (`Delegated — ArticleCard, Heading, Prose`) and stops; re-listing their
-tokens would give one fact two records that drift apart. **`ui/` primitives don't** — they ship no
-story, so nothing else records what `Card` or `Badge` colours; a block delegating to one names its
-tokens on that bullet, because this is the only place they're written down.
-
-A component that sets no colour says so on a bullet — "no tokens of its own, inherits `--background`"
-is information, not an omission.
-
-**This list is hand-maintained and nothing checks it:** when you change a component's classes, update
-its `**Tokens**` list in the same commit, or the docs will confidently describe a colour the component
-no longer has. See **Sections/_Template** for the worked example.
-
-**No code examples in a JSDoc block.** The Storybook MCP already serves each story's composed JSX as a
-paste-ready snippet, so a snippet hand-written into a comment is a second copy of the same fact and
-drifts from the real one. If a use case genuinely needs example code, **write a story for it** — then
-it is type-checked, rendered, and visible to humans and agents alike. Naming a prop and its value
-(`columns={5}`, `icon={Check}`) is API vocabulary, not an example; that stays.
-
-Icons: **`lucide-react`** is the icon library — import glyphs directly
-(`import { ArrowRight } from "lucide-react"`) into blocks/site-local components for visual interest,
-sized and coloured with Tailwind role-token utilities. It's a library, not hand-authored SVG, so it's
-exempt from the icons-barrel rule.
+deterministic theme stays orthogonal. Each component's story documents the tokens it consumes.
 
 ## Group blocks take data, not children
 
@@ -77,7 +46,7 @@ The rule:
 > block that wraps **arbitrary or heterogeneous** content keeps `children`.
 
 `BulletList` (`items`), `StatRow` (`stats`) and `LogoRow` (`logos`) take data. `CtaGroup` (arbitrary
-`Button`s with their own hrefs and variants), `PriceCard` (a heterogeneous slot — a `BulletList` *and*
+`Button`s with their own hrefs and variants), `PriceCard` (a heterogeneous slot — a `BulletList` _and_
 a CTA) and `Prose` / `Quote` / `FaqItem` (free-form rich text) keep `children`.
 
 This isn't stylistic. A parent cannot pass a prop to children it did not construct — the mechanism
@@ -103,82 +72,26 @@ The convention, so the next group block is mechanical:
 
 Content order carries no constraint — a11y is out of scope here (the deliverable is full-page
 screenshots), so a section arranges its slots and blocks however reads best. What keeps output
-deterministic is the **bounded set of block primitives** the agent composes from, the typed slot
-props, and the dev-only slot guard: a bounded vocabulary in place of free-form markup. Compose from
-the published blocks first; when the vocabulary falls short, **extend it deliberately** — a new
-**site-local block** for one site (a new arrangement of core primitives; see below), or a promoted
-core block (with a story + tests), the same way you would a `ui/` primitive. Never drop raw JSX into a
-page.
+deterministic is the **bounded set of block primitives** composed from, the typed slot props, and the
+dev-only slot guard: a bounded vocabulary in place of free-form markup. Compose from the published
+blocks first; when the vocabulary falls short, **extend it deliberately** — a new block, built the
+same way you would a `ui/` primitive. Never drop raw JSX into a page.
 
 ## What earns a place in core
 
-A core section is **purpose-built**: it exists to present one *specific kind of content*, and its slots
+A core section is **purpose-built**: it exists to present one _specific kind of content_, and its slots
 have a closed block vocabulary that says so — `ArticleGrid` holds `ArticleCard`s, `Steps` holds
 numbered `Step`s, `PricingTiers` holds `PriceCard`s, `Hero` opens a page. Name the content and the
 section's reason to exist follows.
 
 A **generic arrangement** is not a section — "N columns under a title", "copy beside media" — it is a
-*composition pattern*. Those go **site-local**, with whatever column count that page actually needs.
-Core deliberately carries no stand-in for them: a generic section is a magnet the agent force-fits
-pages into, and re-composing the pattern per site is cheap and is the intended cost.
-
-**Promotion follows the same test.** A site-local section moves into core when the operator decides at
-the HITL checkpoint that it is reusable *and* purpose-built. Recurrence alone doesn't qualify it — if
-what recurs is a generic arrangement, it stays site-local.
+_composition pattern_. Core deliberately carries no stand-in for them: a generic section is a magnet
+that pages get force-fit into, and re-composing the pattern where it's needed is cheap and is the
+intended cost. So "no core section fits this" is an ordinary outcome, not a shortfall.
 
 ## Building a new section
 
-Copy **`components/sections/_template/`** (see **Sections/_Template**), rename the files + symbols,
+Copy **`components/sections/_template/`** (see **Sections/\_Template**), rename the files + symbols,
 and replace the body. It is a minimal, green, story-documented compound section — the trustworthy
 starting point for all three rules. Export the new section from `components/sections/index.ts` (the
 `_template` itself is intentionally not exported).
-
-## Site-local components
-
-Not every component belongs in core. The assembly agent works an **escalation ladder**, checking the
-existing tier first but building new when nothing fits (an expected move, not a last resort):
-
-- **Site-local section** — when no core section provides the layout. An arrangement of core blocks at
-  `sites/<slug>/components/sections/<name>/`, following **this same contract** (render through
-  `Section`, compound `data-slot` slots filled with blocks, `assertAllowedChildren`, `MediaFrame`).
-- **Site-local block** — when a section needs a piece the block vocabulary can't express. An
-  arrangement of core **primitives** at `sites/<slug>/components/blocks/<name>/` (carries a
-  `data-slot`, CSS-only `cva` variants).
-- **New core primitive** — when a block needs a UI primitive core lacks. Added straight to core via
-  the shadcn MCP (registry-vetted), not site-local.
-
-Site-local components import from the **public** package surface (`@brief-to-site/core` / `/sections`
-/ `/blocks` / `/lib/utils`), not core-internal `@core/*` paths, are imported into pages by relative
-path, and ship **no story/test**. They never introduce **colour math or a new token/theme system** —
-those stay core-only (consume role tokens + `.wcag-contrast`, no JS twin). `yarn sites:novel <slug>`
-lists every site-local block and section for the HITL report; the operator decides whether any is
-worth **promoting** into core (copy it here, add a story + tests, export it). New primitives already
-live in core, so they surface as ordinary core changes.
-
-## The suite covers the common marketing archetypes
-
-The core suite is deep enough to stack a full landing page from it — reach for the whole vocabulary,
-not just Hero + one grid. It is deliberately **purpose-built rather than exhaustive** (see above), so
-"no core section fits this" is an ordinary outcome, not a shortfall: build it site-local instead of
-stretching one of these to cover it.
-
-- **Sections/Hero** — split / centered / with-stats / quote-led / page-intro / stacked compositions.
-- **Sections/FeatureGrid** — `FeatureCard` or `IconTile` blocks in a CSS-only `columns` grid
-  (`five` = dense icon wall), optional header slot.
-- **Sections/Steps** — a how-it-works grid of `Step` blocks (numbered), optional header.
-- **Sections/StatBand** — a "by the numbers" `StatRow`, optional header. *Placeholder-grade figures.*
-- **Sections/Testimonials** — a grid of `Quote` blocks, optional header. *Placeholder-grade quotes.*
-- **Sections/ArticleGrid** — a news/blog/resources grid of `ArticleCard` blocks, optional header.
-- **Sections/PricingTiers** — a plan wall of `PriceCard` blocks, optional header. *Brief-supplied
-  prices only.*
-- **Sections/LogoStrip** — a slim social-proof band: caption + `LogoRow`.
-- **Sections/Faq** — static `FaqItem` Q/A pairs (always open — the deliverable is screenshots).
-- **Sections/CtaBand** — a closing call-to-action on a muted brand surface.
-- **Sections/NewsletterSignup** — a centred email-capture band with a presentational inline form.
-- **Sections/ContactBlock** — a `ContactCopy` slot + a presentational `ContactForm`.
-
-**Proof sections stay honest.** `StatBand` and `Testimonials` render **placeholder-grade** content
-the operator finalizes (like placeholder images) — the agent never invents specific numbers, named
-customers, or real metrics (see `generation.json`). The same rule bounds `PricingTiers`: a
-`PriceCard` states a `price` only when the brief supplies it verbatim; otherwise it renders the
-qualitative "Contact for pricing" fallback. Block vocabulary: **Blocks/***.
