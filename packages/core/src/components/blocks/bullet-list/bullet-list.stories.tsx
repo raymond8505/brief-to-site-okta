@@ -6,10 +6,10 @@ import { BulletList } from "@core/components/blocks/bullet-list/bullet-list";
 /**
  * BulletList — a checklist / value-bullet list. Pass an `items` array (`{ text, icon? }`); the list
  * builds its own rows. The marker is the brand dot by default; pass any `lucide-react` component as
- * `icon` on the list (`<BulletList icon={Check} …>`, the checklist form used by plan/price cards) so
- * every row inherits it, or as an item's own `icon` to override that row. `text` is a `ReactNode`,
- * so a bullet can carry a link or emphasis. A group block: use it in a copy slot to spell out
- * inclusions or benefits. Import from `@brief-to-site/core/blocks`.
+ * the list's `icon` and every row inherits it — the checklist form used by plan/price cards — or as
+ * an item's own `icon` to override that row. `text` is a `ReactNode`, so a bullet can carry a link
+ * or emphasis. A group block: use it in a copy slot to spell out inclusions or benefits. Import from
+ * `@brief-to-site/core/blocks`.
  *
  * **Tokens**
  * - `--brand-secondary` — the dot marker, and any `icon` that replaces it. Raw brand var,

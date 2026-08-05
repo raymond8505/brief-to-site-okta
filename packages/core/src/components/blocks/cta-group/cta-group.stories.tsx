@@ -4,9 +4,10 @@ import { CtaGroup } from "@core/components/blocks/cta-group/cta-group";
 import { Button } from "@core/components/ui/button";
 
 /**
- * CtaGroup — a row of call-to-action buttons/links. Pass `Button` children (the page decides
- * button-vs-link markup, e.g. `<Button render={<Link/>}>`); this block owns only wrap/flow and
- * `align`. A leaf block: compose it at the end of a copy slot. Import from `@brief-to-site/core/blocks`.
+ * CtaGroup — a row of call-to-action buttons/links. Pass `Button` children; the page decides
+ * button-vs-link markup by passing the element through the `Button`'s `render` prop (see the
+ * **LinkCta** story). This block owns only wrap/flow and `align`. A leaf block: compose it at the
+ * end of a copy slot. Import from `@brief-to-site/core/blocks`.
  *
  * **Tokens**
  * - None of its own — this block is pure layout (flex wrap + `align`).
@@ -47,3 +48,24 @@ export const Default: Story = {};
 
 /** Centred — pairs with a centered hero. */
 export const Centered: Story = { args: { align: "center" } };
+
+/**
+ * Navigating CTAs: the page supplies the link element through `Button`'s `render` prop, so the
+ * button styling stays put while the markup becomes an anchor. A site passes `next/link` here; core
+ * has no `next` dependency, so this story uses a plain `<a>`. `Button` infers `nativeButton` from
+ * the render element, so a link CTA needs no extra prop.
+ */
+export const LinkCta: Story = {
+  args: {
+    children: (
+      <>
+        <Button size="lg" render={<a href="/contact" />}>
+          Start a project
+        </Button>
+        <Button size="lg" variant="outline" render={<a href="/about" />}>
+          Meet the studio
+        </Button>
+      </>
+    ),
+  },
+};
