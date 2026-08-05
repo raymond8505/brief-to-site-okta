@@ -10,6 +10,12 @@ import { CtaBand, CtaBandBody } from "@core/components/sections/cta-band/cta-ban
  * default | `start`); plus the shared `density`. A "variant" is a composition — with or without an
  * eyebrow, one or two CTAs. Import the section from `@brief-to-site/core/sections` and the blocks from
  * `@brief-to-site/core/blocks`.
+ *
+ * **Tokens**
+ * - `--muted` — the full-bleed band fill, and the only surface any section sets. It maps to the l90
+ *   brand tint, so the band reads brand-coloured while the dark `--foreground` copy on it stays
+ *   legible with no contrast math. Remap it in the site's `theme.css` to change the band.
+ * - Delegated — the blocks composed into the band (`Eyebrow`, `Heading`, `Prose`, `CtaGroup`).
  */
 const meta = {
   title: "Sections/CtaBand",

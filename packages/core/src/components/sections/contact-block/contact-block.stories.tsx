@@ -15,6 +15,14 @@ import {
  * `end`); plus the shared `density` (`compact` | `comfortable` | `spacious`, default `comfortable`).
  * Import the section from `@brief-to-site/core/sections` and the blocks from
  * `@brief-to-site/core/blocks`.
+ *
+ * **Tokens**
+ * - `--background` / `--foreground` — the inherited page surface. The section sets no colour of its
+ *   own; to restyle it, remap the role tokens in the site's `theme.css`.
+ * - Delegated (copy column) — the blocks composed into it (`Eyebrow`, `Heading`, `Prose`).
+ * - Delegated (form) — the `Input` / `Textarea` / `Label` / `Button` primitives: fields are
+ *   `--input` with a `--border` edge and a `--ring` focus ring at `--radius` corners, and the submit
+ *   button is `--primary` / `--primary-foreground`.
  */
 const meta = {
   title: "Sections/ContactBlock",

@@ -9,7 +9,6 @@ import {
   MediaFrame,
   Prose,
   Quote,
-  Stat,
   StatRow,
 } from "@core/components/blocks";
 import { Hero, HeroAside, HeroBody, HeroMedia } from "@core/components/sections/hero/hero";
@@ -27,6 +26,13 @@ import { Hero, HeroAside, HeroBody, HeroMedia } from "@core/components/sections/
  * **Centered**, **WithStats**, **QuoteLed**, **PageIntro** (interior page-title header: heading +
  * intro prose, no CTA, compact), **StackedMedia** (centred copy, full-width media below). Import the
  * section from `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens**
+ * - `--background` / `--foreground` — the inherited page surface, already brand-tinted
+ *   (`--background` maps to the l96 brand tint). The section sets no colour of its own; to restyle
+ *   it, remap the role tokens in the site's `theme.css`.
+ * - Delegated — the blocks composed into its slots: `Eyebrow`, `Heading`, `Prose`, `CtaGroup`,
+ *   `MediaFrame`, and `Quote` or `StatRow` in the aside.
  */
 const meta = {
   title: "Sections/Hero",
@@ -147,10 +153,13 @@ export const WithStats: Story = {
         </CtaGroup>
       </HeroBody>
       <HeroAside>
-        <StatRow columns={2}>
-          <Stat value="12k" label="sites shipped" />
-          <Stat value="48h" label="brief to launch" />
-        </StatRow>
+        <StatRow
+          columns={2}
+          stats={[
+            { value: "12k", label: "sites shipped" },
+            { value: "48h", label: "brief to launch" },
+          ]}
+        />
       </HeroAside>
     </Hero>
   ),

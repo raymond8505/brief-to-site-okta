@@ -6,6 +6,12 @@ import { FaqItem } from "@core/components/blocks/faq-item/faq-item";
  * FaqItem — one static question/answer pair (`question` prop + answer as children). Always open (no
  * collapse — the deliverable is screenshots). A leaf block: repeat it inside a `Faq` section. Import
  * from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens**
+ * - `--foreground` — the question.
+ * - `--muted-foreground` — the answer.
+ * - `--font-heading` — the question's typeface.
+ * - No brand var and no surface of its own — it inherits its container's background.
  */
 const meta = {
   title: "Blocks/FaqItem",

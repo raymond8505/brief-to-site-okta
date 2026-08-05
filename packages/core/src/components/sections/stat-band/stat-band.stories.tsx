@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { Eyebrow, Heading, Prose, Stat, StatRow } from "@core/components/blocks";
+import { Eyebrow, Heading, Prose, StatRow } from "@core/components/blocks";
 import { StatBand, StatBandHeader } from "@core/components/sections/stat-band/stat-band";
 
 const header = (
@@ -12,18 +12,28 @@ const header = (
 );
 
 const stats = (
-  <StatRow columns={3}>
-    <Stat value="—" label="sites shipped" />
-    <Stat value="48h" label="brief to launch" />
-    <Stat value="1" label="brand colour needed" />
-  </StatRow>
+  <StatRow
+    columns={3}
+    stats={[
+      { value: "—", label: "sites shipped" },
+      { value: "48h", label: "brief to launch" },
+      { value: "1", label: "brand colour needed" },
+    ]}
+  />
 );
 
 /**
  * StatBand — an optional `StatBandHeader` (compose `Eyebrow` / `Heading` / `Prose`) above a `StatRow`
- * of `Stat` blocks; the `StatRow` owns the column count, so `density` is the only section axis.
+ * (pass its `stats` array); the `StatRow` owns the column count, so `density` is the only section
+ * axis.
  * Figures are placeholder-grade (operator-finalized). Import the section from
  * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens**
+ * - `--background` / `--foreground` — the inherited page surface. The section sets no colour of its
+ *   own; to restyle it, remap the role tokens in the site's `theme.css`.
+ * - Delegated — `StatRow` and the header blocks (`Eyebrow`, `Heading`, `Prose`). No brand var
+ *   anywhere in this composition.
  */
 const meta = {
   title: "Sections/StatBand",

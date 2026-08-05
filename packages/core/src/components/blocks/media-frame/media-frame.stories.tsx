@@ -8,6 +8,12 @@ import { MediaFrame } from "@core/components/blocks/media-frame/media-frame";
  * when `src` is omitted it falls back to an inline SVG placeholder sized from `aspect` and captioned
  * with `alt`. `aspect` (`video` | `photo` | `square` | `wide` | `auto`, default `video`) and
  * `rounded` (default off — a `Card` rounds it). Import from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens**
+ * - `--muted` — the box fill, which shows through while an image loads and behind transparent art
+ *   (`LogoRow` overrides it with `bg-transparent`).
+ * - `--radius` — the corners, under `rounded` (`rounded-xl`).
+ * - No brand var — the image is the content, so nothing here is tinted.
  */
 const meta = {
   title: "Blocks/MediaFrame",

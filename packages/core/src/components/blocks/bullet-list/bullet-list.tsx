@@ -1,52 +1,57 @@
 import * as React from "react";
-import { Check } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import { cn } from "@core/lib/utils";
 
-export type BulletListProps = React.ComponentProps<"ul">;
-
-/**
- * BulletList — a checklist / value-bullet list. A group block: compose `BulletItem` children inside
- * it. Owns only the vertical flow; each item owns its marker.
- */
-export function BulletList({ className, ...props }: BulletListProps) {
-  return (
-    <ul data-slot="bullet-list" className={cn("flex flex-col gap-3", className)} {...props} />
-  );
+export interface BulletListItem {
+  /** The bullet's copy. A `ReactNode` so a bullet can carry emphasis or a link, not just a string. */
+  text: React.ReactNode;
+  /** Marker glyph for this row — overrides the list-level `icon`. Omit both for the brand dot. */
+  icon?: LucideIcon;
 }
 
-export interface BulletItemProps extends React.ComponentProps<"li"> {
+export interface BulletListProps extends React.ComponentProps<"ul"> {
+  /** The bullets to render, top to bottom. */
+  items: BulletListItem[];
   /**
-   * Marker style: the brand-coloured `dot` (default) or a `check` icon — the feature-checklist
-   * form (plan cards, inclusion lists). Per-item so a list states it on each row.
+   * Marker glyph for every item — a lucide icon component (e.g. `Check` from `lucide-react`) so a
+   * checklist states it once instead of on every row. Omit for the default brand-coloured dot; an
+   * item's own `icon` overrides it.
    */
-  marker?: "dot" | "check";
+  icon?: LucideIcon;
 }
 
 /**
- * BulletItem — one row of a `BulletList`: a brand-coloured marker (`dot` or `check`) beside its
- * text. Compose inside a `BulletList`.
+ * BulletList — a checklist / value-bullet list. A group block: pass an `items` array; the list builds
+ * its own rows, so the marker is a plain prop rather than something injected into opaque children.
  */
-export function BulletItem({ marker = "dot", className, children, ...props }: BulletItemProps) {
+export function BulletList({ items, icon, className, ...props }: BulletListProps) {
   return (
-    <li
-      data-slot="bullet-item"
-      className={cn("flex items-start gap-3 text-foreground", className)}
-      {...props}
-    >
-      {marker === "check" ? (
-        <Check
-          aria-hidden
-          className="mt-0.5 size-5 shrink-0 [color:var(--brand-secondary)]"
-          strokeWidth={2.5}
-        />
-      ) : (
-        <span
-          aria-hidden
-          className="mt-1.5 size-2 shrink-0 rounded-full [background-color:var(--brand-secondary)]"
-        />
-      )}
-      <span>{children}</span>
-    </li>
+    <ul data-slot="bullet-list" className={cn("flex flex-col gap-3", className)} {...props}>
+      {items.map((item, index) => {
+        const Icon = item.icon ?? icon;
+        return (
+          <li
+            key={index}
+            data-slot="bullet-item"
+            className="flex items-start gap-3 text-foreground"
+          >
+            {Icon ? (
+              <Icon
+                aria-hidden
+                className="mt-0.5 size-5 shrink-0 [color:var(--brand-secondary)]"
+                strokeWidth={2.5}
+              />
+            ) : (
+              <span
+                aria-hidden
+                className="mt-1.5 size-2 shrink-0 rounded-full [background-color:var(--brand-secondary)]"
+              />
+            )}
+            <span>{item.text}</span>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

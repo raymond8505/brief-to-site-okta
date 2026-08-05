@@ -32,6 +32,12 @@ const quotes = [
  * shared `density`. Quotes are placeholder-grade (operator-finalized). A "variant" is a composition —
  * how many quotes, at which `columns`. Import the section from `@brief-to-site/core/sections` and the
  * blocks from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens**
+ * - `--background` / `--foreground` — the inherited page surface. The section sets no colour of its
+ *   own; to restyle it, remap the role tokens in the site's `theme.css`.
+ * - Delegated — `Quote` (whose left rule is where the brand appears) and the header blocks
+ *   (`Eyebrow`, `Heading`, `Prose`).
  */
 const meta = {
   title: "Sections/Testimonials",

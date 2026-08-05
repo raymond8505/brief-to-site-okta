@@ -13,6 +13,14 @@ import {
  * field + submit; labels via `emailLabel` / `placeholder` / `submitLabel`). The form is
  * **presentational** (no submit wiring — the operator connects a real destination after handoff).
  * No layout axis beyond the shared `density`. Import from `@brief-to-site/core/sections`.
+ *
+ * **Tokens**
+ * - `--background` / `--foreground` — the inherited page surface. The section sets no colour of its
+ *   own; to restyle it, remap the role tokens in the site's `theme.css`.
+ * - Delegated (copy) — the blocks composed into it (`Eyebrow`, `Heading`, `Prose`).
+ * - Delegated (form) — the `Input` / `Button` primitives: the field is `--input` with a `--border`
+ *   edge and a `--ring` focus ring at `--radius` corners, the submit is `--primary` /
+ *   `--primary-foreground`.
  */
 const meta = {
   title: "Sections/NewsletterSignup",

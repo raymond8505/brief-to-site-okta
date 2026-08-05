@@ -15,6 +15,12 @@ const logos = [
  * block (pass its `logos` array; omit each `src` to fall back to the `logo` placeholder). `density` is
  * the only axis — pass `compact` for a slim strip. Import the section from
  * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens**
+ * - `--muted-foreground` — the caption, and the only colour this section sets.
+ * - `--background` — inherited; the strip sets no surface of its own.
+ * - Delegated — `LogoRow`, whose logos are transparent supplied assets, so nothing here is
+ *   brand-tinted.
  */
 const meta = {
   title: "Sections/LogoStrip",

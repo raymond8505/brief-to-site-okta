@@ -12,6 +12,16 @@ import {
  * compound section: render through `Section`, a root + named slot subcomponents composed from block
  * primitives, one CSS-only CVA axis (`align`), and images via the `MediaFrame` block. Copy the folder
  * to start a new section; compose its slots from `@brief-to-site/core/blocks`.
+ *
+ * **Tokens**
+ * - `--background` / `--foreground` — the inherited page surface. This template sets no colour of its
+ *   own; say so rather than omitting the list, because "no tokens" is information too.
+ * - Delegated — all colour comes from the blocks composed into the slots (`Eyebrow`, `Heading`,
+ *   `Prose`, `MediaFrame`). Name them; don't re-list their tokens — each documents its own.
+ *
+ * Every section and block story closes with a list like this one, hand-maintained: change a
+ * component's classes, update its `**Tokens**` list in the same commit. Ordering rules and the
+ * no-code-examples-in-JSDoc rule are in **Sections/Overview**.
  */
 const meta = {
   title: "Sections/_Template",
