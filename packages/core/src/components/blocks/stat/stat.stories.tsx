@@ -8,9 +8,11 @@ import { StatRow } from "@core/components/blocks/stat/stat";
  * (`2` | `3` | `4`, default `3`). A group block: use it in a hero aside or a standalone metrics
  * section. Import from `@brief-to-site/core/blocks`.
  *
- * **Tokens** — no brand var. Each value is `--font-heading` in `--foreground`; its label is
- * `--muted-foreground`. `columns` is a grid axis with no token of its own, and the row sets no
- * surface, so it inherits its container's background.
+ * **Tokens**
+ * - `--foreground` — each `value`.
+ * - `--muted-foreground` — each `label`.
+ * - `--font-heading` — the value's typeface.
+ * - No brand var and no surface — the row inherits its container's background.
  */
 const meta = {
   title: "Blocks/StatRow",

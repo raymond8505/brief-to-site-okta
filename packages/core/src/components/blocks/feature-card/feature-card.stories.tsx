@@ -7,11 +7,12 @@ import { FeatureCard } from "@core/components/blocks/feature-card/feature-card";
  * optional description, carrying the `--brand-secondary` top rule. A group block: repeat it inside a
  * `FeatureGrid`. Import from `@brief-to-site/core/blocks`.
  *
- * **Tokens** — the 4px top rule is `--brand-secondary` (a raw brand var derived at `:root` by
- * `theme:build`, not a remappable role token); it carries no text, so it needs no contrast math.
- * The description is `--muted-foreground`. Delegated: the `Card` surface is `--card` /
- * `--card-foreground` with a `--foreground`-tinted ring and `--radius`-scaled corners, and the
- * image sits in a `MediaFrame` (`--muted` box).
+ * **Tokens**
+ * - `--brand-secondary` — the 4px top rule. Raw brand var, `:root`-derived by `theme:build`, not
+ *   remappable per element; it carries no text, so no contrast math applies.
+ * - `--muted-foreground` — the description.
+ * - Delegated — `Card` (`--card` / `--card-foreground`, a `--foreground`-tinted ring, `--radius`
+ *   corners) and `MediaFrame` (`--muted` image box).
  */
 const meta = {
   title: "Blocks/FeatureCard",

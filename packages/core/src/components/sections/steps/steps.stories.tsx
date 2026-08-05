@@ -23,10 +23,11 @@ const steps = [
  * `density`. A "variant" is a composition — how many steps, at which `columns`. Import the section
  * from `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
  *
- * **Tokens** — the section sets no colour of its own: it inherits the page surface (`--background` /
- * `--foreground`) and takes all colour from the blocks in its slots. The brand appears via `Step`'s
- * index badge — a saturated brand-primary fill whose number colour is solved in CSS by
- * `.wcag-contrast` from `--brand-r/g/b`. `columns` and `density` are spacing axes with no token.
+ * **Tokens**
+ * - `--background` / `--foreground` — the inherited page surface. The section sets no colour of its
+ *   own; to restyle it, remap the role tokens in the site's `theme.css`.
+ * - Delegated — `Step` (whose index badge is where the brand appears) and the header blocks
+ *   (`Eyebrow`, `Heading`, `Prose`).
  */
 const meta = {
   title: "Sections/Steps",

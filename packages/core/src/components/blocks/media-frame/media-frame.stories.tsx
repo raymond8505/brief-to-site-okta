@@ -9,9 +9,11 @@ import { MediaFrame } from "@core/components/blocks/media-frame/media-frame";
  * with `alt`. `aspect` (`video` | `photo` | `square` | `wide` | `auto`, default `video`) and
  * `rounded` (default off — a `Card` rounds it). Import from `@brief-to-site/core/blocks`.
  *
- * **Tokens** — the box fill is `--muted`, which shows through while an image loads and behind any
- * transparent art (`LogoRow` overrides it with `bg-transparent`). `rounded` scales its corners with
- * `--radius` (`rounded-xl`). No brand var: the image is the content, so nothing here is tinted.
+ * **Tokens**
+ * - `--muted` — the box fill, which shows through while an image loads and behind transparent art
+ *   (`LogoRow` overrides it with `bg-transparent`).
+ * - `--radius` — the corners, under `rounded` (`rounded-xl`).
+ * - No brand var — the image is the content, so nothing here is tinted.
  */
 const meta = {
   title: "Blocks/MediaFrame",

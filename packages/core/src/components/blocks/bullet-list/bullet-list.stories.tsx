@@ -11,10 +11,11 @@ import { BulletList } from "@core/components/blocks/bullet-list/bullet-list";
  * so a bullet can carry a link or emphasis. A group block: use it in a copy slot to spell out
  * inclusions or benefits. Import from `@brief-to-site/core/blocks`.
  *
- * **Tokens** — the dot marker and any `icon` are painted with `--brand-secondary` (a raw brand var
- * derived at `:root` by `theme:build`, not a remappable role token). Item text is `--foreground`
- * (`text-foreground`). The list sets no surface of its own, so it inherits its container's
- * background.
+ * **Tokens**
+ * - `--brand-secondary` — the dot marker, and any `icon` that replaces it. Raw brand var,
+ *   `:root`-derived by `theme:build`; not remappable per element.
+ * - `--foreground` — item text.
+ * - No surface of its own — the list inherits its container's background.
  */
 const meta = {
   title: "Blocks/BulletList",

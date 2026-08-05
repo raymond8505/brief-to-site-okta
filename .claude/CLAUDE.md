@@ -210,9 +210,11 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   - **That JSDoc must also close with a `**Tokens**` bullet list** naming the design tokens the
     component consumes — **one bullet per token**, `` - `--token` — where it's used ``, ordered raw
     brand vars → role tokens → `.wcag-contrast`/`.brand-rgb` → `--radius`/`--font-heading` → one
-    closing `- Delegated — …` bullet. That last bullet **names** the `ui/` primitive or the slot
-    blocks the colour comes from; it does **not** re-list their tokens (each block documents its own;
-    copying them out gives one fact two records, which drift). "No tokens of its own, inherits
+    closing `- Delegated — …` bullet. What that bullet says turns on whether the target has an entry
+    of its own: a **section** just names its slot blocks (each documents its own tokens — copying them
+    out gives one fact two records, which drift), but a **block** delegating to a `ui/` primitive
+    names that primitive's tokens too, because `ui/` ships **no stories**, so nothing else records
+    what `Card`/`Badge` colour. "No tokens of its own, inherits
     `--background`" is a valid and expected bullet. Rule + worked example: `sections.mdx` and
     `sections/_template/`. It is **hand-maintained on every component change** —
     same standing drift caveat as the variant vocabulary below. A declarative alternative was

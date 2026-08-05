@@ -27,13 +27,12 @@ import { Hero, HeroAside, HeroBody, HeroMedia } from "@core/components/sections/
  * intro prose, no CTA, compact), **StackedMedia** (centred copy, full-width media below). Import the
  * section from `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
  *
- * **Tokens** — the section sets no colour of its own: it inherits the page surface (`--background` /
- * `--foreground`), which is already brand-tinted (`--background` maps to the l96 brand tint). All
- * colour comes from the blocks composed into its slots — `Eyebrow` (`--accent` /
- * `--accent-foreground`), `Heading` (`--font-heading`, `--foreground`), `Prose`
- * (`--muted-foreground`), `CtaGroup` (`--primary`), `MediaFrame` (`--muted`), and in the quote-led
- * composition `Quote`'s `--brand-secondary` rule. `align`, `mediaSide`, `layout` and `density` are
- * geometry axes with no token.
+ * **Tokens**
+ * - `--background` / `--foreground` — the inherited page surface, already brand-tinted
+ *   (`--background` maps to the l96 brand tint). The section sets no colour of its own; to restyle
+ *   it, remap the role tokens in the site's `theme.css`.
+ * - Delegated — the blocks composed into its slots: `Eyebrow`, `Heading`, `Prose`, `CtaGroup`,
+ *   `MediaFrame`, and `Quote` or `StatRow` in the aside.
  */
 const meta = {
   title: "Sections/Hero",

@@ -7,9 +7,10 @@ import { LogoRow } from "@core/components/blocks/logo-row/logo-row";
  * `MediaFrame` (the `logo` placeholder) at a fixed height, `object-contain`. A group block: use it in
  * a slim social-proof section. Import from `@brief-to-site/core/blocks`.
  *
- * **Tokens** — none. The row is pure layout, and each logo overrides `MediaFrame`'s `--muted` box
- * with `bg-transparent` so customer artwork sits on whatever surface the section provides. Nothing
- * here is brand-tinted; a logo is a supplied asset, not themed output.
+ * **Tokens**
+ * - None. The row is pure layout, and each logo overrides `MediaFrame`'s `--muted` box with
+ *   `bg-transparent` so customer artwork sits on whatever surface the section provides.
+ * - No brand var — a logo is a supplied asset, not themed output.
  */
 const meta = {
   title: "Blocks/LogoRow",

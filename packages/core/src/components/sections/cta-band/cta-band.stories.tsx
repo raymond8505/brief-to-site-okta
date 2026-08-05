@@ -11,11 +11,11 @@ import { CtaBand, CtaBandBody } from "@core/components/sections/cta-band/cta-ban
  * eyebrow, one or two CTAs. Import the section from `@brief-to-site/core/sections` and the blocks from
  * `@brief-to-site/core/blocks`.
  *
- * **Tokens** — one of only two sections that sets a surface: the full-bleed band is `--muted`, which
- * maps to the l90 brand tint, so the band reads brand-coloured while the dark `--foreground` copy on
- * it stays legible with no contrast math. Everything inside comes from the blocks (`Eyebrow`'s
- * `--accent` tint, `CtaGroup`'s `--primary` buttons). Remap `--muted` in the site's `theme.css` to
- * change the band.
+ * **Tokens**
+ * - `--muted` — the full-bleed band fill, and the only surface any section sets. It maps to the l90
+ *   brand tint, so the band reads brand-coloured while the dark `--foreground` copy on it stays
+ *   legible with no contrast math. Remap it in the site's `theme.css` to change the band.
+ * - Delegated — the blocks composed into the band (`Eyebrow`, `Heading`, `Prose`, `CtaGroup`).
  */
 const meta = {
   title: "Sections/CtaBand",

@@ -29,11 +29,11 @@ const tierList = (items: string[]) => (
  * composition — how many tiers, which is highlighted, priced vs fallback. Import the section from
  * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
  *
- * **Tokens** — the section sets no colour of its own: it inherits the page surface
- * (`--background` / `--foreground`) and takes all colour from the blocks in its slots — the
- * `PriceCard` cards (`--card`, and `--brand-secondary` on the highlighted tier's border) and the
- * `BulletList` check markers (`--brand-secondary`). `columns` and `density` are spacing-only axes
- * with no token of their own.
+ * **Tokens**
+ * - `--background` / `--foreground` — the inherited page surface. The section sets no colour of its
+ *   own; to restyle it, remap the role tokens in the site's `theme.css`.
+ * - Delegated — `PriceCard` (which carries the brand on a highlighted tier), the `BulletList` inside
+ *   each card, and the header blocks (`Eyebrow`, `Heading`, `Prose`).
  */
 const meta = {
   title: "Sections/PricingTiers",

@@ -16,11 +16,13 @@ import {
  * Import the section from `@brief-to-site/core/sections` and the blocks from
  * `@brief-to-site/core/blocks`.
  *
- * **Tokens** — the section sets no colour of its own: it inherits the page surface (`--background` /
- * `--foreground`). The copy column is coloured by its blocks; the form is delegated to the `Input` /
- * `Textarea` / `Label` / `Button` primitives — fields are `--input` with a `--border` edge and a
- * `--ring` focus ring at `--radius` corners, and the submit button is `--primary` /
- * `--primary-foreground`. `formSide` and `density` are layout axes with no token.
+ * **Tokens**
+ * - `--background` / `--foreground` — the inherited page surface. The section sets no colour of its
+ *   own; to restyle it, remap the role tokens in the site's `theme.css`.
+ * - Delegated (copy column) — the blocks composed into it (`Eyebrow`, `Heading`, `Prose`).
+ * - Delegated (form) — the `Input` / `Textarea` / `Label` / `Button` primitives: fields are
+ *   `--input` with a `--border` edge and a `--ring` focus ring at `--radius` corners, and the submit
+ *   button is `--primary` / `--primary-foreground`.
  */
 const meta = {
   title: "Sections/ContactBlock",

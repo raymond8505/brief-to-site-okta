@@ -13,12 +13,14 @@ import { PriceCard } from "@core/components/blocks/price-card/price-card";
  * verbatim; otherwise omit it and the card renders the qualitative fallback ("Contact for
  * pricing"). `badgeText` marks the highlighted tier. Import from `@brief-to-site/core/blocks`.
  *
- * **Tokens** — a `badgeText` tier draws its 2px accent border from `--brand-secondary` (a raw brand
- * var, `:root`-derived, not a remappable role token); an unhighlighted card has no brand colour. The
- * period suffix and the no-price fallback are `--muted-foreground`. Everything else is delegated:
- * the `Card` surface is `--card` / `--card-foreground` with a `--foreground`-tinted ring and a
- * `--radius`-scaled corner (`rounded-xl`), and the highlight badge is the `Badge` `secondary`
- * variant (`--secondary` / `--secondary-foreground`).
+ * **Tokens**
+ * - `--brand-secondary` — the 2px accent border, on a `badgeText` tier only; an unhighlighted card
+ *   carries no brand colour. Raw brand var, `:root`-derived by `theme:build`, not remappable per
+ *   element.
+ * - `--muted-foreground` — the `period` suffix and the no-price fallback label.
+ * - Delegated — `Card` (`--card` / `--card-foreground`, a `--foreground`-tinted ring, `--radius`
+ *   corners) and the highlight `Badge` `secondary` variant (`--secondary` /
+ *   `--secondary-foreground`).
  */
 const meta = {
   title: "Blocks/PriceCard",

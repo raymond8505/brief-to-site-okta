@@ -7,9 +7,11 @@ import { Prose } from "@core/components/blocks/prose/prose";
  * foreground) and `lead` bumps the size for the sentence directly under a headline. A leaf block:
  * compose it under a `Heading`. Import from `@brief-to-site/core/blocks`.
  *
- * **Tokens** — `tone` *is* the token choice: `muted` (default) is `--muted-foreground`, `default` is
- * `--foreground`. Both are role tokens, remappable per site in `theme.css`. No brand var, no
- * surface — `lead` only changes the type size.
+ * **Tokens**
+ * - `--muted-foreground` — the text under `tone="muted"` (the default).
+ * - `--foreground` — the text under `tone="default"`. `tone` *is* the token choice; both are role
+ *   tokens, remappable per site in `theme.css`.
+ * - No brand var and no surface — `lead` only changes the type size.
  */
 const meta = {
   title: "Blocks/Prose",

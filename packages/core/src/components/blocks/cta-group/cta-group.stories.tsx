@@ -8,10 +8,11 @@ import { Button } from "@core/components/ui/button";
  * button-vs-link markup, e.g. `<Button render={<Link/>}>`); this block owns only wrap/flow and
  * `align`. A leaf block: compose it at the end of a copy slot. Import from `@brief-to-site/core/blocks`.
  *
- * **Tokens** — none of its own; this block is pure layout (flex wrap + `align`). All colour comes
- * from the `Button` children: `default` is `--primary` / `--primary-foreground`, `outline` is
- * `--border` over `--background`, `secondary` is `--secondary` / `--secondary-foreground`. Button
- * corners scale with `--radius`.
+ * **Tokens**
+ * - None of its own — this block is pure layout (flex wrap + `align`).
+ * - Delegated — the `Button` children: `default` is `--primary` / `--primary-foreground`, `outline`
+ *   is `--border` over `--background`, `secondary` is `--secondary` / `--secondary-foreground`, and
+ *   every variant's corners scale with `--radius`.
  */
 const meta = {
   title: "Blocks/CtaGroup",

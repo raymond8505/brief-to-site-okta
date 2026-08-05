@@ -29,10 +29,11 @@ const stats = (
  * Figures are placeholder-grade (operator-finalized). Import the section from
  * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
  *
- * **Tokens** — the section sets no colour of its own: it inherits the page surface (`--background` /
- * `--foreground`) and takes all colour from the blocks in its slots — `StatRow` values
- * (`--font-heading`, `--foreground`) over `--muted-foreground` labels. No brand var anywhere;
- * `density` is a spacing axis with no token.
+ * **Tokens**
+ * - `--background` / `--foreground` — the inherited page surface. The section sets no colour of its
+ *   own; to restyle it, remap the role tokens in the site's `theme.css`.
+ * - Delegated — `StatRow` and the header blocks (`Eyebrow`, `Heading`, `Prose`). No brand var
+ *   anywhere in this composition.
  */
 const meta = {
   title: "Sections/StatBand",
