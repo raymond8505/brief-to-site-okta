@@ -159,7 +159,23 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   `React.Children` treats one as a single opaque child) is the **fallback**, correct only when
   children must genuinely stay opaque. `BulletList` was that worked example for one day and was
   converted to a data prop; the repo now has **zero** `cloneElement` call sites — don't reintroduce
-  one just to illustrate this paragraph. **Nothing but a real `next build` catches a violation**:
+  one just to illustrate this paragraph.
+  - **Core is NOT uniformly server — and the boundary is about functions, not icons.** `Button` and
+    `Input` are server wrappers around **client** base-ui primitives (`@base-ui/react` `button/Button.js`
+    and `input/Input.js` both carry `"use client"`), so every prop handed to them is serialized;
+    `Badge` wraps `use-render`/`merge-props`, which are server, so it never crosses. React's serializer
+    rejects only functions, and only *"passed directly to Client Components"* — **elements cross,
+    functions don't**. So both icon patterns are safe for *different* reasons: `icon={Disc3}` into a
+    server block (`IconTile`/`BulletList`) never leaves the server graph, while
+    `<Button>Text<ArrowRight/></Button>` and `render={<Link href=…/>}` do cross but are elements. The
+    trap is **`render={(props) => …}` or an `onClick` on `Button`/`Input` from a server page** —
+    base-ui's `render` accepts a function and its docs feature that form. Verified empirically: it
+    **passes `tsc`** and dies at prerender with `Functions cannot be passed directly to Client
+    Components … {… render: function render …}`. Nothing in the repo does this (sites are
+    presentational — the forms deliberately have no submit wiring), which is why it has never
+    surfaced. Corollary: **a block taking a `LucideIcon` prop must never gain `"use client"`**; if one
+    must, the icon has to arrive as an element (`icon={<Check/>}`) or be imported inside the client file.
+  **Nothing but a real `next build` catches a violation**:
   vitest runs jsdom against client React, and `tsc`/`eslint` have no notion of the server/client
   boundary — so verify component changes with `yarn workspace @brief-to-site/site-<slug> build`, not
   just the push gate.

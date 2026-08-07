@@ -61,6 +61,21 @@ reach them.
   exporting one only invites misuse.
 - No `assertAllowedChildren` — the type is the contract.
 
+### A component-valued prop keeps a block server-only
+
+A block that takes an icon (`icon: LucideIcon` — `IconTile`, `BulletList`) **must never gain
+`"use client"`.** A component is a function, and React's serializer rejects functions *passed directly
+to Client Components*; `icon={Check}` from a server page works only because nothing crosses a boundary.
+If such a block ever genuinely needs client behaviour, the icon has to arrive as an **element**
+(`icon={<Check/>}`, which serializes) or be imported inside the client file — don't just add the
+directive.
+
+The inverse is also worth knowing when composing: **elements cross the boundary, functions don't.**
+`Button` and `Input` are server wrappers around *client* base-ui primitives, so
+`<Button>Text<ArrowRight/></Button>` and `render={<Link href=…/>}` are serialized — fine, because
+they're elements. A function-valued `render` or an `onClick` on those two is not, and it **passes
+`tsc`**, failing only at `next build`.
+
 ## What earns a place in core
 
 A core section is **purpose-built**: it presents one *specific kind of content*, and its slots have
