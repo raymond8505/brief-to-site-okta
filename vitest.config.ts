@@ -11,6 +11,8 @@ const dirname =
 // Vitest 4 multi-project setup. The "unit" project covers core's deterministic logic and
 // component render smoke tests (jsdom + Testing Library). Storybook is preview-only — there
 // is no story-as-test/browser project; all assertions live in these Vitest unit tests.
+// The "lint-rules" project covers the local ESLint plugin in `eslint-rules/` via RuleTester —
+// plain Node, no jsdom, and authored in `.mjs` because ESLint flat config loads JS directly.
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -29,6 +31,15 @@ export default defineConfig({
           globals: true,
           setupFiles: ["./vitest.setup.ts"],
           include: ["packages/*/src/**/*.{test,spec}.{ts,tsx}"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "lint-rules",
+          environment: "node",
+          globals: true,
+          include: ["eslint-rules/**/*.{test,spec}.mjs"],
         },
       },
     ],

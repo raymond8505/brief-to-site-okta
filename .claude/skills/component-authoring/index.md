@@ -73,8 +73,14 @@ directive.
 The inverse is also worth knowing when composing: **elements cross the boundary, functions don't.**
 `Button` and `Input` are server wrappers around *client* base-ui primitives, so
 `<Button>Text<ArrowRight/></Button>` and `render={<Link href=…/>}` are serialized — fine, because
-they're elements. A function-valued `render` or an `onClick` on those two is not, and it **passes
-`tsc`**, failing only at `next build`.
+they're elements. A function-valued `render` on those two is not, and it **passes `tsc`**.
+
+Both of the above are **linted**, so you get told at `yarn lint` rather than at the end of a
+production build: `rsc-boundary/no-component-prop-in-client-file` and
+`rsc-boundary/no-function-render-prop` (`eslint-rules/rsc-boundary.mjs`). Treat the paragraphs above
+as the reason and the rules as the gate. Note the rules skip `*.stories.tsx` and `*.test.tsx` — those
+render under client React, where both patterns are legal — and that `lint:core` (the push hook) only
+covers core, so a site-page violation needs `yarn lint` or the site build to surface.
 
 ## What earns a place in core
 

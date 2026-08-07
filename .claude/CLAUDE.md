@@ -175,7 +175,14 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
     presentational — the forms deliberately have no submit wiring), which is why it has never
     surfaced. Corollary: **a block taking a `LucideIcon` prop must never gain `"use client"`**; if one
     must, the icon has to arrive as an element (`icon={<Check/>}`) or be imported inside the client file.
-  **Nothing but a real `next build` catches a violation**:
+  - **These two patterns are linted** by the local `rsc-boundary` plugin (`eslint-rules/`, wired in
+    `eslint.config.mjs`, RuleTester-tested under the `lint-rules` vitest project):
+    `no-component-prop-in-client-file` and `no-function-render-prop`. The prose above is the upfront
+    warning; the rules are the deterministic gate. They are scoped to core's `components/` and each
+    site's `app/`+`components/`, and **exclude stories and tests** — those render under client React
+    in the browser, where both patterns are perfectly legal. Every *other* RSC violation
+    (`createContext`, a function prop to some other client primitive) is still build-only:
+  **nothing but a real `next build` catches those**:
   vitest runs jsdom against client React, and `tsc`/`eslint` have no notion of the server/client
   boundary — so verify component changes with `yarn workspace @brief-to-site/site-<slug> build`, not
   just the push gate.
@@ -405,8 +412,9 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
 - **`git push --no-verify` is forbidden** (also a global rule). No CI by design: this local
   hook IS the enforcement layer.
 - **The push gate is CORE-ONLY.** `.husky/pre-push` runs `yarn typecheck:core` (`tsc -p packages/core`),
-  `yarn lint:core` (`eslint packages/core`), then `yarn test` (vitest — already core-only; its glob is
-  `packages/*/src/**` and sites have no tests). **Sites are excluded from the hook by design** — a site
+  `yarn lint:core` (`eslint packages/core`), then `yarn test` (vitest — two projects: `unit`, whose glob
+  is `packages/*/src/**`, and `lint-rules`, which RuleTester-tests the local `eslint-rules/` plugin;
+  sites have no tests). **Sites are excluded from the hook by design** — a site
   type/lint error will NOT block a push. Validate sites manually: `yarn workspace @brief-to-site/site-<slug>
   build`, or the full-repo `yarn typecheck` / `yarn lint` (both still exist for local runs). The gate also
   drops the root `scripts/` typecheck (that's `tsc -p tsconfig.scripts.json`, part of full-repo
