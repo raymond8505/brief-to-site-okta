@@ -86,6 +86,20 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   *saturated fill carrying text* must use `.wcag-contrast` with `--r/--g/--b` (**primary only** —
   derived secondary/tertiary are HSL-only, no RGB); *saturated with no text* (a decorative rule, the
   FeatureGrid card top-accent) can use the `--brand-secondary`/`-tertiary` hsl token directly.
+- **Copy over imagery uses a halo, and the halo is an aid — not the contrast system.** `globals.css`
+  registers `--text-shadow-legible-light`/`-dark` (a plain `@theme` block → `text-shadow-legible-*`
+  utilities). They are deliberately a **large, very-low-opacity diffuse wash**, not a drop shadow:
+  the job is to lift/drop the art immediately behind the glyphs, so don't "fix" them by raising the
+  alpha or shrinking the blur into a visible edge. Polarity is not auto-detected — `Hero`'s
+  `mediaTone` (`light`|`dark`) drives copy colour + halo + scrim tint together, because nothing at
+  build time knows how dark a sourced photo is. None of this clears an AA floor over arbitrary art;
+  `scrim` is the lever when the halo isn't enough, and picking better art is the real fix.
+- **A full-bleed backdrop must be positioned against the `<section>`, not the section's layout row.**
+  `Section` renders a full-bleed `<section>` around an unpositioned `max-w-7xl` container, so an
+  `inset-0` descendant resolves straight past the container to the `<section>` — but only once that
+  carries `relative`. Hence `Hero`'s split cvas: `heroSectionVariants` → the shell (`relative isolate
+  overflow-hidden` + the scrim `::before`), `heroVariants` → the row. Putting `relative` on the row
+  instead traps the backdrop inside the content column, which looks almost right at `lg`.
 - **Default brand seed = Tailwind blue-600** (`#2563eb` = hsl(221 83% 53%) = rgb(37 99 235)) in both
   `colors.css` and `sites/_shell` — one canonical default.
 - **Border-radius is a per-site style token** (`brand.json` `radius`). Named presets live in

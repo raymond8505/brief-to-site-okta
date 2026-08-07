@@ -63,6 +63,42 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Legibility halos for copy that sits directly on imagery (Hero `media="background"`). Deliberately
+   a large, very-low-opacity diffuse wash rather than a drop shadow: the goal is to lift or drop the
+   art immediately behind the glyphs, not to draw a visible edge around them. Two stacked radii give
+   a cumulative falloff with no hard boundary. Which way it washes follows the art, so the polarity
+   is Hero's `mediaTone` axis, not a decision made here. Plain `@theme` (not `@theme inline`) because
+   these are literal values, not `var()` indirections that must resolve per element. */
+@theme {
+  --text-shadow-legible-light: 0 0 20px rgb(255 255 255 / 0.35), 0 0 44px rgb(255 255 255 / 0.25);
+  --text-shadow-legible-dark: 0 0 20px rgb(0 0 0 / 0.35), 0 0 44px rgb(0 0 0 / 0.25);
+}
+
+/* Companion to the halos: flip the copy light for text sitting on DARK backdrop art (Hero
+   `mediaTone="dark"`). Setting `color` on an ancestor does nothing here — the text blocks bake their
+   own role class (`Heading` is `text-foreground`, `Prose`/`Quote`/`StatRow` mix `text-foreground`
+   and `text-muted-foreground`), so they overwrite anything inherited. Remapping the *roles* does
+   reach them: `@theme inline` above inlines `text-foreground` to `color: var(--foreground)`, which
+   resolves against each element's own cascaded value.
+
+   Scoped to the text blocks by name rather than applied to the whole subtree, because the remap must
+   NOT reach anything that paints its own surface — an `outline`/`ghost` Button inherits its colour
+   and sits on `--background`, so a blanket flip would put near-white text on a light fill. A new
+   text block belongs on this list; the failure mode if it's forgotten is visible (dark copy on dark
+   art), not silent. Authored as a class rather than inline `[--foreground:…]` arbitrary properties,
+   which Tailwind v4's oxide scanner corrupts — see the `.brand-rgb` note in contrast-math.css. */
+.copy-on-dark-media
+  :is(
+    [data-slot="heading"],
+    [data-slot="prose"],
+    [data-slot="quote"],
+    [data-slot="stat-row"],
+    [data-slot="bullet-list"]
+  ) {
+  --foreground: var(--primary-foreground);
+  --muted-foreground: color-mix(in oklab, var(--primary-foreground) 78%, transparent);
+}
+
 :root {
   --background: var(--brand-surface);
   --foreground: oklch(0.145 0 0);
