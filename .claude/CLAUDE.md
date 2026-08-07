@@ -135,11 +135,13 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
     wrapping *arbitrary/heterogeneous* content keeps `children` (`CtaGroup`'s `Button`s, `PriceCard`'s
     slot, `Prose`/`Quote`/`FaqItem`'s rich text). Sections holding repeated blocks
     (`Steps`/`Step`, `Faq`/`FaqItem`, …) stay compound — the rule doesn't reach them. Full convention
-    (item-type naming, required array, index keys, no item subcomponent) in `sections.mdx`.
+    (item-type naming, required array, index keys, no item subcomponent) in
+    `./skills/component-authoring/index.md`.
   `MediaFrame` is the **sole** render-time image element; no section renders a raw `<img>`. In a real
   site its `src` is an explicit `/images/<name>.png` (from the placeholder manifest); when `src` is
   omitted (Storybook/dev/jsdom) it falls back to an inline SVG data-URI sized from `aspect` via
-  `ASPECT_DIMENSIONS`. The section contract doc is `components/sections/sections.mdx`; the copy-me
+  `ASPECT_DIMENSIONS`. Authoring a section or block → `./skills/component-authoring/index.md`; the
+  consumer-facing contract is Storybook's **Sections/Overview** + **Blocks/Overview**; the copy-me
   archetype is `components/sections/_template/`.
 - **Core sections/blocks are React SERVER Components — there is no `createContext`.** Sites render
   static/SSR, so core's components land in the RSC graph; React's `react-server` build exports only
@@ -153,11 +155,34 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   mechanism**: a parent can't pass props to children it didn't construct, so if it renders a
   *homogeneous repeated set*, give it a **data array** and let it build its own rows — an ordinary
   prop, a compile-time item type, no traversal (`BulletList`/`StatRow`/`LogoRow`; rule + convention in
-  `sections.mdx`). `React.Children.map` + `cloneElement` (unwrapping `React.Fragment` yourself, since
+  `./skills/component-authoring/index.md`). `React.Children.map` + `cloneElement` (unwrapping `React.Fragment` yourself, since
   `React.Children` treats one as a single opaque child) is the **fallback**, correct only when
   children must genuinely stay opaque. `BulletList` was that worked example for one day and was
   converted to a data prop; the repo now has **zero** `cloneElement` call sites — don't reintroduce
-  one just to illustrate this paragraph. **Nothing but a real `next build` catches a violation**:
+  one just to illustrate this paragraph.
+  - **Core is NOT uniformly server — and the boundary is about functions, not icons.** `Button` and
+    `Input` are server wrappers around **client** base-ui primitives (`@base-ui/react` `button/Button.js`
+    and `input/Input.js` both carry `"use client"`), so every prop handed to them is serialized;
+    `Badge` wraps `use-render`/`merge-props`, which are server, so it never crosses. React's serializer
+    rejects only functions, and only *"passed directly to Client Components"* — **elements cross,
+    functions don't**. So both icon patterns are safe for *different* reasons: `icon={Disc3}` into a
+    server block (`IconTile`/`BulletList`) never leaves the server graph, while
+    `<Button>Text<ArrowRight/></Button>` and `render={<Link href=…/>}` do cross but are elements. The
+    trap is **`render={(props) => …}` or an `onClick` on `Button`/`Input` from a server page** —
+    base-ui's `render` accepts a function and its docs feature that form. Verified empirically: it
+    **passes `tsc`** and dies at prerender with `Functions cannot be passed directly to Client
+    Components … {… render: function render …}`. Nothing in the repo does this (sites are
+    presentational — the forms deliberately have no submit wiring), which is why it has never
+    surfaced. Corollary: **a block taking a `LucideIcon` prop must never gain `"use client"`**; if one
+    must, the icon has to arrive as an element (`icon={<Check/>}`) or be imported inside the client file.
+  - **These two patterns are linted** by the local `rsc-boundary` plugin (`eslint-rules/`, wired in
+    `eslint.config.mjs`, RuleTester-tested under the `lint-rules` vitest project):
+    `no-component-prop-in-client-file` and `no-function-render-prop`. The prose above is the upfront
+    warning; the rules are the deterministic gate. They are scoped to core's `components/` and each
+    site's `app/`+`components/`, and **exclude stories and tests** — those render under client React
+    in the browser, where both patterns are perfectly legal. Every *other* RSC violation
+    (`createContext`, a function prop to some other client primitive) is still build-only:
+  **nothing but a real `next build` catches those**:
   vitest runs jsdom against client React, and `tsc`/`eslint` have no notion of the server/client
   boundary — so verify component changes with `yarn workspace @brief-to-site/site-<slug> build`, not
   just the push gate.
@@ -187,49 +212,9 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   failures. Do **not** widen it back to `"../components"`. (See the colour-system `.brand-rgb` note.) `yarn sites:novel <slug>` (pure
   `config/novel-inventory.ts#formatNovelComponents` + thin `cli/novel-list.ts`) lists site-local blocks
   AND sections for the HITL report — the directory IS the record, not agent memory.
-- **Section shapes come from the Storybook MCP, not a bespoke CLI.** `get-documentation` (per section)
-  returns everything the old catalog did, from three sources: (1) the **component description** — the
-  JSDoc block **immediately above `const meta`** in each `*.stories.tsx` (react-docgen only attaches
-  the leading comment adjacent to the default-export meta; a `const` between the comment and `meta`
-  drops it — verified empirically). Put the section's **purpose + slot/composition vocabulary +
-  layout-axis defaults** there. For a compound section, `get-documentation` returns each variant
-  story's **full composed children JSX** as a paste-ready copy-me snippet (verified) — so the variant
-  stories ARE the composition presets. The same applies to the `Blocks/*` tree (each block has its own
-  autodocs entry). (2) **copy-me usage + every variant value** — the per-variant **stories** (each
-  meaningful variant has its own story; the `Default` story is the type-checked copy-me snippet, which
-  is why we don't hand-write a usage block — that would drift). (3) **content-prop docs** — the
-  interface JSDoc. `tags: ["autodocs"]` generates the human Docs page and enriched variant `argTypes`
-  (`description` + `table.defaultValue`) document the variant props there (they don't surface in
-  `get-documentation`). Note `parameters.docs.description.component` does **not** surface in
-  `get-documentation` — use the meta-leading JSDoc for the MCP-visible description.
-  - **That JSDoc carries no code examples.** The MCP already serves each story's composed JSX as a
-    paste-ready snippet, so a hand-written snippet in a comment is a second copy that drifts from the
-    real one. A use case that genuinely needs example code gets **its own story** — type-checked,
-    rendered, and visible to humans and agents alike. Naming a prop and its value (`columns={5}`,
-    `icon={Check}`) is API vocabulary, not an example, and stays.
-  - **That JSDoc must also close with a `**Tokens**` bullet list** naming the design tokens the
-    component consumes — **one bullet per token**, `` - `--token` — where it's used ``, ordered raw
-    brand vars → role tokens → `.wcag-contrast`/`.brand-rgb` → `--radius`/`--font-heading` → one
-    closing `- Delegated — …` bullet. What that bullet says turns on whether the target has an entry
-    of its own: a **section** just names its slot blocks (each documents its own tokens — copying them
-    out gives one fact two records, which drift), but a **block** delegating to a `ui/` primitive
-    names that primitive's tokens too, because `ui/` ships **no stories**, so nothing else records
-    what `Card`/`Badge` colour. "No tokens of its own, inherits
-    `--background`" is a valid and expected bullet. Rule + worked example: `sections.mdx` and
-    `sections/_template/`. It is **hand-maintained on every component change** —
-    same standing drift caveat as the variant vocabulary below. A declarative alternative was
-    investigated and **deferred**: Storybook's slot for structured per-component metadata is
-    `parameters` (typed via a shared `Meta` wrapper so `tsc` enforces it), but the MCP composes its
-    output from *only* the meta-leading JSDoc, story descriptions + snippets, props docgen, and
-    attached MDX — `parameters` never enter it (read from `formatComponentManifest` in
-    `@storybook/mcp/dist/index.js`), so a typed parameter would be invisible to the assembling agent.
-    Any future deterministic solution has to clear that bar.
-  - The old `yarn sections:catalog` CLI (`components/sections/catalog.ts` + `catalog.test.ts` +
-    `config/cli/sections-catalog.ts` + per-section exported `*VariantsConfig`) was **removed**; the
-    configs are inlined back into each `cva()` call. Consequence: story `argTypes` variant lists and
-    the JSDoc variant vocabulary are **hand-maintained** and can drift from the `cva` config (the
-    catalog's zero-drift guarantee was intentionally dropped; no replacement drift test). SKILL.md
-    step 5 points at the Storybook MCP as the authoritative props source.
+- **Section and block shapes come from the Storybook MCP** (`list-all-documentation` /
+  `get-documentation`), never a hand-written list here or a bespoke CLI. Authoring the docs the MCP
+  serves → `./skills/storybook-docs/index.md`.
 - **`theme:build <slug>`** reads `config/brand.json` (hex) and writes `sites/<slug>/theme.css`:
   `--brand-h/s/l` (via `palette.hexToHsl`) **and `--brand-r/g/b`** (via `palette.hexToRgb`, the input
   `.wcag-contrast` reads), the harmony offset vars, and explicit `--brand-secondary/tertiary-*`
@@ -332,8 +317,8 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   raster.
 - **`placeholders:source <slug>` auto-fills real stock photos from the manifest** — **operator-run,
   NOT part of the generation pipeline** (the microsite skill phases don't invoke it; operator uses it
-  at their discretion). Documented in the Storybook **Guides/Placeholder Sourcing** page
-  (`config/placeholder-sourcing.mdx`). Root `scripts/placeholder-source.ts` (network + fs, OUT of core
+  at their discretion). Operator guide: root `PLACEHOLDERS.md` — Storybook documents components, so
+  a CLI manual doesn't live there. Root `scripts/placeholder-source.ts` (network + fs, OUT of core
   like the other scripts) reads the
   manifest and per entry: Unsplash `search/photos` by `query ?? description` (optional manifest
   `query` field — keywords beat prose), takes the top match, fetches an exact-`aspect` cropped PNG
@@ -427,8 +412,9 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
 - **`git push --no-verify` is forbidden** (also a global rule). No CI by design: this local
   hook IS the enforcement layer.
 - **The push gate is CORE-ONLY.** `.husky/pre-push` runs `yarn typecheck:core` (`tsc -p packages/core`),
-  `yarn lint:core` (`eslint packages/core`), then `yarn test` (vitest — already core-only; its glob is
-  `packages/*/src/**` and sites have no tests). **Sites are excluded from the hook by design** — a site
+  `yarn lint:core` (`eslint packages/core`), then `yarn test` (vitest — two projects: `unit`, whose glob
+  is `packages/*/src/**`, and `lint-rules`, which RuleTester-tests the local `eslint-rules/` plugin;
+  sites have no tests). **Sites are excluded from the hook by design** — a site
   type/lint error will NOT block a push. Validate sites manually: `yarn workspace @brief-to-site/site-<slug>
   build`, or the full-repo `yarn typecheck` / `yarn lint` (both still exist for local runs). The gate also
   drops the root `scripts/` typecheck (that's `tsc -p tsconfig.scripts.json`, part of full-repo
@@ -492,6 +478,16 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   file-access interstitial). Chrome + Edge are installed under `Program Files`.
 
 ## Storybook (SB10, nextjs-vite)
+
+**Never document what Storybook or its MCP already exposes.** Component inventories, story rosters,
+and explicitly-declared prop signatures are *retrieved* (`list-all-documentation` /
+`get-documentation`), never transcribed into prose — a second copy has no reader and drifts.
+Document only what the MCP can't see: cva-derived variant vocabulary and defaults, slot
+composition, item shapes, tokens, and the correct import subpath. And **Storybook documents
+components** — tool/CLI/workflow docs live with the tool, referenced not reproduced.
+
+Writing or editing any story JSDoc, `**Tokens**` list, or `.mdx` page → **./skills/storybook-docs/index.md**
+(the MCP-visibility matrix that decides what is redundant lives there).
 
 - Correct import paths: `storybook/test` (assertions), `@storybook/addon-docs/blocks` (MDX `Meta`).
   NOT `@storybook/test` / `@storybook/blocks` (not installed).

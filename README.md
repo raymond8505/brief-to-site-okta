@@ -106,7 +106,7 @@ before capture:
 |               | `yarn sites:validate <slug>`       | Zod-validate a site's `config/*.json`                   |
 | theme+assets  | `yarn theme:build <slug>`          | `brand.json` (hex) → `theme.css` (HSL/RGB seed + harmony) |
 |               | `yarn placeholders:build <slug>`   | draw offline text-placeholder PNGs from `config/placeholders.json` (the default) |
-|               | `yarn placeholders:source <slug>`  | opt-in — auto-fill placeholders with real Unsplash photos (`UNSPLASH_ACCESS_KEY`) |
+|               | `yarn placeholders:source <slug>`  | opt-in — auto-fill placeholders with real Unsplash photos ([PLACEHOLDERS.md](./PLACEHOLDERS.md)) |
 | verify        | `yarn sites:dev <slug>`            | run the site's `next dev` server                        |
 | capture       | `yarn capture:run <slug>`          | drive Chromium motion-free → full-page JPEGs per page × viewport |
 

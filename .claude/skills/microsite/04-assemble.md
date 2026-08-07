@@ -49,6 +49,9 @@ by imitating another site's design.
   and sets `meta.logoSrc` to `/images/logo.png`; leave both as-is and **don't** add a `logo` entry or
   invent logo art.
 - CTAs are links: `<Button render={<Link href="/contact" />}>…</Button>` (Base UI `render` slot).
+  Pass `render` an **element**, never a function — `render={(props) => <a …/>}` typechecks and then
+  fails the build (`Button` wraps a client primitive, and functions can't cross that boundary). Same
+  reason there are no `onClick` handlers: these pages are presentational.
 - Non-Home pages `export const metadata = { title: "… — <Site Name>" }`.
 - **Do not** add runtime `fs` reads — `app/layout.tsx` already static-imports config; the shell
   (`MicrositeShell` + `SiteNav`) renders header/nav/footer with **no sticky header**. Don't

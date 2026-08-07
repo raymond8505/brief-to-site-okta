@@ -23,9 +23,8 @@ const tierList = (items: string[]) => (
 /**
  * PricingTiers — a plan-comparison section: a grid of `PriceCard` blocks below an optional
  * `PricingTiersHeader` (compose `Eyebrow` / `Heading` / `Prose`). One layout axis: `columns`
- * (`2` | `3` | `4`, default `3`); plus the shared `density`. **Guardrail:** prices are
- * checkable specifics — a card gets a `price` ONLY when the brief supplies it verbatim; the
- * no-price fallback form is the default. Mark at most one tier with `badgeText`. A "variant" is a
+ * (`2` | `3` | `4`, default `3`); plus the shared `density`. Mark at most one tier with
+ * `badgeText`. A "variant" is a
  * composition — how many tiers, which is highlighted, priced vs fallback. Import the section from
  * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
  *

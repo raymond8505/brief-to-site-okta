@@ -9,10 +9,7 @@ import { assertAllowedChildren } from "@core/components/blocks/lib/assert-slot";
 /**
  * PricingTiers — a plan-comparison section: a grid of `PriceCard` blocks below an optional
  * `PricingTiersHeader` slot (compose `Eyebrow` / `Heading` / `Prose` inside it). The one layout
- * axis is `columns` (`2` | `3` | `4`, default `3`). **Prices are checkable
- * specifics** — a card states one only when the brief supplies it; otherwise omit its `price` for
- * the qualitative fallback. Import the section from `@brief-to-site/core/sections` and the blocks
- * from `@brief-to-site/core/blocks`.
+ * axis is `columns` (`2` | `3` | `4`, default `3`).
  */
 
 export const pricingTiersVariants = cva("grid grid-cols-1 items-start gap-8", {

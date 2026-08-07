@@ -1,0 +1,62 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Blocks/Overview" />
+
+# Block vocabulary
+
+A **block** is the smallest composable unit — a heading, a pull-quote, a logo strip, a price card.
+Blocks are what you fill a section's slots with; a section supplies the band and the layout, a block
+supplies the content. Each carries a `data-slot` so its parent section can target it.
+
+Browse the vocabulary in the **Blocks/\*** tree — each entry documents its own props, variants and
+tokens. Import them from `@brief-to-site/core/blocks`.
+
+```tsx
+import { CtaGroup, Eyebrow, Heading, Prose } from "@brief-to-site/core/blocks";
+```
+
+## Blocks vs primitives
+
+A block is composed from **`ui/` primitives** (`Button`, `Card`, `Badge`, `Input`, …) plus Tailwind
+utilities and lucide icons. The primitives are the raw material; blocks are the vocabulary you
+actually compose pages from. Reach for a block first — drop to a primitive only inside a block you
+are building.
+
+## The two shapes a block takes
+
+Blocks are **not** compound families the way sections are. You will meet exactly two shapes, and
+knowing which one you're holding tells you how to call it:
+
+> A block that renders a **homogeneous repeated set** takes a **data array** and builds its own
+> rows. A block that wraps **arbitrary or heterogeneous** content takes **`children`**.
+
+So a value list is `items={[…]}` rather than a set of child elements, while a button row takes the
+`Button`s themselves. The data-array form makes the item shape a real compile-time type, which is
+why it's preferred wherever the set is uniform. Each block's entry shows which shape it uses.
+
+## Images go through `MediaFrame`
+
+`MediaFrame` is the one image element — nothing else renders a raw `<img>`. It takes a `src` (the
+root-relative `/images/<name>.png` a placeholder manifest entry generated) in an `object-cover` box,
+so an operator can overwrite art of any size without resizing. Omit `src` and it falls back to an
+inline placeholder sized from its `aspect`.
+
+Image paths are always **root-relative**. A relative `images/…` resolves against nested routes and
+404s under a page like `/about`.
+
+## Colour
+
+Blocks consume **role tokens** (`bg-background`, `text-foreground`, `text-muted-foreground`,
+`bg-muted`, `--brand-secondary`) — never hardcoded colours — so the deterministic theme stays
+orthogonal. Each block's story documents the tokens it consumes, which is where you look to answer
+"what would I remap to restyle this". See **Colors/Overview** for the token system.
+
+## The vocabulary is bounded, but not closed
+
+What keeps output deterministic is that pages are composed from a **bounded set of blocks** rather
+than free-form markup — never drop raw JSX into a page.
+
+Bounded is not the same as closed. Compose from the published blocks first; when none of them
+expresses the piece a section needs, **author a block** — a new arrangement of primitives following
+the same contract (carries a `data-slot`, CSS-only `cva` variants, role tokens only). That is an
+expected move, not a last resort. The bound is the block *contract*, not this inventory.

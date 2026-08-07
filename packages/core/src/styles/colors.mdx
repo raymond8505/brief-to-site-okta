@@ -1,4 +1,6 @@
-import { Meta } from "@storybook/addon-docs/blocks";
+import { Canvas, Meta } from "@storybook/addon-docs/blocks";
+
+import * as ColorStories from "./colors.stories";
 
 <Meta title="Colors/Overview" />
 
@@ -10,42 +12,46 @@ The microsite theme is driven by **one required brand colour** (the primary). Ev
 ## 1. HSL palette derivation
 
 A single seed (`--brand-h` / `--brand-s` / `--brand-l`, unitless HSL channels) produces the palette
-via fixed HSL transforms. The same constants live in [`palette.ts`](?path=/story/colors-palette--default)
-(`HUE_OFFSETS`, `NEUTRAL_TINT`) so tooling (`theme:build`) and the CSS never drift.
+via fixed HSL transforms. The derived tokens and the offsets that place them are defined once in
+[`palette.ts`](?path=/story/colors-palette--default) (`HUE_OFFSETS`, `NEUTRAL_TINT`) and mirrored in
+`colors.css`, so tooling (`theme:build`) and the CSS never drift. The swatches below are computed by
+the real CSS at runtime — drag the seed controls and the whole palette re-derives:
 
-Secondary/tertiary use a **named colour harmony** (default **complementary**). Switch it by pointing
-`--secondary-h-offset` / `--tertiary-h-offset` at another pair, e.g. `var(--secondary-h--triadic)`:
+<Canvas of={ColorStories.Default} />
 
-| Harmony | secondary offset | tertiary offset |
-| --- | --- | --- |
-| complementary *(default)* | +150° | +210° |
-| triadic | +120° | +240° |
-| analogous | +330° (−30°) | +30° |
+Secondary and tertiary sit at a **named colour harmony** off the primary hue (default
+**complementary**). Switch it by pointing `--secondary-h-offset` / `--tertiary-h-offset` at another
+pair, e.g. `var(--secondary-h--triadic)`. A different seed shows the same derivation holding:
 
-| Token | Derivation |
-| --- | --- |
-| `--brand-primary` | the seed |
-| `--brand-secondary` | primary hue + active secondary offset |
-| `--brand-tertiary` | primary hue + active tertiary offset |
-| `--brand-surface` | primary hue, lightness **96%** (brand-tinted near-white) |
-| `--brand-muted` | primary hue, lightness **90%** |
+<Canvas of={ColorStories.WarmSeed} />
 
 Supply an explicit 2nd/3rd colour by overriding `--brand-secondary-*` / `--brand-tertiary-*`.
+
+**Seeds only work at `:root`.** The derived tokens are declared *and resolved* there, then inherit as
+fixed values — overriding `--brand-h` or `--secondary-h-offset` on a descendant does **not**
+re-derive them. That is exactly what a site's `theme.css` does. A **role remap** is different: it
+resolves an already-computed token, so it works from any scope.
 
 ## 2. WCAG 4.5:1 contrast
 
 The `.wcag-contrast` utility (ported verbatim from
 [raymond8505/pure-css-wcag-compliant-dynamic-colors](https://github.com/raymond8505/pure-css-wcag-compliant-dynamic-colors))
 takes a background as `--r` / `--g` / `--b` and applies a guaranteed-legible text colour using pure
-CSS `pow()`. Chromium (the capture engine) supports it. See the **Contrast** story.
+CSS `pow()`. Chromium (the capture engine) supports it. It adapts per hue — a mid green legitimately
+gets **dark** text, because white on it would fail AA:
 
-## Role assignment — operator-controlled
+<Canvas of={ColorStories.Contrast} />
 
-Brand tokens are **not** force-assigned to shadcn role vars. core wires only `--primary` and
-`--ring` to `--brand-primary`; the operator/agent decides what else uses which colour by pointing
-role vars at brand tokens in a site's `theme.css` (see `theme.example.css`). This is why "role
-mapping" is a per-site override, not a baked-in rule — it keeps colour assignment a deliberate,
-brief-driven choice.
+## Role assignment
 
-Explore live: **Colors/Palette** (derivation, with seed controls), **Colors/Palette → RoleMapping**
-(remapping), **Colors/Contrast** (legible text on any background).
+Role vars point at brand tokens, so a page picks up the brand hue while staying legible with no
+contrast math: `--background` is the l96 brand tint (`--brand-surface`), and `--secondary` /
+`--muted` / `--accent` / `--border` / `--input` are the l90 tint (`--brand-muted`), with `--primary`
+and `--ring` on the saturated `--brand-primary`. `--card` and `--popover` stay white so cards lift
+off the tint. Light tint plus dark text is always ≥4.5:1; a *saturated* fill that carries text goes
+through `.wcag-contrast` instead.
+
+None of this is baked in. A site's `theme.css` can repoint any role var, and the derived-var cascade
+resolves each override against that site's seed:
+
+<Canvas of={ColorStories.RoleMapping} />
