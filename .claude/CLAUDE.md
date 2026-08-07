@@ -135,11 +135,13 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
     wrapping *arbitrary/heterogeneous* content keeps `children` (`CtaGroup`'s `Button`s, `PriceCard`'s
     slot, `Prose`/`Quote`/`FaqItem`'s rich text). Sections holding repeated blocks
     (`Steps`/`Step`, `Faq`/`FaqItem`, …) stay compound — the rule doesn't reach them. Full convention
-    (item-type naming, required array, index keys, no item subcomponent) in `sections.mdx`.
+    (item-type naming, required array, index keys, no item subcomponent) in
+    `./skills/component-authoring/index.md`.
   `MediaFrame` is the **sole** render-time image element; no section renders a raw `<img>`. In a real
   site its `src` is an explicit `/images/<name>.png` (from the placeholder manifest); when `src` is
   omitted (Storybook/dev/jsdom) it falls back to an inline SVG data-URI sized from `aspect` via
-  `ASPECT_DIMENSIONS`. The section contract doc is `components/sections/sections.mdx`; the copy-me
+  `ASPECT_DIMENSIONS`. Authoring a section or block → `./skills/component-authoring/index.md`; the
+  consumer-facing contract is Storybook's **Sections/Overview** + **Blocks/Overview**; the copy-me
   archetype is `components/sections/_template/`.
 - **Core sections/blocks are React SERVER Components — there is no `createContext`.** Sites render
   static/SSR, so core's components land in the RSC graph; React's `react-server` build exports only
@@ -153,7 +155,7 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   mechanism**: a parent can't pass props to children it didn't construct, so if it renders a
   *homogeneous repeated set*, give it a **data array** and let it build its own rows — an ordinary
   prop, a compile-time item type, no traversal (`BulletList`/`StatRow`/`LogoRow`; rule + convention in
-  `sections.mdx`). `React.Children.map` + `cloneElement` (unwrapping `React.Fragment` yourself, since
+  `./skills/component-authoring/index.md`). `React.Children.map` + `cloneElement` (unwrapping `React.Fragment` yourself, since
   `React.Children` treats one as a single opaque child) is the **fallback**, correct only when
   children must genuinely stay opaque. `BulletList` was that worked example for one day and was
   converted to a data prop; the repo now has **zero** `cloneElement` call sites — don't reintroduce

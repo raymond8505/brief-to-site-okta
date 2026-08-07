@@ -4,94 +4,56 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # Section suite
 
-A **section** is one full-width horizontal band of a page — a hero, a feature grid, a closing
-call to action. Sections are the largest composable unit: a page is a stack of them. Each is a
-compound family whose slots are filled with **blocks**, the smaller presentational leaves.
+A **section** is one full-width horizontal band of a page — a hero, a feature grid, a closing call
+to action. Sections are the largest composable unit: a page is a stack of them, and each one's slots
+are filled with **blocks** (see **Blocks/Overview**).
 
-Browse the suite in the **Sections/\*** tree, and the block vocabulary in **Blocks/\***. Each entry
-documents its own slots, variant axes and tokens. This page is the contract they all follow.
+Browse the suite in the **Sections/\*** tree — each entry documents its own slots, layout axes and
+tokens. Import them from `@brief-to-site/core/sections`.
 
-## The contract
+```tsx
+import { Hero, HeroBody, HeroMedia } from "@brief-to-site/core/sections";
+```
 
-1. **Render through `Section`.** The shell is a full-bleed `<section>` that provides the standard
-   centred container (`max-w-7xl`, default breakpoints, responsive gutters) and the one variant axis
-   shared by all sections: spacing **density** (`compact` / `comfortable` / `spacious`). Because it is
-   full-bleed, a section may carry its own background on the outer element while its content still
-   lands on the shared column.
-2. **A section is a compound family, filled with blocks.** Like the `Card` family, a section is a
-   root plus **named slot subcomponents** (e.g. `Hero` + `HeroBody` / `HeroMedia` / `HeroAside`), each
-   carrying a `data-slot`. Fill those slots with **block primitives** from
-   `@brief-to-site/core/blocks` — never ad-hoc markup. **A "variant" is a composition**: the same
-   section reads as _split_, _centered_, _with-stats_, or _quote-led_ purely by which blocks fill
-   which slots. A section still owns any genuine geometric layout as a small **CSS-only CVA**
-   (`align`, `mediaSide`, `columns`, `formSide`); and layout may react to which slots are present via
-   `has-[data-slot=…]`. A quantity axis takes **numbers**, never number-words — `columns={3}`, not
-   `columns="three"`. A dev-only `assertAllowedChildren` guard warns when a wrong component is
-   composed into a slot.
-3. **Images go through the `MediaFrame` block.** No section renders a raw `<img>`. `MediaFrame` takes
-   a `src` path (the root-relative `/images/<name>.png` a placeholder manifest entry generated) in an
-   `object-cover` box — so an operator overwrites art of any size without resizing. When `src` is
-   omitted it falls back to an inline placeholder sized from its `aspect`.
+## Sections are full-bleed, with a shared `density`
 
-Colour: sections and blocks consume **role tokens** (`bg-background`, `text-foreground`,
-`text-muted-foreground`, `bg-muted`, `--brand-secondary`) — never hardcoded colours — so the
-deterministic theme stays orthogonal. Each component's story documents the tokens it consumes.
+Every section renders through a full-bleed `<section>` that supplies the standard centred container
+(`max-w-7xl`, responsive gutters). Because the shell is full-bleed, a section can carry a background
+edge to edge while its content still lands on the shared column — so you never need a wrapper to
+make a band span the viewport.
 
-## Group blocks take data, not children
+The one axis every section shares is spacing **`density`** (`compact` / `comfortable` / `spacious`).
+Reach for it to tighten or open a page's rhythm without touching the sections themselves.
 
-Sections are compound (a root plus named slot subcomponents, above). **Blocks are not, by default.**
-The rule:
+## A variant is a composition
 
-> A block that renders a **homogeneous repeated set** takes a data array and builds its own rows. A
-> block that wraps **arbitrary or heterogeneous** content keeps `children`.
+A section is a compound family: a root plus **named slot subcomponents** — `Hero` + `HeroBody` /
+`HeroMedia` / `HeroAside`, much like the `Card` family. You fill those slots with blocks; **never
+ad-hoc markup**.
 
-`BulletList` (`items`), `StatRow` (`stats`) and `LogoRow` (`logos`) take data. `CtaGroup` (arbitrary
-`Button`s with their own hrefs and variants), `PriceCard` (a heterogeneous slot — a `BulletList` _and_
-a CTA) and `Prose` / `Quote` / `FaqItem` (free-form rich text) keep `children`.
+That is what makes a variant a *composition* rather than a flag. The same `Hero` reads as split,
+centered, with-stats or quote-led purely by which blocks fill which slots — so when you want a
+different look, change the composition before you look for a prop. Any genuine geometry a section
+does own (which side the media sits on, how many columns) is a small layout prop, and layout can
+react to which slots you filled.
 
-This isn't stylistic. A parent cannot pass a prop to children it did not construct — the mechanism
-for that is context, and core's blocks are **Server Components**, where React's `react-server` build
-exports no `createContext`. Composing a repeated set as children therefore forces
-`React.Children.map` + `cloneElement` + fragment-unwrapping to reach the items, and the item shape can
-only be checked by a dev-only `assertAllowedChildren` warning. A data array replaces all of it with an
-ordinary prop and a **compile-time** type.
+A dev-only guard warns in the console when a component lands in a slot that doesn't expect it. It's
+a safety net for composition mistakes, and it never runs in a built site.
 
-The convention, so the next group block is mechanical:
+## Filling slots
 
-- Export a named item interface — `<Component><Singular>` (`LogoRowLogo`, `BulletListItem`,
-  `StatRowStat`) — declared **above** the props interface, with per-field JSDoc.
-- The array prop is **required** and named for its plural noun (`items`, `stats`, `logos`) — the shape
-  is uniform, the noun stays semantic so it reads at a call site.
-- Props still extend the DOM element props; the array is additive. Key by index (these lists are
-  static and never reorder).
-- No item subcomponent. A `<li>` or a `<dt>`/`<dd>` is invalid outside its parent anyway, so exporting
-  one only invites misuse.
-- No `assertAllowedChildren` — the type is the contract.
+Slots take **blocks** — the ones published in `@brief-to-site/core/blocks` are simply the blocks
+that already exist. A block you author to the same contract is an equally valid slot filler, so a
+section is never limited to core's inventory. **Blocks/Overview** covers the block contract and when
+to author one.
 
-## The bound is the block vocabulary
+If no section in the suite provides the band a page needs, compose the arrangement you need rather
+than stretching a section to stand in for it. The suite is purpose-built rather than exhaustive, so
+"no core section fits this" is an ordinary outcome, not a shortfall.
 
-Content order carries no constraint — a11y is out of scope here (the deliverable is full-page
-screenshots), so a section arranges its slots and blocks however reads best. What keeps output
-deterministic is the **bounded set of block primitives** composed from, the typed slot props, and the
-dev-only slot guard: a bounded vocabulary in place of free-form markup. Compose from the published
-blocks first; when the vocabulary falls short, **extend it deliberately** — a new block, built the
-same way you would a `ui/` primitive. Never drop raw JSX into a page.
+## Colour
 
-## What earns a place in core
-
-A core section is **purpose-built**: it exists to present one _specific kind of content_, and its slots
-have a closed block vocabulary that says so — `ArticleGrid` holds `ArticleCard`s, `Steps` holds
-numbered `Step`s, `PricingTiers` holds `PriceCard`s, `Hero` opens a page. Name the content and the
-section's reason to exist follows.
-
-A **generic arrangement** is not a section — "N columns under a title", "copy beside media" — it is a
-_composition pattern_. Core deliberately carries no stand-in for them: a generic section is a magnet
-that pages get force-fit into, and re-composing the pattern where it's needed is cheap and is the
-intended cost. So "no core section fits this" is an ordinary outcome, not a shortfall.
-
-## Building a new section
-
-Copy **`components/sections/_template/`** (see **Sections/\_Template**), rename the files + symbols,
-and replace the body. It is a minimal, green, story-documented compound section — the trustworthy
-starting point for all three rules. Export the new section from `components/sections/index.ts` (the
-`_template` itself is intentionally not exported).
+Sections consume **role tokens** — never hardcoded colours — so the deterministic theme stays
+orthogonal. Most sections set no colour at all and simply inherit the page surface, taking their
+colour from the blocks in their slots; each section's story documents exactly what it consumes. See
+**Colors/Overview** for the token system.
