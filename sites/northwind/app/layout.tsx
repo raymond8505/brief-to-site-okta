@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { MicrositeShell, metaSchema, pagesSchema, siteFontClassName } from "@brief-to-site/core";
+import { MicrositeShell, metaSchema, pagesSchema } from "@brief-to-site/core";
 
 import metaJson from "../config/meta.json";
 import pagesJson from "../config/pages.json";
@@ -19,7 +19,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={siteFontClassName}>
+    <html lang="en">
       <body>
         <MicrositeShell meta={meta} pages={pages}>
           {children}

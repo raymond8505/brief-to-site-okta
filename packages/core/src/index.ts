@@ -1,7 +1,6 @@
 // Public barrel for @brief-to-site/core. Re-exports grow as modules land
 // (colour system, schemas, microsite shell, sections live behind their own subpath exports).
 export { cn, navHref } from "./lib/utils";
-export { sansFont, monoFont, siteFontClassName } from "./font/siteFont";
 
 // Colour system. Deterministic HSL derivation + WCAG contrast math — the single source of
 // truth shared by the CSS (styles/colors.css, styles/contrast-math.css) and theme:build.

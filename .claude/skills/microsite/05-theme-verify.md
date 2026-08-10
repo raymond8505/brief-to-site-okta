@@ -9,7 +9,8 @@ yarn theme:build <slug>         # brand.json → theme.css (hex → HSL + RGB se
 yarn placeholders:build <slug>  # draws public/images/<name>.png from config/placeholders.json
 ```
 
-Re-run `theme:build` after any `brand.json` edit. `placeholders:build` reads the per-site
+Re-run `theme:build` after any `brand.json` edit — it rewrites `theme.css` only, so the site's
+hand-edited `fonts.css` is never at risk. `placeholders:build` reads the per-site
 `config/placeholders.json` manifest you authored in phase 4 and draws one PNG per entry into
 `public/images/`, baking each entry's `description` into the image as centered text (the operator's
 cue for sourcing real art). Re-run it after editing the manifest. `ASPECT_DIMENSIONS` (core) is the

@@ -31,7 +31,7 @@ const swatch: React.CSSProperties = {
   alignItems: "flex-end",
   padding: 8,
   fontSize: 12,
-  fontFamily: "var(--font-mono, monospace)",
+  fontFamily: "var(--font-mono-family, monospace)",
 };
 
 const meta = {
@@ -49,7 +49,7 @@ const meta = {
           >
             {name}
           </div>
-          <span style={{ fontSize: 11, fontFamily: "var(--font-mono, monospace)", opacity: 0.6 }}>
+          <span style={{ fontSize: 11, fontFamily: "var(--font-mono-family, monospace)", opacity: 0.6 }}>
             {value === "0" ? "0" : value}
           </span>
         </div>
