@@ -5,7 +5,7 @@ export { Section, sectionVariants } from "./section";
 export type { SectionProps } from "./section";
 export { placeholderSvg, placeholderDataUri } from "./placeholder";
 export type { PlaceholderOptions } from "./placeholder";
-export { Hero, HeroBody, HeroMedia, HeroAside, heroVariants } from "./hero/hero";
+export { Hero, HeroBody, HeroMedia, HeroAside, heroVariants, heroSectionVariants } from "./hero/hero";
 export type { HeroProps } from "./hero/hero";
 export { FeatureGrid, FeatureGridHeader, featureGridVariants } from "./feature-grid/feature-grid";
 export type { FeatureGridProps } from "./feature-grid/feature-grid";
