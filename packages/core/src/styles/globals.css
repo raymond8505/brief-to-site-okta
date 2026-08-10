@@ -66,9 +66,12 @@
 /* Legibility halos for copy that sits directly on imagery (Hero `media="background"`). Deliberately
    a large, very-low-opacity diffuse wash rather than a drop shadow: the goal is to lift or drop the
    art immediately behind the glyphs, not to draw a visible edge around them. Two stacked radii give
-   a cumulative falloff with no hard boundary. Which way it washes follows the art, so the polarity
-   is Hero's `mediaTone` axis, not a decision made here. Plain `@theme` (not `@theme inline`) because
-   these are literal values, not `var()` indirections that must resolve per element. */
+   a cumulative falloff with no hard boundary — so don't "fix" a halo that reads as weak by raising
+   the alpha or shrinking the blur, which turns the wash into exactly the hard edge it avoids. When
+   it genuinely isn't enough, the lever is Hero's `scrim`, not a heavier shadow. Which way it washes
+   follows the art, so the polarity is Hero's `mediaTone` axis, not a decision made here. Plain
+   `@theme` (not `@theme inline`) because these are literal values, not `var()` indirections that
+   must resolve per element. */
 @theme {
   --text-shadow-legible-light: 0 0 20px rgb(255 255 255 / 0.35), 0 0 44px rgb(255 255 255 / 0.25);
   --text-shadow-legible-dark: 0 0 20px rgb(0 0 0 / 0.35), 0 0 44px rgb(0 0 0 / 0.25);

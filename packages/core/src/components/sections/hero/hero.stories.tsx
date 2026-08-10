@@ -50,8 +50,10 @@ const DARK_ART = backdropArt("#1e293b", "#334155", "#0f172a");
  * section stays content-fit. Two more props apply only then. `mediaTone` (`light` | `dark`, default
  * `light`) says how dark the art is, and drives copy colour, halo polarity and scrim tint together —
  * `light` keeps the inherited near-black copy under a soft white wash, `dark` switches to the
- * near-white role token under a soft dark one. `scrim` (boolean, default `false`) lays a matching
- * tint over the whole image for art too busy for the per-glyph halo alone.
+ * near-white role token under a soft dark one. Set it to match the art you're placing: nothing at
+ * build time can see how dark a sourced photo is, so the polarity is yours to pick rather than
+ * something detected. `scrim` (boolean, default `false`) lays a matching tint over the whole image
+ * for art too busy for the per-glyph halo alone.
  *
  * A "variant" is a **composition** — which blocks fill which slots. Import the section from
  * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
@@ -63,8 +65,9 @@ const DARK_ART = backdropArt("#1e293b", "#334155", "#0f172a");
  * - `--primary-foreground` — the near-white copy colour, consumed only at `mediaTone="dark"`.
  * - `--text-shadow-legible-light` / `--text-shadow-legible-dark` — the copy halo over backdrop art.
  *   Deliberately a large, very-low-opacity wash that lifts or drops the art behind the glyphs, not a
- *   visible drop shadow. It is a legibility *aid*, not a contrast guarantee — reach for `scrim` when
- *   the art is busy.
+ *   visible drop shadow. It is a legibility *aid*, not a contrast guarantee: over arbitrary art
+ *   nothing here clears an AA floor. Reach for `scrim` when the art is busy, and treat choosing
+ *   calmer art behind the copy as the real fix.
  * - Delegated — the blocks composed into its slots: `Eyebrow`, `Heading`, `Prose`, `CtaGroup`,
  *   `MediaFrame`, and `Quote` or `StatRow` in the aside.
  */
