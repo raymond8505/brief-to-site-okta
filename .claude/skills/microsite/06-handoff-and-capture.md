@@ -14,6 +14,10 @@ Post a short, **point-form** handoff:
 - **Last-mile QA (operator's):** swap placeholder images (overwrite the PNGs in `public/images/` —
   each bakes in a description of the ideal content to source), replace any staged stats/quotes with
   real figures, tweak copy/layout to taste.
+- **Typography (operator's):** the site's two typefaces live in `sites/<slug>/fonts.css` — one
+  `@import` plus `--font-heading-family` / `--font-body-family`. Surface the brief's typography
+  intent here as a suggestion and leave the choice to the operator. Keep it to a single `@import`
+  (a CSS bundle drops the rest); `theme:build` never touches this file.
 - **Site-local components:** run `yarn sites:novel <slug>` and include its output — for each block/
   section, its purpose, what tier fell short, and that it's a promote-to-core candidate (operator
   decides). Say so if the list is empty.

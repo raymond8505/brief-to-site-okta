@@ -71,7 +71,7 @@ const swatchBox: React.CSSProperties = {
   alignItems: "flex-end",
   padding: 6,
   fontSize: 11,
-  fontFamily: "var(--font-mono, monospace)",
+  fontFamily: "var(--font-mono-family, monospace)",
 };
 
 const row: React.CSSProperties = { display: "flex", gap: 12, flexWrap: "wrap" };

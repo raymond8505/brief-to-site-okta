@@ -102,6 +102,49 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   scope (the `Tokens/Radius` story sets it per-swatch). A site opts into a non-default corner feel by
   setting `brand.json` `radius` to a non-default `RADIUS_PRESETS` key.
 
+## Typography (`packages/core/src/styles/fonts.css`)
+
+- **A site has two typefaces and a human picks them.** `--font-heading-family` (default
+  `"Geist Mono"`) and `--font-body-family` (default `"Geist"`), plus `--font-mono-family` for sample
+  text. They are plain `:root` custom properties; globals.css maps Tailwind's `--font-sans`/
+  `--font-mono`/`--font-heading` onto them inside **`@theme inline`**, so utilities emit
+  `font-family: var(--font-…-family)` and one `:root` override restyles a whole site — the same
+  direct-consumption mechanism as `--radius`. Verified against a real `next build`. **No component
+  takes a font prop**, and none should. `--font-heading` reaches `Heading`, `Step` (title + badge
+  number), `FaqItem`'s question, `Stat`'s value and `Card` titles; `--font-sans` reaches everything
+  else via `html { @apply font-sans }`.
+- **Fonts are NOT in `brand.json` and there is no font CLI.** Typography is deliberately outside the
+  generation pipeline: the agent captures typography intent in the brief's Visual direction and
+  surfaces it at the phase-6 HITL handoff, then the **operator** edits the file. The agent must not.
+- **A site owns two stylesheets and the split is load-bearing.** `theme.css` is **generated** —
+  `theme:build` rewrites it wholesale from `brand.json`. `fonts.css` is **hand-edited and never
+  generated**, which is the only reason typography survives a theme rebuild. Never move font
+  declarations into `theme.css`, and never teach `theme:build` to emit them. `app/globals.css`
+  imports core → `theme.css` → `fonts.css`; later wins, so the site's `:root` beats core's defaults.
+- **Exactly ONE `@import url()` survives per CSS bundle** — Lightning CSS hoists one to the top and
+  drops the rest with *"@import rules must precede all rules aside from @charset and @layer"*.
+  Verified empirically: with a remote `@import` in **both** core's fonts.css and a site's, only the
+  site's reached the output and core's default faces silently failed to load. So **core names the
+  default families but does not load them**; the site's `fonts.css` is the sole loader, and every
+  family it needs rides in one Google Fonts URL (repeat `&family=`). Storybook has no site
+  `fonts.css` and loads the defaults from **`.storybook/preview-head.html`**, where a `<link>` is
+  not subject to the `@import` ordering rule at all. Do not add a second `@import` anywhere in the
+  chain — it will be dropped, and the failure is silent in the browser.
+- **Each site's `app/layout.tsx` preconnects to the font hosts** (`fonts.googleapis.com` +
+  `fonts.gstatic.com`, the latter with `crossOrigin`), rendered in `<head>` so React hoists them —
+  verified present before `</head>` in built HTML. They matter because the faces are requested by a
+  CSS `@import`, which the browser only discovers *after* fetching and parsing the stylesheet; the
+  hints start the DNS/TLS handshakes in parallel with that. Repoint them if a site's `fonts.css`
+  loads from a different host.
+- **Every family value carries a real fallback stack, not a bare generic keyword.** The mono-primary
+  vars (`--font-heading-family`, `--font-mono-family`) use Tailwind v4's own `--font-mono` stack —
+  `ui-monospace` alone does not resolve to a good face on Windows Chrome. `--font-mono-family` is
+  the one no site declares, so it stays on core's default even when a site's `@import` carries no
+  mono face at all.
+- `sites/_shell/fonts.css` rides the `cpSync` scaffold copy, so new sites inherit it with no
+  `scaffoldSite` change. No drift test (nothing generates it); `scaffold.test.ts` asserts only that
+  a scaffolded site carries it with both vars and a single `@import`.
+
 ## Sites & tooling (`sites:new` + `theme:build`)
 
 - **Site dependency split.** `next`/`react`/`react-dom` live in **each site** +

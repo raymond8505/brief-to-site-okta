@@ -30,6 +30,8 @@ phase has a single source of copy grounding.
    lets you compose expressively (which icons, which richer arrangements) instead of a plain block
    stack. Radius + colour harmony come from `config/brand.json`; this section steers everything the
    tokens don't.
+   - **Typography is the exception: you don't set it.** Capture the intent here, then hand it to
+     the operator at phase 6 — they pick the typefaces in `fonts.css`. Never edit that file.
 
 ## Thin brief? Design more, don't defer more.
 

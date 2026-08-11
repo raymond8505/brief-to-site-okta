@@ -1,0 +1,28 @@
+/* Typeface tokens.
+
+   This file names the default families; it does NOT load them. Loading is the consumer's job,
+   because a CSS bundle keeps exactly one `@import url()` — the rest are dropped as misplaced. A
+   site loads its faces in `sites/<slug>/fonts.css`, Storybook loads them in `.storybook/preview-head.html`.
+
+   A site picks its own pair by redeclaring these vars at `:root` in its `fonts.css`, which the
+   site's `app/globals.css` imports after this file — the later declaration wins, the same way
+   `theme.css` beats the colour defaults in colors.css.
+
+   These are plain custom properties. globals.css maps Tailwind's font tokens onto them through
+   `@theme inline`, so `font-sans` / `font-heading` / `font-mono` resolve per element and a site
+   changes its typography without touching a single component. */
+
+:root {
+  /* Headings — every `font-heading` consumer: Heading, Step (title + badge number), FaqItem's
+     question, Stat's value, and Card titles. */
+  --font-heading-family:
+    "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  /* Body copy — `html { @apply font-sans }` puts this on everything else. */
+  --font-body-family: "Geist", ui-sans-serif, system-ui, sans-serif;
+  /* Monospace — token/value sample text. No site declares this one, so it stays on the default
+     even after an operator swaps the site's @import to a pair that has no mono face. */
+  --font-mono-family:
+    "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+}

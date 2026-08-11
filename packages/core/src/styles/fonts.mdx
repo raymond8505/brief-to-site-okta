@@ -1,0 +1,55 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Fonts/Overview" />
+
+# Typography
+
+A site has **two typefaces**: one for headings, one for body copy. They are chosen by a human, not
+derived from the brief — the operator picks them during last-mile QA, and no config field or build
+step is involved.
+
+## The two tokens
+
+Both are plain CSS custom properties declared at `:root`:
+
+- `--font-heading-family` — defaults to **Geist Mono**, backed by the system mono stack.
+- `--font-body-family` — defaults to **Geist**, backed by the system sans stack.
+
+A third, `--font-mono-family`, backs sample and value text and rarely changes. No site declares it,
+so it stays on core's default even when a site's `@import` carries no mono face — which is why it
+keeps a full system fallback behind it rather than a bare `monospace`.
+
+Give every value a real fallback stack, not a single generic keyword: the webfont is a network
+request, and whatever sits behind it is what readers see until it lands.
+
+`styles/globals.css` maps Tailwind's font tokens onto them inside `@theme inline`, so `font-sans`,
+`font-heading` and `font-mono` emit `font-family: var(--font-…-family)` rather than a baked value.
+That indirection is what lets a single `:root` override restyle a whole site.
+
+`--font-heading` reaches every heading-weight surface: `Heading`, `Step`'s title and badge number,
+`FaqItem`'s question, `Stat`'s value, and `Card` titles. `--font-sans` reaches everything else via
+`html { @apply font-sans }`. **No component takes a font prop**, and none should — typography is a
+token concern.
+
+## Where a site sets them
+
+Each site owns two stylesheets, and the split matters:
+
+- `theme.css` is **generated** — `theme:build` rewrites it from `config/brand.json` on every run.
+- `fonts.css` is **hand-edited** and never regenerated, so typography survives any number of
+  theme rebuilds.
+
+`app/globals.css` imports core, then `theme.css`, then `fonts.css`. Later declarations win, so a
+site's `:root` block overrides core's defaults — the same cascade the colour system uses.
+
+## One `@import` per site
+
+`fonts.css` also **loads** the faces, and it is the only place that does. A CSS bundle keeps exactly
+one `@import url()` and drops the rest as misplaced rules, so every family a site uses must ride in a
+single Google Fonts URL — repeat the `&family=` parameter rather than adding a second `@import`.
+
+Core deliberately names the default families without loading them; Storybook loads them from
+`.storybook/preview-head.html`, where a `<link>` avoids the ordering rule entirely.
+
+Changing a site's typography is therefore two edits in one file: swap the URL, repoint the var. The
+operator's procedure lives with the pipeline, in the `microsite` skill's handoff phase.

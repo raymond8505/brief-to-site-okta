@@ -1,0 +1,20 @@
+/* HAND-EDITED — this site's typefaces. The one style file `theme:build` never touches, so it
+   survives any number of brand.json rebuilds.
+
+   To change a face:
+     1. Pick it on fonts.google.com, copy the `@import` embed URL, and replace the one below.
+        Keep it to a SINGLE `@import` — a CSS bundle drops every one after the first, so put
+        every family you want in the one url (`&family=` repeats).
+     2. Point the matching var at the new family name, keeping a fallback after it.
+
+   Both vars are read by core's Tailwind font tokens, so nothing else in the site needs to change. */
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap");
+
+:root {
+  /* Headings — section headings, step titles + numbers, FAQ questions, stat values, card titles. */
+  --font-heading-family:
+    "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  /* Body copy — everything else. */
+  --font-body-family: "Geist", ui-sans-serif, system-ui, sans-serif;
+}

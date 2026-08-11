@@ -147,6 +147,17 @@ describe("scaffoldSite", () => {
     expect(readFileSync(join(siteDir, "theme.css"), "utf8")).toBe(buildThemeCss(brand));
   });
 
+  // fonts.css is hand-edited, never generated, so there is nothing to drift-check — but it must
+  // reach every new site, since it is the only place a site's typefaces are declared AND loaded.
+  it("carries a fonts.css declaring both typeface vars and loading the faces", () => {
+    const fonts = readFileSync(join(siteDir, "fonts.css"), "utf8");
+    expect(fonts).toContain("--font-heading-family:");
+    expect(fonts).toContain("--font-body-family:");
+    // Exactly one @import RULE — a CSS bundle drops every one after the first. Anchored to line
+    // start so the prose mentions of `@import` in the file's own comment don't count.
+    expect(fonts.match(/^@import/gm)).toHaveLength(1);
+  });
+
   it("does not copy build/install artifacts", () => {
     expect(existsSync(join(siteDir, "node_modules"))).toBe(false);
     expect(existsSync(join(siteDir, ".next"))).toBe(false);
