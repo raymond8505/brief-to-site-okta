@@ -12,7 +12,9 @@
 
 :root {
   /* Headings — section headings, step titles + numbers, FAQ questions, stat values, card titles. */
-  --font-heading-family: "Geist Mono", ui-monospace, monospace;
+  --font-heading-family:
+    "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
   /* Body copy — everything else. */
   --font-body-family: "Geist", ui-sans-serif, system-ui, sans-serif;
 }

@@ -15,9 +15,14 @@
 :root {
   /* Headings — every `font-heading` consumer: Heading, Step (title + badge number), FaqItem's
      question, Stat's value, and Card titles. */
-  --font-heading-family: "Geist Mono", ui-monospace, monospace;
+  --font-heading-family:
+    "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
   /* Body copy — `html { @apply font-sans }` puts this on everything else. */
   --font-body-family: "Geist", ui-sans-serif, system-ui, sans-serif;
-  /* Monospace — token/value sample text. */
-  --font-mono-family: "Geist Mono", ui-monospace, monospace;
+  /* Monospace — token/value sample text. No site declares this one, so it stays on the default
+     even after an operator swaps the site's @import to a pair that has no mono face. */
+  --font-mono-family:
+    "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
 }

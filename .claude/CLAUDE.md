@@ -130,6 +130,17 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   `fonts.css` and loads the defaults from **`.storybook/preview-head.html`**, where a `<link>` is
   not subject to the `@import` ordering rule at all. Do not add a second `@import` anywhere in the
   chain — it will be dropped, and the failure is silent in the browser.
+- **Each site's `app/layout.tsx` preconnects to the font hosts** (`fonts.googleapis.com` +
+  `fonts.gstatic.com`, the latter with `crossOrigin`), rendered in `<head>` so React hoists them —
+  verified present before `</head>` in built HTML. They matter because the faces are requested by a
+  CSS `@import`, which the browser only discovers *after* fetching and parsing the stylesheet; the
+  hints start the DNS/TLS handshakes in parallel with that. Repoint them if a site's `fonts.css`
+  loads from a different host.
+- **Every family value carries a real fallback stack, not a bare generic keyword.** The mono-primary
+  vars (`--font-heading-family`, `--font-mono-family`) use Tailwind v4's own `--font-mono` stack —
+  `ui-monospace` alone does not resolve to a good face on Windows Chrome. `--font-mono-family` is
+  the one no site declares, so it stays on core's default even when a site's `@import` carries no
+  mono face at all.
 - `sites/_shell/fonts.css` rides the `cpSync` scaffold copy, so new sites inherit it with no
   `scaffoldSite` change. No drift test (nothing generates it); `scaffold.test.ts` asserts only that
   a scaffolded site carries it with both vars and a single `@import`.

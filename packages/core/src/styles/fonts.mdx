@@ -12,10 +12,15 @@ step is involved.
 
 Both are plain CSS custom properties declared at `:root`:
 
-- `--font-heading-family` — defaults to `"Geist Mono", ui-monospace, monospace`.
-- `--font-body-family` — defaults to `"Geist", ui-sans-serif, system-ui, sans-serif`.
+- `--font-heading-family` — defaults to **Geist Mono**, backed by the system mono stack.
+- `--font-body-family` — defaults to **Geist**, backed by the system sans stack.
 
-A third, `--font-mono-family`, backs sample and value text and rarely changes.
+A third, `--font-mono-family`, backs sample and value text and rarely changes. No site declares it,
+so it stays on core's default even when a site's `@import` carries no mono face — which is why it
+keeps a full system fallback behind it rather than a bare `monospace`.
+
+Give every value a real fallback stack, not a single generic keyword: the webfont is a network
+request, and whatever sits behind it is what readers see until it lands.
 
 `styles/globals.css` maps Tailwind's font tokens onto them inside `@theme inline`, so `font-sans`,
 `font-heading` and `font-mono` emit `font-family: var(--font-…-family)` rather than a baked value.
