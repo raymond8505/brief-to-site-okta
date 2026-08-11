@@ -37,23 +37,27 @@ export const heroSectionVariants = cva("", {
     mediaTone: { light: "", dark: "" },
     /**
      * Lay a tinted wash over the backdrop, for art too busy for the per-glyph halo alone. A
-     * `::before` on the section — a CSS layer, so no DOM branch and no extra slot.
+     * `::before` on the section — a CSS layer, so no DOM branch and no extra slot. How heavy the
+     * wash is is the `--scrim-opacity` token, not a variant: it's a continuous quantity the operator
+     * tunes against the actual photo (globals.css).
      */
     scrim: { true: "", false: "" },
   },
   compoundVariants: [
-    // Tailwind v4's `before:` variant supplies `content: ""`, so none is authored here.
+    // Tailwind v4's `before:` variant supplies `content: ""`, so none is authored here. Only the
+    // geometry is utilities: the tint is the authored `.scrim-*` class (globals.css), which reads
+    // `--scrim-opacity` — an arbitrary value here would be an oxide-corruption candidate.
     {
       media: "background",
       scrim: true,
       mediaTone: "light",
-      class: "before:absolute before:inset-0 before:z-10 before:bg-white/35",
+      class: "before:absolute before:inset-0 before:z-10 scrim-light",
     },
     {
       media: "background",
       scrim: true,
       mediaTone: "dark",
-      class: "before:absolute before:inset-0 before:z-10 before:bg-black/35",
+      class: "before:absolute before:inset-0 before:z-10 scrim-dark",
     },
   ],
   defaultVariants: { media: "column", mediaTone: "light", scrim: false },
@@ -156,12 +160,22 @@ function Hero({
   density,
   id,
   className,
+  style,
   children,
   ...props
 }: HeroProps) {
   assertAllowedChildren(children, [HeroBody, HeroMedia, HeroAside], "Hero");
   return (
-    <Section density={density} id={id} className={heroSectionVariants({ media, mediaTone, scrim })}>
+    // `style` goes to the shell for the same reason the classes above do — the scrim is the
+    // section's own `::before`, which a declaration on the inner row could never reach. That makes
+    // the shell the one scope where `--scrim-opacity` and `--halo-opacity-*` both land: custom
+    // properties inherit, so from here they also reach the copy slots carrying the halo.
+    <Section
+      density={density}
+      id={id}
+      style={style}
+      className={heroSectionVariants({ media, mediaTone, scrim })}
+    >
       <div
         data-slot="hero"
         className={cn(heroVariants({ align, mediaSide, layout, media, mediaTone }), className)}

@@ -1,3 +1,4 @@
+import type * as React from "react";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { expect } from "storybook/test";
 
@@ -53,7 +54,9 @@ const DARK_ART = backdropArt("#1e293b", "#334155", "#0f172a");
  * near-white role token under a soft dark one. Set it to match the art you're placing: nothing at
  * build time can see how dark a sourced photo is, so the polarity is yours to pick rather than
  * something detected. `scrim` (boolean, default `false`) lays a matching tint over the whole image
- * for art too busy for the per-glyph halo alone.
+ * for art too busy for the per-glyph halo alone. How *heavy* that tint is — and how strong the halo
+ * is — is not a variant but a pair of tokens, since both are continuous quantities the operator
+ * tunes against the actual photo; see **Tokens** below and the `ScrimAndHaloStrength` story.
  *
  * A "variant" is a **composition** — which blocks fill which slots. Import the section from
  * `@brief-to-site/core/sections` and the blocks from `@brief-to-site/core/blocks`.
@@ -68,6 +71,13 @@ const DARK_ART = backdropArt("#1e293b", "#334155", "#0f172a");
  *   visible drop shadow. It is a legibility *aid*, not a contrast guarantee: over arbitrary art
  *   nothing here clears an AA floor. Reach for `scrim` when the art is busy, and treat choosing
  *   calmer art behind the copy as the real fix.
+ * - `--halo-opacity-inner` (`0.35`) / `--halo-opacity-outer` (`0.25`) — the alphas of the halo's two
+ *   stacked layers, and `--scrim-opacity` (`0.35`) — the alpha of the scrim tint. The operator's
+ *   knobs for both treatments, because how much wash a photo needs is a property of the photo and
+ *   nothing at build time can see it. Both scopes work: declare them at `:root` in the site's own
+ *   stylesheet to tune every hero, or hand them to one hero on its `style` prop. Raising the halo
+ *   alphas far turns the diffuse wash into the hard edge it exists to avoid — past a nudge, the
+ *   scrim is the better lever.
  * - Delegated — the blocks composed into its slots: `Eyebrow`, `Heading`, `Prose`, `CtaGroup`,
  *   `MediaFrame`, and `Quote` or `StatRow` in the aside.
  */
@@ -114,7 +124,7 @@ const meta = {
     scrim: {
       control: "boolean",
       description:
-        "Lay a `mediaTone`-matched tint over the backdrop, for art too busy for the halo alone. `media=\"background\"` only. Default `false`.",
+        "Lay a `mediaTone`-matched tint over the backdrop, for art too busy for the halo alone. Its strength is the `--scrim-opacity` token, not a variant. `media=\"background\"` only. Default `false`.",
       table: { defaultValue: { summary: "false" } },
     },
     density: {
@@ -352,7 +362,8 @@ export const BackgroundMedia: Story = {
  * Backdrop over dark art: `mediaTone="dark"` switches the copy to the near-white
  * `--primary-foreground` and washes the art darker behind it, and `scrim` lays a matching tint over
  * the whole image. Reach for the scrim when the art is busy enough that the per-glyph halo alone
- * won't carry the copy.
+ * won't carry the copy. Both treatments here are at their default strength —
+ * `ScrimAndHaloStrength` is the same composition turned up.
  */
 export const BackgroundMediaDark: Story = {
   args: { media: "background", mediaTone: "dark", scrim: true, align: "center", density: "spacious" },
@@ -381,6 +392,67 @@ export const BackgroundMediaDark: Story = {
       </HeroMedia>
     </Hero>
   ),
+};
+
+/**
+ * The same dark backdrop with both treatments turned up: `--scrim-opacity` to `0.6` and the halo
+ * alphas to `0.5`/`0.4`, handed to this one hero on its `style` prop. Side by side with
+ * `BackgroundMediaDark` this is what the knobs buy — the art recedes and the copy sits forward. The
+ * same three declarations at `:root` in a site's own stylesheet tune every hero in that site
+ * instead; nothing about the component changes between the two scopes.
+ *
+ * They reach the section because Hero puts `style` on its shell, which is where the scrim's
+ * `::before` lives — the halo then inherits down to the copy slots. The play() reads both back:
+ * jsdom resolves neither a pseudo-element nor a `var()` chain, so this needs a browser.
+ */
+export const ScrimAndHaloStrength: Story = {
+  args: {
+    media: "background",
+    mediaTone: "dark",
+    scrim: true,
+    align: "center",
+    density: "spacious",
+    style: {
+      "--scrim-opacity": "0.6",
+      "--halo-opacity-inner": "0.5",
+      "--halo-opacity-outer": "0.4",
+    } as React.CSSProperties,
+  },
+  render: (args) => (
+    <Hero {...args}>
+      <HeroBody>
+        <Eyebrow>After hours</Eyebrow>
+        <Heading level={1} size="xl">
+          Briefs in at five, site up by nine.
+        </Heading>
+        <Prose lead>
+          The studio runs a single fixed-scope pass: one brief, one brand colour, one finished
+          microsite.
+        </Prose>
+        <CtaGroup align="center">
+          <Button size="lg">Start a project</Button>
+          <Button size="lg" variant="outline">
+            Meet the studio
+          </Button>
+        </CtaGroup>
+      </HeroBody>
+      <HeroMedia>
+        <MediaFrame alt="The studio after dark" src={DARK_ART} />
+      </HeroMedia>
+    </Hero>
+  ),
+  play: async ({ canvasElement }) => {
+    await new Promise((r) => requestAnimationFrame(() => r(null)));
+    const section = canvasElement.querySelector<HTMLElement>("[data-slot=section]");
+    const body = canvasElement.querySelector<HTMLElement>("[data-slot=hero-body]");
+    if (!section || !body) throw new Error("missing hero section shell or body");
+    expect(getComputedStyle(section, "::before").backgroundColor).toBe("rgba(0, 0, 0, 0.6)");
+    // Tailwind emits each halo layer as `var(--tw-text-shadow-color, rgb(0 0 0 / var(--halo-…)))`,
+    // so a resolved alpha here proves the override survived that wrapping and landed on the glyphs.
+    const shadow = getComputedStyle(body).textShadow;
+    expect(shadow).toContain("0.5");
+    expect(shadow).toContain("0.4");
+  },
 };
 
 /** `density: compact` — tighter vertical rhythm. */
