@@ -478,11 +478,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@brief-to-site/site-lee-carvalo@workspace:sites/lee-carvalo":
+"@brief-to-site/site-alf-pogs@workspace:sites/alf-pogs":
   version: 0.0.0-use.local
-  resolution: "@brief-to-site/site-lee-carvalo@workspace:sites/lee-carvalo"
+  resolution: "@brief-to-site/site-alf-pogs@workspace:sites/alf-pogs"
   dependencies:
     "@brief-to-site/core": "workspace:*"
+    lucide-react: "npm:1.24.0"
     next: "npm:16.2.6"
     react: "npm:19.2.4"
     react-dom: "npm:19.2.4"
@@ -490,12 +491,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@brief-to-site/site-melmac-milkcaps@workspace:sites/melmac-milkcaps":
+"@brief-to-site/site-lee-carvalo@workspace:sites/lee-carvalo":
   version: 0.0.0-use.local
-  resolution: "@brief-to-site/site-melmac-milkcaps@workspace:sites/melmac-milkcaps"
+  resolution: "@brief-to-site/site-lee-carvalo@workspace:sites/lee-carvalo"
   dependencies:
     "@brief-to-site/core": "workspace:*"
-    lucide-react: "npm:1.24.0"
     next: "npm:16.2.6"
     react: "npm:19.2.4"
     react-dom: "npm:19.2.4"
