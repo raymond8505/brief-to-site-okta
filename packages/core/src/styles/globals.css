@@ -69,15 +69,29 @@
 /* Legibility halos for copy that sits directly on imagery (Hero `media="background"`). Deliberately
    a large, very-low-opacity diffuse wash rather than a drop shadow: the goal is to lift or drop the
    art immediately behind the glyphs, not to draw a visible edge around them. Two stacked radii give
-   a cumulative falloff with no hard boundary — so don't "fix" a halo that reads as weak by raising
-   the alpha or shrinking the blur, which turns the wash into exactly the hard edge it avoids. When
-   it genuinely isn't enough, the lever is Hero's `scrim`, not a heavier shadow. Which way it washes
-   follows the art, so the polarity is Hero's `mediaTone` axis, not a decision made here. Plain
-   `@theme` (not `@theme inline`) because these are literal values, not `var()` indirections that
-   must resolve per element. */
+   a cumulative falloff with no hard boundary — push `--halo-opacity-*` far and the wash becomes
+   exactly the hard edge it avoids, so when a halo reads as weak the first lever is Hero's `scrim`,
+   not a heavier shadow. Which way it washes follows the art, so the polarity is Hero's `mediaTone`
+   axis, not a decision made here.
+
+   The `var()`s survive to the element, which is what makes the strength tunable per hero: the
+   `text-shadow-*` utility inlines the theme value **literally** — it has to, so it can wrap each
+   layer's colour in `var(--tw-text-shadow-color, …)` for the `/alpha` modifier — so what lands on
+   the element is `text-shadow: … var(--tw-text-shadow-color, rgb(255 255 255/var(--halo-opacity-
+   inner))) …`, resolved against that element's own cascade. `inline` is NOT the lever here and is
+   deliberately absent: verified against a real `next build` that plain `@theme` and `@theme inline`
+   emit byte-identical CSS for these two, because that utility never takes the `var(--text-shadow-…)`
+   indirection that `inline` would strip. What both DO emit is a `:root` copy of the token — and that
+   copy is inert: a custom property containing `var()` is substituted where it's declared, so it has
+   the defaults frozen into it. Consume these through the utility, never as
+   `text-shadow: var(--text-shadow-legible-light)`, which would ignore any override. */
 @theme {
-  --text-shadow-legible-light: 0 0 20px rgb(255 255 255 / 0.35), 0 0 44px rgb(255 255 255 / 0.25);
-  --text-shadow-legible-dark: 0 0 20px rgb(0 0 0 / 0.35), 0 0 44px rgb(0 0 0 / 0.25);
+  --text-shadow-legible-light:
+    0 0 20px rgb(255 255 255 / var(--halo-opacity-inner)),
+    0 0 44px rgb(255 255 255 / var(--halo-opacity-outer));
+  --text-shadow-legible-dark:
+    0 0 20px rgb(0 0 0 / var(--halo-opacity-inner)),
+    0 0 44px rgb(0 0 0 / var(--halo-opacity-outer));
 }
 
 /* Companion to the halos: flip the copy light for text sitting on DARK backdrop art (Hero
@@ -103,6 +117,19 @@
   ) {
   --foreground: var(--primary-foreground);
   --muted-foreground: color-mix(in oklab, var(--primary-foreground) 78%, transparent);
+}
+
+/* The scrim's tint — the heavier half of the same legibility problem: a wash over the WHOLE backdrop
+   for art too busy for the per-glyph halo. Hero owns the `::before` geometry (`before:absolute
+   before:inset-0 before:z-10`, whose `before:` variant also supplies the `content`) and picks the
+   polarity from `mediaTone`; only the colour lives here, because only the colour needs the token.
+   Authored as classes rather than `before:bg-[rgb(255_255_255/var(--scrim-opacity))]` for the same
+   reason as `.copy-on-dark-media` above — see the `.brand-rgb` note in contrast-math.css. */
+.scrim-light::before {
+  background-color: rgb(255 255 255 / var(--scrim-opacity));
+}
+.scrim-dark::before {
+  background-color: rgb(0 0 0 / var(--scrim-opacity));
 }
 
 :root {
@@ -138,6 +165,16 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
+  /* Strength of the two legibility treatments over backdrop art (see the halo + scrim blocks
+     above). Direct-consumption vars like --radius: the halo's alphas ride into the text-shadow
+     utility and the scrim's into `.scrim-*::before`, so both resolve per element. How much wash a
+     photo needs is a property of the photo, and nothing at build time can see it — so this is the
+     operator's knob, at either scope. A site tunes every hero by redeclaring them at `:root` in its
+     own stylesheet; a single hero takes them on its `style` prop (they reach the scrim because Hero
+     puts `style` on the Section — see hero.tsx). */
+  --halo-opacity-inner: 0.35;
+  --halo-opacity-outer: 0.25;
+  --scrim-opacity: 0.35;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);

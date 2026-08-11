@@ -1,3 +1,4 @@
+import type * as React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
@@ -145,14 +146,30 @@ describe("Hero", () => {
         <HeroBody>x</HeroBody>
       </Hero>,
     );
-    expect(light.container.querySelector("[data-slot=section]")).toHaveClass("before:bg-white/35");
+    expect(light.container.querySelector("[data-slot=section]")).toHaveClass("scrim-light");
 
     const dark = render(
       <Hero media="background" mediaTone="dark" scrim>
         <HeroBody>x</HeroBody>
       </Hero>,
     );
-    expect(dark.container.querySelector("[data-slot=section]")).toHaveClass("before:bg-black/35");
+    expect(dark.container.querySelector("[data-slot=section]")).toHaveClass("scrim-dark");
+  });
+
+  it("puts style on the section, so a --scrim-opacity override reaches the ::before", () => {
+    const { container } = render(
+      <Hero media="background" scrim style={{ "--scrim-opacity": "0.6" } as React.CSSProperties}>
+        <HeroBody>x</HeroBody>
+      </Hero>,
+    );
+    // The scrim is the section's own pseudo-element: a declaration on the inner row would be a
+    // sibling scope to it, so the token would silently do nothing. jsdom can't evaluate the
+    // ::before, but which element carries the declaration is exactly what decides whether it works.
+    const section = container.querySelector<HTMLElement>("[data-slot=section]");
+    expect(section?.style.getPropertyValue("--scrim-opacity")).toBe("0.6");
+    expect(
+      container.querySelector<HTMLElement>("[data-slot=hero]")?.style.getPropertyValue("--scrim-opacity"),
+    ).toBe("");
   });
 
   it("omits the scrim by default and when the media is a column", () => {

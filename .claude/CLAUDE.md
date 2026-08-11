@@ -88,6 +88,26 @@ hostnames, `BTS_*`-style env indirection in `.mcp.json`) never enter committed c
   FeatureGrid card top-accent) can use the `--brand-secondary`/`-tertiary` hsl token directly.
 - **Default brand seed = Tailwind blue-600** (`#2563eb` = hsl(221 83% 53%) = rgb(37 99 235)) in both
   `colors.css` and `sites/_shell` — one canonical default.
+- **Legibility over backdrop art is two treatments and three opacity tokens.** `Hero`
+  `media="background"` gets a per-glyph halo (`--text-shadow-legible-light/dark`) and an optional
+  full-image scrim; their strengths are `--halo-opacity-inner` (0.35) / `--halo-opacity-outer` (0.25)
+  and `--scrim-opacity` (0.35), declared at `:root` in globals.css. Deliberately **not** in
+  `brand.json`/`theme:build`/`config:schema` and needing no new hand-edited site file: how much wash
+  a photo needs is a property of the photo, and the cascade already does both scopes — a site
+  redeclares them at `:root` in its own stylesheet, one hero takes them on its `style` prop. Two
+  wiring facts make the per-instance scope work. **Hero passes `style` to its `Section` shell**, not
+  the inner row — the scrim is the section's `::before`, so a declaration on the row would be a
+  sibling scope to it (the halo then inherits down to the copy slots). And the halo's `var()`s
+  survive to the element because Tailwind's `text-shadow-*` utility **inlines the theme value
+  literally** (it wraps each layer's colour in `var(--tw-text-shadow-color, …)` for the `/alpha`
+  modifier), so they resolve per element. `@theme inline` is **not** the lever and is deliberately
+  absent — verified against a real `next build` that plain `@theme` and `@theme inline` emit
+  byte-identical CSS for these, since that utility never takes the `var(--text-shadow-…)`
+  indirection `inline` would strip. Both emit a `:root` copy of the token with the defaults frozen
+  in; consume the halo through the utility, never as `text-shadow: var(--text-shadow-legible-light)`.
+  The scrim's tint is the **authored `.scrim-light`/`.scrim-dark`** classes — an
+  arbitrary-value `before:bg-[rgb(…/var(--scrim-opacity))]` would be an oxide-corruption candidate
+  (see the `.brand-rgb` note above); Hero keeps only the `::before` geometry as utilities.
 - **Border-radius is a per-site style token** (`brand.json` `radius`). Named presets live in
   `styles/radius.ts` (`RADIUS_PRESETS` → base rem; the `radius` enum is built from its keys, mirroring
   `HARMONIES`↔`HUE_OFFSETS`) — `RADIUS_PRESETS` is the single source, don't re-list the names here.
